@@ -1,0 +1,19 @@
+Instead of Trigger
+===================
+
+the above operations cannot be operated directly on the view, coz it has some analytical operations.instead of using update, 
+we can apply triggers 'instead of' triggers . for example
+
+instead_of_trg.sql. 
+Now you are saying, instead of update the view 'HR_EMPS_BY_DEPT' , directly update on the employees table, where with the new department_id
+
+CREATE OR REPLACE TRIGGER UPD_EMPS_BY_DEPT 
+INSTEAD OF UPDATE ON HR_EMPS_BY_DEPT 
+BEGIN
+  UPDATE employees
+    SET department_id = :new.department_id
+    WHERE last_name = :old.last_name;
+END;
+/
+
+Now run the hr_emps_by_dept_vw.sql and check HR_EMPS_BY_DEPT view. all the relvant record last_name = 'Grant' has been updated with department_id = 10 

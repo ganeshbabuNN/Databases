@@ -1,0 +1,529 @@
+
+-In early chapter we discussed about the complex types like record and arrays
+- and also packages, 
+--now we shall discuss about the object and object types, where we can think like a complex and packages types
+
+like example
+emp_obj1.sql :
+the below last_name,first_name...etc are like refered as a type of Object . sometime we can call it has a object delcarations
+
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE
+)  
+/
+
+The same we can also find the record type, the below last_name, first_name..etc type decared as a record.
+
+call_emp_obj1.sql
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE
+  );
+  Begin
+	null;
+  end;
+
+
+
+---I can even add a array of the above type.. here the below example, 't_emps' is a array of tables
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE
+  );
+type t_emps is TABLE OF r_emps;
+  Begin
+	null;
+  end;
+
+---now by above object "emp_obj1.sql" can able to create a table of the object type.
+
+emp_obj_tab.sql
+CREATE TABLE emp_obj_tab (
+  emp_rec emp_obj )
+/
+
+---now the pure difference between the object and type is where type is a PL SQL construct and object is a database object.
+--now compile emp_obj1.sql and compile table t_emp_obj .sql that will be available in the database--- check
+
+t_emp_obj.sql 
+
+create or replace
+TYPE t_emp_obj 
+AS TABLE OF emp_obj;
+
+---Now you can't create a table from a record and where you can create record from the rowtype not from the table from the record. whereas in object type, you can create table from the objects, this will encapsulate the logic what you are looking for.
+
+--let us what is really a difference between the record and object types..
+let us take the example for type and complike.
+call_emp_obj1.sql:
+add the salary attribute 
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE,
+    salary number(8,2) --- added new
+  );
+   type t_emps is table of r_emps;
+  begin 
+     null;
+  end;
+
+--then put same attribute in the object emp_obj1.sql  and compile. you shall get the error coz of its depencies.. if you really want to compile successfully, drop the table "emp_obj_tab" and table type t_emp_obj awhich you have created for the objects, then compile i shown work.
+
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE,
+  salary number(8,2)
+)  
+/
+
+Assigning the value
+-------------------
+now let us assign the value for the record type i,e initializations..
+	
+  DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE,
+    salary number(8,2) 
+  );
+
+  v_emps r_emps;
+
+  BEGIN
+	v_emps.last_name :='ganesh';
+	v_emps.first_name :='babu';
+  end;
+
+
+--where as in Object, you have to initialize the object using CONSTRUCTORs
+emp_obj1.sql
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE,
+    salary NUMBER(8,2)
+  ) ;
+  
+  v_emps r_emps;
+  
+  v_emp_obj emp_obj;
+BEGIN
+  v_emps.last_name := 'ganesh';
+  v_emps.first_name := 'babi';
+  
+---- here is the instance of the emp_obj object with the name parameter initialized.
+  v_emp_obj := emp_obj(     
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@g.com',
+    phone_number => '233-33-322',
+    hire_date => sysdate,
+    salary => 5000);
+  
+END; 
+/
+
+CONSTRUCTORS
+=============
+
+As discussing A record type is just a data struture where all the attributes comprises into a unit where as in object is contains multiples field i,e attributes but the diff is in the field we can include code with it as i said before object type is a combinations of package and complex types.
+-- the record data struture and package strutues will be used in various situationsin PLSQL
+-- by default the this type, default construtors. this is done by the oracle
+--the sample code like like this.
+emp_obj2.sql
+
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE,
+  salary NUMBER(8,2),
+  --- the below code is placed by the oracle by default, no need to put expliclity . the attribute of the object type , to be ----same as the construtor attributes.
+  CONSTRUCTOR FUNCTION emp_obj(
+    last_name IN VARCHAR2,
+    first_name IN VARCHAR2,
+    email IN VARCHAR2,
+    phone_number IN VARCHAR2,
+    hire_date IN DATE,
+    salary IN NUMBER )      
+    RETURN SELF AS RESULT--- result which in turns return the instance of that actual objects..
+)  
+NOT FINAL;-- this keyword which is used to reuse in different type across the various create
+/
+
+
+-- like how you have package body and the spec, here also object body can be return for the code.
+emp_obj2.sql
+
+'SELF' this is trying to assigning the body to the instance of the object
+create or replace
+TYPE BODY emp_obj
+AS 
+  --- this is the specification code
+  CONSTRUCTOR FUNCTION emp_obj(
+    last_name IN VARCHAR2,
+    first_name IN VARCHAR2,
+    email IN VARCHAR2,
+    phone_number IN VARCHAR2,
+    hire_date IN DATE,
+    salary IN NUMBER )      
+    RETURN SELF AS RESULT
+  IS
+  --- this is the actual code which is the code 
+
+  BEGIN
+    SELF.last_name := last_name;
+    SELF.first_name := first_name;
+    SELF.email := email;
+    SELF.phone_number := phone_number;
+    SELF.hire_date := hire_Date;
+    SELF.salary := salary;
+    
+    RETURN;
+  END;
+END;
+
+---let us call the object that is is emp_obj
+DECLARE  
+  v_emp_obj emp_obj;
+BEGIN
+
+  v_emp_obj := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@g.com',
+    phone_number => 'ga',
+    hire_date => sysdate,
+    salary => 32323);  
+END;  
+/
+
+---Now creating the construtor , passing without any attribute and with only one attribule
+emp_obj3.sql.
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE,
+  salary NUMBER(8,2),
+  
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT,
+    
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+)  
+NOT FINAL 
+/
+
+---adding the implementation for the body of above type
+emp_obj3.sql
+create or replace
+TYPE BODY emp_obj
+AS 
+
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    RETURN;
+  END;  
+  
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.email := email;
+    
+    RETURN;
+  END;
+END;
+/
+
+---same you can even put some initializing value into the empty constructor.
+create or replace
+TYPE BODY emp_obj
+AS 
+
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.salary := 0;
+    RETURN;
+  END;  
+  
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.email := email;
+    
+    RETURN;
+  END;
+END;
+/
+
+---now call the object, by default other attributes are called with that constructure, which is called by the constructors.
+DECLARE  
+  v_emp_obj emp_obj;
+BEGIN
+
+  v_emp_obj := emp_obj(); -- you called empty also
+
+  v_emp_obj := emp_obj( -- with one arguments also
+    email => 'ganesh@gmail.com' );
+  
+  v_emp_obj := emp_obj(
+    last_name => 'ga',
+    first_name => 'bab',
+    email => 'gag@ba.cpm',
+    phone_number => '3423423423',
+    hire_date => sysdate,
+    salary => 2333);
+  
+END; 
+/
+
+---MEMBER Procedures
+-------------------
+a member functions is allows to operate on the instance of the type, an instance of type that are type contains data. the type is a definiations and instance of type are where we have called three types of that single instance
+
+emp_obj4.sql
+
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE,
+  salary NUMBER(8,2),
+  
+  MEMBER PROCEDURE print, --- included the print procedures
+  
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT,
+    
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+)  
+NOT FINAL 
+/
+
+create or replace
+TYPE BODY emp_obj
+AS 
+
+  MEMBER PROCEDURE print    --- implemented the print procedure just for printing the last name...etc
+  IS
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE('Last Name: ' || SELF.last_name);
+    DBMS_OUTPUT.PUT_LINE('Email: ' || SELF.email);
+    DBMS_OUTPUT.PUT_LINE('Salary: ' || TO_CHAR(SELF.salary));
+  END;
+    
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.salary := 0;
+    RETURN;
+  END;  
+  
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.email := email;
+    
+    RETURN;
+  END;
+END;
+/
+
+---now call the emp_obj where actually its called the instance of the object like how we are calling package with the procedures and functions.
+here the print is the procedures of the instance of member procedures 'print'
+call_emp_obj4.sql
+DECLARE  
+  v_emp_obj emp_obj;
+BEGIN
+
+  v_emp_obj := emp_obj();
+
+  v_emp_obj.print;
+  
+  v_emp_obj := emp_obj(
+    email => 'ganesh@gmail.com' );
+  
+  v_emp_obj.print;
+  
+  v_emp_obj := emp_obj(
+    last_name => 'ga',
+    first_name => 'dd',
+    email => 'ganesh@gmail.com',
+    phone_number => '3322',
+    hire_date => sysdate,
+    salary => 333);
+
+  v_emp_obj.print;
+    
+END;  
+/
+
+---Even you call the object type with the instance name with 'v_emp_obj.last_name' ...etc
+DECLARE  
+  v_emp_obj emp_obj;
+BEGIN
+
+  v_emp_obj := emp_obj();
+  DBMS_OUTPUT.PUT_LINE('Last Name: ' || v_emp_obj.last_name);
+  DBMS_OUTPUT.PUT_LINE('Email: ' || v_emp_obj.email);
+  DBMS_OUTPUT.PUT_LINE('Salary: ' || TO_CHAR(v_emp_obj.salary));
+    
+END;  
+/
+
+MEMBER Functions
+-----------------
+which like a return the value which is passed.
+
+emp_obj5.sql
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE,
+  salary NUMBER(8,2),
+  
+  MEMBER PROCEDURE print,
+  
+  MEMBER FUNCTION bonus(
+    p_percent IN NUMBER )
+    RETURN NUMBER,
+  
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT,
+    
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+)  
+NOT FINAL 
+/
+
+create or replace
+TYPE BODY emp_obj
+AS 
+
+  MEMBER FUNCTION bonus(
+    p_percent IN NUMBER )
+    RETURN NUMBER
+  AS
+  BEGIN
+    RETURN SELF.salary * p_percent;
+  END;
+  
+  MEMBER PROCEDURE print
+  IS
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE('Last Name: ' || SELF.last_name);
+    DBMS_OUTPUT.PUT_LINE('Email: ' || SELF.email);
+    DBMS_OUTPUT.PUT_LINE('Salary: ' || TO_CHAR(SELF.salary));
+  END;
+    
+  CONSTRUCTOR FUNCTION emp_obj
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.salary := 0;
+    RETURN;
+  END;  
+  
+  CONSTRUCTOR FUNCTION emp_obj(
+    email IN VARCHAR2 )      
+    RETURN SELF AS RESULT
+  IS
+  BEGIN
+    SELF.email := email;
+    
+    RETURN;
+  END;
+END;
+/
+
+---and now call the object with those member functions.
+DECLARE  
+  v_emp_obj emp_obj;
+BEGIN
+  
+  v_emp_obj := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'baba',
+    email => 'gbag@gmail.com',
+    phone_number => '13423423',
+    hire_date => sysdate,
+    salary => 3344);
+
+  v_emp_obj.print;
+    
+  dbms_output.put_line(
+    v_emp_obj.bonus(0.10));
+    
+END;  
+/
+
+--remember the program unit in the type is directly represent what the type represent, something like this is an employee can you act on employees, think about the type are related to traisent operations where packages is used for persitance operations. where think package is still used as a employee API
