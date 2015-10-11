@@ -3,10 +3,10 @@ DECLARE
 BEGIN
 
   v_emp_obj := emp_obj(
-    last_name => 'Cunningham',
-    first_name => 'Lewis',
-    email => 'lewisc@databasewisdom.com',
-    phone_number => '813-555-5555',
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@gmail.com',
+    phone_number => '34343',
     hire_date => sysdate,
     salary => 5000);
   
