@@ -1,0 +1,6 @@
+BEGIN
+  logit( 'Hello again!');
+END;
+
+/
+

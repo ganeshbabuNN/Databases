@@ -1,0 +1,10 @@
+SQL PLUS
+============
+
+--in SQL PLUS , use the path with the script name
+example
+
+@c:\program_files\ganesh\hello_world.sql
+
+--put SET SERVERON OUTPUT ON , so you output will be printed in the console
+

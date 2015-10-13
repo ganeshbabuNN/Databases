@@ -1,0 +1,13 @@
+BEGIN
+  logit;
+  BEGIN
+    logit( 'Hello again!');
+    DECLARE
+      v_a_different_msg VARCHAR2(100);
+    BEGIN
+      v_a_different_msg := 'Where am I?';
+      logit( v_a_different_msg );
+    END;
+  END;
+END;
+/
