@@ -1,0 +1,7 @@
+begin
+  print_business_days(
+     to_date( '22-DEC-2012', 'DD-MON-YYYY'),
+     to_date('03-JAN-2013', 'DD-MON-YYYY')
+  );
+end;
+/
