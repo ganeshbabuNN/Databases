@@ -7,7 +7,7 @@ BEGIN
     last_name => 'ganesh',
     first_name => 'babu',
     email => 'ganesh@gmail.com',
-    phone_number => '966389538',
+    phone_number => '9663895384',
     hire_date => sysdate,
     salary => 5000);
 	
@@ -15,7 +15,7 @@ BEGIN
     last_name => 'ganesh',
     first_name => 'babu',
     email => 'ganesh@yahoo.com',
-    phone_number => '966389538',
+    phone_number => '9663895384',
     hire_date => SYSDATE,
     salary => 3000);
 

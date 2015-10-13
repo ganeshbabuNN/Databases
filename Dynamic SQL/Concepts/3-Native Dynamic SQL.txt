@@ -1,0 +1,374 @@
+NDS
+===
+
+--it just simplies the code required to run the DYnamic SQL
+--it was been said it is more faster then the DBMS SQL, but not really true
+--but there are limitations where DBMS SQL is a better choice
+--in most of the NDS , you see EXECUTE IMMDIATE apart from using the DBMS SQL
+--the biggest limitations is NDS is can't handle is dynamic Set of columns where has in DBMS SQL you can bind the variable with that column name, where as in NDS you should know where the column is from?.
+
+--the basic format of the NDS statement is 
+nds1.sql
+BEGIN
+  EXECUTE IMMEDIATE 'CREATE TABLE tababc (col1 VARCHAR2(10), col2 VARCHAR2(10))';
+END;
+/
+
+--in this NDS you also do the DDL, DML...etc same like the DBMS SQL and not much difference from DBMS SQL
+
+Basic procedures
+================
+let has take back where we used DBMS SQL Call_cursor_static.sql
+and will see how to use in the NDS SQL, but it may look more complex then a static, but less complex then Static
+- here you assing those column name and start to use the procedures.
+
+nds2.sql
+
+DECLARE
+  v_CURSOR_string VARCHAR2(2001) := '
+    SELECT first_name, last_name, email, phone_number, hire_date
+      FROM employees
+      WHERE employee_id = :p_employee_id
+  ';
+    
+  v_local_record employees%ROWTYPE;
+BEGIN
+
+  v_local_record.employee_id := 101;
+
+  execute immediate v_cursor_string 
+     into v_local_record.last_name,
+          v_local_record.first_name,
+          v_local_record.email,
+          v_local_record.phone_number,
+          v_local_record.hire_date
+     using v_local_record.employee_id;
+                    
+	
+	logit(v_local_record.email, 'D');
+	
+END;
+/
+
+DDL Procedures
+================
+--using clause which basically bind the variables to the dynamic string of the binded variable by execute immediate command.
+nds3.sql
+
+BEGIN
+  execute immediate 
+      'insert into tababc (col1, col2) 
+         values (:col1val, :col2val)'
+    using 'A', 'B';
+  
+  logit('Insert Rows: ' || SQL%ROWCOUNT, 'D' );
+  
+  execute immediate 
+      'update tababc 
+         set col1 = :newcol1
+         where col2 = :oldcol2'
+    using 'C', 'B';
+    
+  logit('Update Rows: ' || SQL%ROWCOUNT, 'D' );
+  
+  execute immediate 
+      'delete from  tababc 
+         where col2 = :oldcol2'
+    using 'B';
+    
+  logit('Delete Rows: ' || SQL%ROWCOUNT, 'D' );
+  
+END;
+
+/
+
+returning some variable 
+=======================
+for example if a scenario like sequences. 
+--you can either use the IN MODE or INTO  which gives the same results.
+--
+
+
+Using IN MODE
+nds4_returning_dml_vals.sql
+DECLARE
+  v_output VARCHAR2(1);
+BEGIN
+  execute immediate 
+      'insert into tababc (col1, col2) 
+         values (:col1val, :col2val)
+         RETURNING col1 INTO :colret'
+    using 'A', 'B', OUT v_output;
+  
+  logit('v_output: ' || v_output, 'D' );
+    
+END;
+/
+
+NOT USING ANY MODE
+DECLARE
+  v_output VARCHAR2(1);
+BEGIN
+  execute immediate 
+      'insert into tababc (col1, col2) 
+         values (:col1val, :col2val)
+         RETURNING col1 INTO :colret'
+    using 'A', 'B'
+    RETURNING INTO v_output;
+  
+  logit('v_output: ' || v_output, 'D' );
+    
+END;
+/
+
+calling my stored Procedures
+=============================
+--just use the USING clause passing those values to a binding variable and get your procedures executed.
+
+nds5_call_proc.sql
+BEGIN
+  EXECUTE IMMEDIATE '
+    BEGIN
+      logit(:mybindvar, :displaymode);
+    END;
+  '
+  USING 'This is my dynamic message.', 'D';
+END;
+/
+
+Converting the DBMS SQL to NDS
+=============================
+let us convert dbms_sql1.sql to the NDS
+ some points 
+--eliminating the cursors using the memory cursor where are of memory for that curosr
+
+dbms_to_nds1.sql
+DECLARE
+  v_CURSOR_string VARCHAR2(2001) := '
+    SELECT first_name, last_name, email, phone_number, hire_date
+      FROM employees
+      WHERE employee_id = :p_employee_id
+';
+      
+  --v_cursor_id NUMBER;
+  v_cursor sys_refcursor;
+  
+  v_local_record employees%ROWTYPE;
+  --v_rows_fetched NUMBER;
+BEGIN
+
+  --v_cursor_id := DBMS_SQL.open_cursor;
+  OPEN v_cursor FOR v_cursor_string USING 101;
+  
+  /*
+  the above one line code replaced with just using clasue
+  DBMS_SQL.parse(v_cursor_id, v_cursor_string, DBMS_SQL.native );
+  
+  DBMS_SQL.define_column( v_cursor_id, 1, v_local_record.first_name, 20);
+  DBMS_SQL.define_column( v_cursor_id, 2, v_local_record.last_name, 25);
+  DBMS_SQL.define_column( v_cursor_id, 3, v_local_record.email, 20);
+  DBMS_SQL.define_column( v_cursor_id, 4, v_local_record.phone_number, 25);
+  DBMS_SQL.define_column( v_cursor_id, 5, v_local_record.hire_date);
+  
+  DBMS_SQL.bind_variable( v_cursor_id, 'p_employee_id', 101);
+  
+  v_rows_fetched := DBMS_SQL.execute(v_cursor_id);
+	*/
+  
+  LOOP 
+    FETCH v_cursor INTO 
+         v_local_record.first_name, 
+         v_local_record.last_name, 
+         v_local_record.email, 
+         v_local_record.phone_number, 
+         v_local_record.hire_date;
+    EXIT WHEN v_cursor%NOTFOUND;
+         
+    /*
+    IF DBMS_SQL.FETCH_ROWS(v_cursor_id)> 0 THEN 
+      DBMS_SQL.COLUMN_VALUE( v_cursor_id, 1, v_local_record.first_name);
+      DBMS_SQL.COLUMN_VALUE( v_cursor_id, 2, v_local_record.last_name);
+      DBMS_SQL.COLUMN_VALUE( v_cursor_id, 3, v_local_record.email);
+      DBMS_SQL.COLUMN_VALUE( v_cursor_id, 4, v_local_record.phone_number);
+      DBMS_SQL.COLUMN_VALUE( v_cursor_id, 5, v_local_record.hire_date);
+    ELSE 
+      EXIT; 
+    END IF;
+    */
+  END LOOP; 
+	
+	--DBMS_SQL.close_cursor(v_cursor_id);
+  CLOSE v_cursor;
+	
+	logit(v_local_record.email, 'D');
+	
+END;
+/
+
+
+BULK COLLECT 
+===========
+-- as per previous example bulk_collect_into_with_limit.sql
+--converting to NDS
+dbms_to_nds1.sql
+
+DECLARE
+
+  v_CURSOR_string VARCHAR2(2000) := '
+    SELECT *
+      FROM employees
+      WHERE rownum < :rowsproc';
+
+  TYPE t_local_emps 
+    IS TABLE OF employees%ROWTYPE;
+    
+  v_local_emps t_local_emps;
+
+BEGIN
+
+  EXECUTE IMMEDIATE v_cursor_string
+    BULK COLLECT INTO v_local_emps
+    USING 3;
+  
+  FOR i IN 1..v_local_emps.LAST
+  LOOP
+    dbms_output.put_line('On Loop: ' || 
+      i ||
+      ',  ' || v_local_emps(i).last_name);
+  END LOOP;    
+      
+END;
+/
+
+
+Using FORALLL
+==============
+similar like  bulk_operations_with_forall.sql for basic DBMS SQL
+
+---showing the same in different way
+
+--create two tables 
+CREATE TABLE emp_names (
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20) );
+
+--then execute bulk_operations_with_forall.sql
+
+---let us convert into the NDS Version and see
+CREATE TABLE emp_names_nds (
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20) );
+
+
+nds6_forall.sql
+
+DECLARE
+  v_CURSOR_string VARCHAR2(2000) := '
+    SELECT last_name, first_name
+      FROM employees
+      WHERE rownum < :rowsproc';
+
+  TYPE r_local_emps IS RECORD (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20) );
+    
+  TYPE t_local_emps 
+    IS TABLE OF r_local_emps;
+    
+  v_local_emps t_local_emps;
+BEGIN
+
+  EXECUTE IMMEDIATE v_cursor_string
+    BULK COLLECT INTO v_local_emps
+    USING 100;
+
+  FORALL i IN v_local_emps.FIRST..v_local_emps.LAST
+    EXECUTE IMMEDIATE
+    'INSERT INTO emp_names_nds (last_name, first_name)
+      VALUES (:lastname, :firstname)'
+    USING v_local_emps(i).last_name, v_local_emps(i).first_name;
+      
+END;
+/
+
+MEASURING performance
+======================
+This is just a script to understand the performance using the Dynamic SQL where binding variable are used w.r.t to normal SQL.
+
+
+measure_bind_performance.sql
+declare
+  v_char_null varchar2(10);
+  v_num_null number;
+  v_not_null number := 0;
+  v_value number;
+  v_loop_cnt PLS_INTEGER := 10000;
+  v_start_time timestamp(9);
+  v_end_time timestamp(9);
+  
+  v_rand number := abs(dbms_random.random);
+
+  v_sql_stmt VARCHAR2(1000);  
+begin
+
+  v_loop_cnt := v_loop_cnt + v_rand;
+
+  dbms_output.put_line('Random: ' || to_char(v_rand) );
+  
+  v_start_time := systimestamp;
+
+  FOR i IN v_rand..v_loop_cnt
+  LOOP
+    v_sql_stmt := 'SELECT NVL(to_number(''''), to_number(''' || i || ''')) FROM DUAL';
+    EXECUTE IMMEDIATE v_sql_stmt INTO v_value;
+  END LOOP;  
+              
+  v_end_time := systimestamp;
+              
+  dbms_output.put_line( 'No Binds, Conversion         ' ||  
+              to_char(v_end_time - v_start_time) );
+
+  v_start_time := systimestamp;
+
+  FOR i IN v_rand..v_loop_cnt
+  LOOP
+    v_sql_stmt := 'SELECT NVL(null, ' || i || ') FROM DUAL';
+    EXECUTE IMMEDIATE v_sql_stmt  INTO v_value;
+  END LOOP;  
+              
+  v_end_time := systimestamp;
+              
+  dbms_output.put_line( 'No Binds, No Conversion      ' ||  
+              to_char(v_end_time - v_start_time) );
+
+  v_start_time := systimestamp;
+
+  v_sql_stmt := 'SELECT NVL(:v_num_null, :v_not_null) FROM DUAL' ;
+      
+  FOR i IN v_rand..v_loop_cnt
+  LOOP
+    v_not_null := i;
+    EXECUTE IMMEDIATE v_sql_stmt  INTO v_value USING IN v_num_null, IN v_not_null;
+  END LOOP;  
+              
+  v_end_time := systimestamp;
+              
+  dbms_output.put_line( 'Binds, No Conversion         ' ||  
+              to_char(v_end_time - v_start_time) );
+
+  v_start_time := systimestamp;
+
+  FOR i IN v_rand..v_loop_cnt
+  LOOP
+    v_not_null := i;
+    SELECT NVL(v_num_null, v_not_null) INTO v_value FROM DUAL;
+  END LOOP;  
+              
+  v_end_time := systimestamp;
+              
+  dbms_output.put_line( 'Not Dynamic                  ' ||  
+              to_char(v_end_time - v_start_time) );
+
+end;
+/
+

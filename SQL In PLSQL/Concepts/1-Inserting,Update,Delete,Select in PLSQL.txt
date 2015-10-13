@@ -1,0 +1,590 @@
+--SQL in PLSQL, like an integrations into the DB.
+-- PLSQL is nothing but the extension of SQL
+--DDL is not intregrations into PLSQL
+--DML in PLSQL is possible.
+
+--Let us create a API for insert,update and delete
+
+insert
+======
+
+CREATE OR REPLACE PROCEDURE emp_insert
+as
+BEGIN
+ NULL;
+END;
+
+--let us create using RECORD API
+%ROWTYPE gets all the column name without any constraints, just column name
+Remember ROWTYPE is for entire record where as the TYPE is for the column
+--this has to be in order
+
+emp_insert_rec.sql
+create or replace
+PROCEDURE emp_insert(
+  p_employees_rec IN EMPLOYEES%ROWTYPE )
+AS
+BEGIN
+  INSERT INTO employees VALUES p_employees_rec;
+END;
+/
+
+--now let us call the procedures
+
+DECLARE
+  v_employees_rec employees%ROWTYPE;
+BEGIN
+  v_employees_rec.employee_id := 999;
+  v_employees_rec.first_name := 'ganesh';
+  v_employees_rec.last_name := 'babu';
+  v_employees_rec.email := 'g@bb.com';
+  v_employees_rec.phone_number := '3432432';
+  v_employees_rec.hire_date := SYSDATE;
+  v_employees_rec.job_id := 'IT_PROG';
+  v_employees_rec.salary := 50000;
+  v_employees_rec.commission_pct := 0;
+  v_employees_rec.manager_id := 100;
+  v_employees_rec.department_id := 60;
+  
+  emp_insert( v_employees_rec );
+  
+END;
+/
+--assume that you want to specificy the column of that table for the inser operations based on parameters 
+
+emp_insert_parameterized.sql
+create or replace
+PROCEDURE emp_insert(
+  p_employee_id IN employees.employee_id%TYPE,
+  p_first_name IN employees.first_name%TYPE,
+  p_last_name IN employees.last_name%TYPE,
+  p_email IN employees.email%TYPE,
+  p_phone_number IN employees.phone_number%TYPE,
+  p_hire_date IN employees.hire_date%TYPE,
+  p_job_id IN employees.job_id%TYPE,
+  p_salary IN employees.salary%TYPE,
+  p_commission_pct IN employees.commission_pct%TYPE,
+  p_manager_id IN employees.manager_id%TYPE,
+  p_department_id IN employees.department_id%TYPE
+  )
+AS
+BEGIN
+  INSERT INTO employees 
+    (employee_id, first_name, last_name, email,
+    phone_number, hire_date, job_id, salary,
+    commission_pct, manager_id, department_id)
+    VALUES 
+    (p_employee_id, p_first_name, p_last_name, p_email,
+    p_phone_number, p_hire_date, p_job_id, p_salary,
+    p_commission_pct, p_manager_id, p_department_id);
+    
+END;
+/
+
+
+
+--inserting of positing those column each type by type, its good pratice to specify the record as show in the below example
+with our RECORD TYPE
+
+emp_insert_params_rec.sql
+create or replace
+PROCEDURE emp_insert(
+  p_employee_id IN employees.employee_id%TYPE,
+  p_first_name IN employees.first_name%TYPE,
+  p_last_name IN employees.last_name%TYPE,
+  p_email IN employees.email%TYPE,
+  p_phone_number IN employees.phone_number%TYPE,
+  p_hire_date IN employees.hire_date%TYPE,
+  p_job_id IN employees.job_id%TYPE,
+  p_salary IN employees.salary%TYPE,
+  p_commission_pct IN employees.commission_pct%TYPE,
+  p_manager_id IN employees.manager_id%TYPE,
+  p_department_id IN employees.department_id%TYPE
+  )
+AS
+  v_employees_rec employees%ROWTYPE;
+BEGIN
+
+  v_employees_rec.employee_id := p_employee_id;
+  v_employees_rec.first_name := p_first_name;
+  v_employees_rec.last_name := p_last_name;
+  v_employees_rec.email := p_email;
+  v_employees_rec.phone_number := p_phone_number;
+  v_employees_rec.hire_date := p_hire_date;
+  v_employees_rec.job_id := p_job_id;
+  v_employees_rec.salary := p_salary;
+  v_employees_rec.commission_pct := p_commission_pct;
+  v_employees_rec.manager_id := p_manager_id;
+  v_employees_rec.department_id := p_department_id;
+  
+  INSERT INTO employees VALUES v_employees_rec;
+END;
+/
+
+---now call the procedures for parameterised api
+BEGIN
+  emp_insert(
+   p_employee_id => 999,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'gb@gbcom',
+   p_phone_number => '232',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+END;
+/
+
+------Different way
+--call the procedure where we created our RECORD TYPE
+calling without the name parameters.
+BEGIN
+  emp_insert (999,'ganesh','babu','g@bb.com','3432432',SYSDATE,'IT_PROG',50000,0,100,60);
+END;
+/
+
+- with named notations
+
+BEGIN
+
+  emp_insert(
+   p_employee_id => 999,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'gb@gbcom',
+   p_phone_number => '232',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+END;
+/
+
+UPDATES
+===========
+
+--create a empty update
+create or replace procedures emp_update
+as 
+begin 
+   null;
+end;
+
+-- create the update procedures with record type
+emp_update_rec.sql
+create or replace
+PROCEDURE emp_update(
+  p_employees_rec IN EMPLOYEES%ROWTYPE )
+AS
+BEGIN
+  UPDATE employees 
+    SET ROW = p_employees_rec
+    WHERE employee_id = p_employees_rec.employee_id;
+END;
+/
+
+--with specifying the columns where you can call through a name notations.
+emp_update_parameterized.sql
+
+create or replace
+PROCEDURE emp_update(
+  p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+  p_first_name IN employees.first_name%TYPE DEFAULT '*',
+  p_last_name IN employees.last_name%TYPE DEFAULT '*',
+  p_email IN employees.email%TYPE DEFAULT '*',
+  p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+  p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+  p_job_id IN employees.job_id%TYPE DEFAULT '*',
+  p_salary IN employees.salary%TYPE DEFAULT -1,
+  p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+  p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+  p_department_id IN employees.department_id%TYPE DEFAULT -1
+  )
+AS
+BEGIN
+ /*
+  UPDATE employees 
+  SET ROW = p_employees_rec
+  WHERE employee_id = p_employees_rec.employee_id;
+ */
+ null;
+END;
+/
+
+--calling the update procedures using name notations.
+in this name notations while calling the procedure, you no need to maintain in orders whereas in normal way it should be maintained in ordered way.
+
+BEGIN
+
+  emp_update(
+   p_employee_id => 999,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'gb@gbcom',
+   p_phone_number => '232',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+END;
+/
+
+call_emp_update.sql
+BEGIN
+  emp_update(
+   p_employee_id => 999,
+   p_email => 'gaa@baba.com' );
+  
+END;
+/
+
+---Without name notations
+It is difficult to use without the name notations.
+
+begin 
+    emp_update( 999,'*', '*','gaa@baba.com');
+end;
+/
+
+or full length for default value which is default value, or else name notations is a good thing.
+
+begin 
+    emp_update( 999,'*', '*', '*',, '*',to_date('01-jan-9999','DD-MON-YYYY') ,'*', -1,-0.01,-1,5);
+end;
+/
+
+--let us begin writing the update procedures
+based on the table characterstics where the column do not allow null with their defaults.
+
+emp_update_parameterized.sql
+
+create or replace
+PROCEDURE emp_update(
+  p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+  p_first_name IN employees.first_name%TYPE DEFAULT '*',
+  p_last_name IN employees.last_name%TYPE DEFAULT '*',
+  p_email IN employees.email%TYPE DEFAULT '*',
+  p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+  p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+  p_job_id IN employees.job_id%TYPE DEFAULT '*',
+  p_salary IN employees.salary%TYPE DEFAULT -1,
+  p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+  p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+  p_department_id IN employees.department_id%TYPE DEFAULT -1
+  )
+AS
+BEGIN
+
+  IF p_employee_id IS NULL
+  OR p_last_name IS NULL
+  OR p_email IS NULL
+  OR p_hire_date IS NULL
+  OR p_job_id IS NULL
+  THEN
+    RAISE value_error;
+  END IF;
+  
+  UPDATE employees 
+    SET 
+      first_name = CASE WHEN p_first_name = '*' THEN first_name ELSE p_first_name END,
+      last_name = CASE WHEN p_last_name = '*' THEN last_name ELSE p_last_name END,
+      email = CASE WHEN p_email = '*' THEN email ELSE p_email END,
+      phone_number = CASE WHEN p_phone_number = '*' THEN phone_number ELSE p_phone_number END,
+      hire_date = CASE WHEN p_hire_date = to_date('01-JAN-9999', 'DD-MON-YYYY')
+	                    THEN hire_date ELSE p_hire_date END,
+      job_id = CASE WHEN p_job_id = '*' THEN job_id ELSE p_job_id END,
+      salary = CASE WHEN p_salary = -1 THEN salary ELSE p_salary END,
+      commission_pct = CASE WHEN p_commission_pct = -0.01 THEN commission_pct ELSE p_commission_pct END,
+      manager_id = CASE WHEN p_manager_id = -1 THEN manager_id ELSE p_manager_id END,
+      department_id = CASE WHEN p_department_id = -1 THEN department_id ELSE p_department_id END
+    WHERE employee_id = p_employee_id;
+END;
+/
+
+---you can resue those default with those constants this will be very good in code maintenance .
+
+emp_update_params_constants.sql
+create or replace PROCEDURE emp_update(
+  p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+  p_first_name IN employees.first_name%TYPE DEFAULT '*',
+  p_last_name IN employees.last_name%TYPE DEFAULT '*',
+  p_email IN employees.email%TYPE DEFAULT '*',
+  p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+  p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+  p_job_id IN employees.job_id%TYPE DEFAULT '*',
+  p_salary IN employees.salary%TYPE DEFAULT -1,
+  p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+  p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+  p_department_id IN employees.department_id%TYPE DEFAULT -1
+  )
+AS
+
+  v_char_default CONSTANT VARCHAR2(1) := '*';
+  v_whole_number_default CONSTANT NUMBER := -1;
+  v_fractional_number_default CONSTANT NUMBER := -0.01;
+  v_date_default CONSTANT DATE := to_date('01-JAN-9999', 'DD-MON-YYYY');
+BEGIN
+  UPDATE employees 
+     SET
+      first_name = CASE WHEN p_first_name = v_char_default THEN first_name ELSE p_first_name END,
+      last_name = CASE WHEN p_last_name = v_char_default THEN last_name ELSE p_last_name END,
+      email = CASE WHEN p_email = v_char_default THEN email ELSE p_email END,
+      phone_number = CASE WHEN p_phone_number = v_char_default THEN phone_number ELSE p_phone_number END,
+      hire_date = CASE WHEN p_hire_date = v_date_default
+	                    THEN hire_date ELSE p_hire_date END,
+      job_id = CASE WHEN p_job_id = v_char_default THEN job_id ELSE p_job_id END,
+      salary = CASE WHEN p_salary = -1 THEN salary ELSE p_salary END,
+      commission_pct = CASE WHEN p_commission_pct = -0.01 THEN commission_pct ELSE p_commission_pct END,
+      manager_id = CASE WHEN p_manager_id = -1 THEN manager_id ELSE p_manager_id END,
+      department_id = CASE WHEN p_department_id = -1 THEN department_id ELSE p_department_id END
+    WHERE employee_id = p_employee_id;
+END;
+/
+
+---now test by calling the update procedures
+BEGIN
+  emp_update(
+   p_employee_id => 999,
+   p_email => 'gaa@baba.com' );
+  
+END;
+/
+
+DELETE 
+==========
+--with a basic delete procedures
+-- delete the row or record based on the Primary key of the columns
+
+emp_delete.sql
+create or replace
+PROCEDURE emp_delete(
+  p_employee_id IN employees.employee_id%TYPE )
+AS
+BEGIN
+  DELETE FROM employees 
+    WHERE employee_id = p_employee_id;
+END;
+/
+
+--call the procedures
+
+call_emp_delete.sql
+BEGIN
+  emp_delete(
+   p_employee_id => 999
+  );
+  
+END;
+/
+
+SELECT 
+=============
+-to select a column from the select statment just include the INTO keyword and the rest is the basic SQL
+
+DECLARE
+ v_test VARCHAR2(10);
+ BEGIN
+  select user into v_test from dual;
+ end;
+
+
+--- put a where clause , if there is no data found, they you get a exceptions as "no data found"
+DECLARE
+ v_test VARCHAR2(10);
+ BEGIN
+  select user into v_test from dual where dummy='Y';
+ end;
+
+-- for the above exception that can be handled during the exection using a exception handler
+select_into_nodatafound.sql
+DECLARE
+  v_test VARCHAR2(10);
+BEGIN
+  SELECT user
+    INTO v_test
+	FROM DUAL
+  WHERE dummy = 'Y';
+EXCEPTION
+  WHEN no_data_found
+  THEN
+    NULL;
+END;
+/
+
+--- other common exception in SQL will be too many rows
+select_into_toomanyrows.sql
+DECLARE
+  v_test VARCHAR2(10);
+BEGIN
+  SELECT USER
+    INTO v_test
+    FROM (
+      SELECT user
+      FROM DUAL
+      UNION ALL
+      SELECT user
+      FROM DUAL);
+EXCEPTION
+  WHEN no_data_found
+  THEN
+    NULL;
+END;
+/
+-- an that exception can bee handled by exceptions
+select_into_with_handler.sql
+DECLARE
+  v_test VARCHAR2(10);
+BEGIN
+  SELECT USER
+    INTO v_test
+    FROM (
+      SELECT user
+      FROM DUAL
+      UNION ALL
+      SELECT user
+      FROM DUAL);
+EXCEPTION
+  WHEN too_many_rows
+  THEN
+    NULL;
+  WHEN no_data_found
+  THEN
+    NULL;
+END;
+/
+
+--- Taking to the previous example for inserting the record if the employee id is null?
+create or replace
+PROCEDURE emp_insert(
+  p_employees_rec IN EMPLOYEES%ROWTYPE )
+AS
+BEGIN
+  IF p_employees_rec.employee_id IS NULL
+  THEN
+    SELECT employees_seq.nextval 
+      INTO p_employees_rec.employee_id 
+      FROM DUAL;
+  END IF;
+
+  INSERT INTO employees VALUES p_employees_rec;
+
+END;
+/
+
+--- for the above warning, you need to declare a local variable assing the execution value and then storedin the record
+here what is happening , i created a local record which is assinged by the parameter record, then using the local record i did all the sequencing and return the parameter record by local record
+
+create or replace 
+PROCEDURE emp_insert(
+  p_employees_rec IN EMPLOYEES%ROWTYPE )
+AS
+  v_local_record EMPLOYEES%ROWTYPE;
+BEGIN
+  v_local_record :=p_employees_rec;
+  
+  IF v_local_record.employee_id IS NULL
+  THEN
+    SELECT employees_seq.nextval 
+      INTO v_local_record.employee_id 
+      FROM DUAL;
+  END IF;
+
+  INSERT INTO employees VALUES p_employees_rec;
+
+END;
+
+
+---- or use the IN OUT MODE instead of using the local record.
+
+emp_insert_return_empid.sql
+
+create or replace
+PROCEDURE emp_insert(
+  p_employees_rec IN OUT EMPLOYEES%ROWTYPE )
+AS
+BEGIN
+  IF p_employees_rec.employee_id IS NULL
+  THEN
+    SELECT employees_seq.nextval 
+      INTO p_employees_rec.employee_id 
+      FROM DUAL;
+  END IF;
+
+  INSERT INTO employees VALUES p_employees_rec;
+
+END;
+/
+
+---if you want to select the multiple columns, annotate the column name exactly with the column name of that table.
+
+select_multiple_columns.sql
+DECLARE
+  p_first_name employees.first_name%TYPE;
+  p_last_name employees.last_name%TYPE;
+  p_email employees.email%TYPE;
+  p_phone_number employees.phone_number%TYPE;
+  p_hire_date employees.hire_date%TYPE;
+BEGIN
+  SELECT first_name, last_name, email, phone_number, hire_date
+    INTO p_first_name, p_last_name, p_email, p_phone_number, p_hire_date
+	FROM employees
+	WHERE employee_id = 101;
+END;
+/
+
+-- if you want to select the entire record,
+select_into_record.sql
+DECLARE
+  v_local_record EMPLOYEES%ROWTYPE;
+BEGIN
+   SELECT *
+      INTO v_local_record
+	FROM employees
+	WHERE employee_id = 101;
+END;
+/
+
+--- You can also use as a cursor , which is nothing but the declared select statements, here you have to declare cursor has record type like did for table type. Here just defined has a cursor has a place holder to identify the column I want
+
+cursor_parameter.sql
+DECLARE
+  CURSOR c1( p_employee_id IN employees.employee_id%TYPE ) IS
+    SELECT first_name, last_name, email, phone_number, hire_date
+      FROM employees
+      WHERE employee_id = p_employee_id;
+      
+  v_local_record C1%ROWTYPE;
+BEGIN
+   SELECT first_name, last_name, email, phone_number, hire_date
+      INTO v_local_record
+	FROM employees
+	WHERE employee_id = 101;
+END;
+/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

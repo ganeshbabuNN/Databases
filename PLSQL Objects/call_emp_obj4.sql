@@ -7,15 +7,15 @@ BEGIN
   v_emp_obj.print;
   
   v_emp_obj := emp_obj(
-    email => 'gg@gmail.com' );
+    email => 'lewisc@databasewisdom.com' );
   
   v_emp_obj.print;
   
   v_emp_obj := emp_obj(
-    last_name => 'gg',
-    first_name => 'bb',
-    email => 'ganesh@gmail.com',
-    phone_number => 'ganesh',
+    last_name => 'Cunningham',
+    first_name => 'Lewis',
+    email => 'lewisc@databasewisdom.com',
+    phone_number => '813-555-5555',
     hire_date => sysdate,
     salary => 5000);
 

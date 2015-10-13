@@ -13,14 +13,14 @@ DECLARE
   
   v_emp_obj emp_obj;
 BEGIN
-  v_emps.last_name := 'gg';
-  v_emps.first_name := 'bb';
+  v_emps.last_name := 'Cunningham';
+  v_emps.first_name := 'Lewis';
   
   v_emp_obj := emp_obj(
-    last_name => 'gg',
-    first_name => 'bb',
-    email => 'gg@databasewisdom.com',
-    phone_number => '34343',
+    last_name => 'Cunningham',
+    first_name => 'Lewis',
+    email => 'lewisc@databasewisdom.com',
+    phone_number => '813-555-5555',
     hire_date => sysdate,
     salary => 5000);
   

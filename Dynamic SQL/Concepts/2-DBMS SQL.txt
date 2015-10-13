@@ -1,0 +1,349 @@
+
+DDL with DBMS SQL
+=================
+DDL way of Dynamic SQL is basicall used for creating table, granting persmission, creating stored procedures, functions...etc, dropping objects...like that
+Here we are creating the Table using the Dynamic SQL concept where table is created based on the table name, column is passed to the AB.
+
+create_table_proc.sql
+
+CREATE OR REPLACE PROCEDURE CREATE_TABLE 
+(
+  P_TABLE_NAME IN VARCHAR2  
+, P_COLUMNS IN DBMS_SQL.varchar2a  
+---this datatype is array index type varchar as a type which are available in the DBMS_SQL package.
+) AS 
+
+  v_ddl_string CLOB;
+  
+  v_index PLS_INTEGER;
+  
+  -- DBMS_SQL variables
+  v_cursor_id NUMBER;
+  v_rows_fetched NUMBER;
+  
+BEGIN
+
+  IF p_table_name IS NULL
+    OR p_columns.COUNT = 0
+  THEN
+    RETURN;
+  END IF;
+  
+  v_ddl_string := 'CREATE TABLE ';
+  
+  v_ddl_string := v_ddl_string || p_table_name || '( ';
+  
+  v_index := p_columns.FIRST;
+  
+  LOOP
+    EXIT WHEN v_index IS NULL;
+    
+    IF v_index != p_columns.FIRST
+    THEN
+      v_ddl_string := v_ddl_string || ', ';
+    END IF;
+    
+    v_ddl_string := v_ddl_string || p_columns(v_index);
+    
+    v_index := P_columns.NEXT(v_index);
+    
+  END LOOP;
+  
+  v_ddl_string := v_ddl_string || ')';
+  
+  -- Display the string
+  logit( v_ddl_string, 'D');
+  
+  -- Create the table
+  v_cursor_id := DBMS_SQL.open_cursor;
+  DBMS_SQL.PARSE(v_cursor_id, v_ddl_string, DBMS_SQL.NATIVE);
+  v_rows_fetched := DBMS_SQL.EXECUTE(v_cursor_id);
+  DBMS_SQL.CLOSE_CURSOR(v_cursor_id);
+
+END CREATE_TABLE;
+/
+
+then call through the AB and check.
+
+call_create_table_proc.sql
+DECLARE
+  v_table_name VARCHAR2(30) := 'GANESH_TEST';
+  v_columns DBMS_SQL.varchar2a;
+BEGIN
+
+  v_columns(1) := 'NAME VARCHAR2(10)';
+  v_columns(5) := 'FIRST_NAME VARCHAR2(2)';
+  v_columns(10) := 'LAST_NAME NUMBER';
+  
+  CREATE_TABLE(v_table_name, v_columns);
+  
+END;
+/
+
+DML with DBMS SQL
+==================
+In this we can cover insert ,update and deletes.
+---inserting a row
+--create the package spec with the body for the insert procedures.
+
+create or replace
+PACKAGE tababc_dyn_api IS
+ PROCEDURE insert_row(
+    p_col1 IN tababc.col1%TYPE,
+    p_col2 IN tababc.col2%TYPE,
+    p_col3 IN tababc.col3%TYPE
+  );
+END;
+/
+
+create or replace
+PACKAGE BODY tababc_dyn_api IS
+  PROCEDURE insert_row(
+    p_col1 IN tababc.col1%TYPE,
+    p_col2 IN tababc.col2%TYPE,
+    p_col3 IN tababc.col3%TYPE
+  ) 
+  AS 
+
+    v_dml_string CLOB;
+  
+    -- DBMS_SQL variables
+    v_cursor_id NUMBER;
+    v_rows_fetched NUMBER;
+  
+  BEGIN
+
+    v_cursor_id := DBMS_SQL.open_cursor;
+    
+    v_dml_string := 'INSERT INTO tababc (col1, col2, col3) ';
+    v_dml_string := v_dml_string || 'VALUES (:col1, :col2, :col3) ';
+  
+    -- Display the string
+    logit( v_dml_string, 'D');
+ 
+    DBMS_SQL.PARSE(v_cursor_id, v_dml_string, DBMS_SQL.NATIVE);
+
+    DBMS_SQL.bind_variable( v_cursor_id, 'col1', p_col1);
+    DBMS_SQL.bind_variable( v_cursor_id, 'col2', p_col2);
+    DBMS_SQL.bind_variable( v_cursor_id, 'col3', p_col3);
+  
+    v_rows_fetched := DBMS_SQL.EXECUTE(v_cursor_id);
+    DBMS_SQL.CLOSE_CURSOR(v_cursor_id);
+    
+    COMMIT;
+
+    logit( 'Rows Fetched: ' || to_char(v_rows_fetched), 'D');
+
+  END; 
+
+END tababc_dyn_api;
+/
+
+--Now call the insert procedures
+BEGIN
+  tababc_dyn_api.insert_row('A', 'B', 1);
+  tababc_dyn_api.insert_row('D', 'E', 2);
+  tababc_dyn_api.insert_row('G', 'H', 3);
+END;
+/
+
+---------now for the update
+create or replace
+PACKAGE tababc_dyn_api IS
+ PROCEDURE update_row(
+    p_col1 IN tababc.col1%TYPE,
+    p_col2 IN tababc.col2%TYPE,
+    p_col3 IN tababc.col3%TYPE
+  );
+END;
+/
+
+create or replace
+PACKAGE BODY tababc_dyn_api IS  
+  PROCEDURE update_row(
+    p_col1 IN tababc.col1%TYPE,
+    p_col2 IN tababc.col2%TYPE,
+    p_col3 IN tababc.col3%TYPE
+  ) 
+  AS 
+
+    v_dml_string CLOB;
+  
+    -- DBMS_SQL variables
+    v_cursor_id NUMBER;
+    v_rows_fetched NUMBER;
+  
+  BEGIN
+
+    v_cursor_id := DBMS_SQL.open_cursor;
+    
+    v_dml_string := 'UPDATE tababc ';
+    v_dml_string := v_dml_string || 
+               'SET col1 = :col1, 
+                    col2 = :col2
+                    where col3 = :col3 ';
+  
+    -- Display the string
+    logit( v_dml_string, 'D');
+ 
+    DBMS_SQL.PARSE(v_cursor_id, v_dml_string, DBMS_SQL.NATIVE);
+
+    DBMS_SQL.bind_variable( v_cursor_id, 'col1', p_col1);
+    DBMS_SQL.bind_variable( v_cursor_id, 'col2', p_col2);
+    DBMS_SQL.bind_variable( v_cursor_id, 'col3', p_col3);
+  
+    v_rows_fetched := DBMS_SQL.EXECUTE(v_cursor_id);
+    DBMS_SQL.CLOSE_CURSOR(v_cursor_id);
+    
+    COMMIT;
+
+    logit( 'Rows Fetched: ' || to_char(v_rows_fetched), 'D');
+
+  END ;
+  end tababc_dyn_api;
+  /
+--call the update procedures
+BEGIN
+  tababc_dyn_api.update_row('G', 'A', 3);
+END;
+/
+
+---delete procedures
+create or replace
+PACKAGE tababc_dyn_api IS
+  
+ PROCEDURE delete_row(
+    p_col1 IN tababc.col1%TYPE,
+    p_col2 IN tababc.col2%TYPE,
+    p_col3 IN tababc.col3%TYPE
+  );  
+END;
+/
+
+create or replace
+PACKAGE BODY tababc_dyn_api IS
+  PROCEDURE delete_row(
+    p_col1 IN tababc.col1%TYPE,
+    p_col2 IN tababc.col2%TYPE,
+    p_col3 IN tababc.col3%TYPE
+  ) 
+  AS 
+
+    v_dml_string CLOB;
+  
+    -- DBMS_SQL variables
+    v_cursor_id NUMBER;
+    v_rows_fetched NUMBER;
+  
+  BEGIN
+
+    v_cursor_id := DBMS_SQL.open_cursor;
+    
+    v_dml_string := 'DELETE FROM tababc ';
+    v_dml_string := v_dml_string || 
+               'WHERE col1 = :col1 AND 
+                      col2 = :col2 AND
+                      col3 = :col3 ';
+  
+    -- Display the string
+    logit( v_dml_string, 'D');
+ 
+    DBMS_SQL.PARSE(v_cursor_id, v_dml_string, DBMS_SQL.NATIVE);
+
+    DBMS_SQL.bind_variable( v_cursor_id, 'col1', p_col1);
+    DBMS_SQL.bind_variable( v_cursor_id, 'col2', p_col2);
+    DBMS_SQL.bind_variable( v_cursor_id, 'col3', p_col3);
+  
+    v_rows_fetched := DBMS_SQL.EXECUTE(v_cursor_id);
+    DBMS_SQL.CLOSE_CURSOR(v_cursor_id);
+    
+    COMMIT;
+
+    logit( 'Rows Fetched: ' || to_char(v_rows_fetched), 'D');
+
+  END; 
+
+END tababc_dyn_api;
+/
+
+--call the delete procedures
+BEGIN
+  tababc_dyn_api.delete_row('G', 'A', 3);
+END;
+/
+
+all the above script are combined in one scripts
+
+tababc_dyn_api.sql
+
+call_tababc_dyn_api.sql
+
+
+now let us how to call the basic procedure  for delete procedures
+=================================================================
+
+By calling dbms_call_func.sql basic procedure, you are dynamically passing the variable dynamically by passing the value, where it executes .
+
+DECLARE
+    v_dml_string CLOB;
+  
+    -- DBMS_SQL variables
+    v_cursor_id NUMBER;
+    v_rows_fetched NUMBER;
+BEGIN
+  v_dml_string := 'BEGIN tababc_dyn_api.delete_row(:param1, :param2, :param3); END;';
+  
+  v_cursor_id := DBMS_SQL.open_cursor;
+
+  DBMS_SQL.PARSE(v_cursor_id, v_dml_string, DBMS_SQL.NATIVE);
+
+  DBMS_SQL.bind_variable( v_cursor_id, 'param1', 'A');
+  DBMS_SQL.bind_variable( v_cursor_id, 'param2', 'B');
+  DBMS_SQL.bind_variable( v_cursor_id, 'param3', 1);
+  
+  v_rows_fetched := DBMS_SQL.EXECUTE(v_cursor_id);
+  DBMS_SQL.CLOSE_CURSOR(v_cursor_id);
+   
+END;
+/
+
+
+now let us how to call the basic functions for delete procedures
+=================================================================
+Here you trying to passing string which is a string value, , you are setting those Bind variable to the local variable and executing the cursor and printing the output
+
+dbms_sql_call_proc.sql
+DECLARE
+    v_dml_string CLOB;
+  
+    -- DBMS_SQL variables
+    v_cursor_id NUMBER;
+    v_rows_fetched NUMBER;
+    
+    v_input_string VARCHAR2(100);
+    v_ret_string VARCHAR2(100);
+BEGIN
+  v_dml_string := 'BEGIN :v_ret_val := InitCap(:stringval); END;';
+  
+  v_cursor_id := DBMS_SQL.open_cursor;
+
+  DBMS_SQL.PARSE(v_cursor_id, v_dml_string, DBMS_SQL.NATIVE);
+
+  v_input_string := 'Ganesh';
+  
+  DBMS_SQL.bind_variable( v_cursor_id, 'v_ret_val', v_ret_string, 100);
+  DBMS_SQL.bind_variable( v_cursor_id, 'stringval', v_input_string, 100);
+  
+  v_rows_fetched := DBMS_SQL.EXECUTE(v_cursor_id);
+  
+  DBMS_SQL.variable_value(v_cursor_id,'v_ret_val',v_ret_string);
+  
+  logit('InitCapped: ' || v_ret_string, 'D');
+
+  DBMS_SQL.CLOSE_CURSOR(v_cursor_id);
+   
+END;
+/
+
+like this in this package, you can do more number of operations can be done like bulk processing,writing dynamic utility type programs and read the structure from the data dictionary.
+
