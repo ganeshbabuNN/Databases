@@ -1,0 +1,167 @@
+--As I was saying , a procedure is intended to show some actions, where as the functions is intended to return some value.
+-- The primary focus on the functions is to return atleast single value and the focus is to perform some single actions
+
+
+--we know this procedures
+print_business_days_proc.sql
+
+create or replace
+PROCEDURE PRINT_BUSINESS_DAYS
+  (
+    P_START_DATE IN DATE 
+    , P_END_DATE IN DATE 
+  )
+AS
+  v_loop_increment NUMBER := 0;
+BEGIN
+  LOOP
+    EXIT WHEN p_start_date + v_loop_increment >  p_end_date;
+    IF to_number(to_char(p_start_date + v_loop_increment, 'd'))
+      IN (2,3,4,5,6)
+    THEN 
+      dbms_output.put_line(to_char(p_start_date + v_loop_increment, 'FMDay DD "of" Month, YYYY'));
+    END IF;
+
+    v_loop_increment := v_loop_increment + 1;
+
+  END LOOP;
+END PRINT_BUSINESS_DAYS;
+
+--we shall convert into this has a functions
+
+print_business_days_func.sql
+
+CREATE OR REPLACE FUNCTION BUSINESS_DAYS(
+    P_START_DATE IN DATE 
+  , P_END_DATE IN DATE 
+  , P_DEBUG IN VARCHAR2 DEFAULT 'FALSE' )
+RETURN NUMBER
+AS
+  v_loop_increment NUMBER := 0;
+  v_days_increment NUMBER := 0;
+BEGIN
+  LOOP
+    EXIT WHEN p_start_date + v_loop_increment >  p_end_date;
+    IF to_number(to_char(p_start_date + v_loop_increment, 'd'))
+      IN (2,3,4,5,6)
+    THEN 
+      v_days_increment := v_days_increment + 1;
+      IF p_debug != 'FALSE'
+      THEN
+        dbms_output.put_line(to_char(p_start_date + v_loop_increment, 'FMDay DD "of" Month, YYYY'));
+      END IF; 
+    END IF;
+    v_loop_increment := v_loop_increment + 1;
+  END LOOP;
+  RETURN v_days_increment;
+END BUSINESS_DAYS;
+
+--call the functions
+call_business_days.sql
+
+declare
+  v_business_days NUMBER;
+begin
+  v_business_days :=
+    business_days(
+      to_date( '22-DEC-2012', 'DD-MON-YYYY'),
+      to_date('03-JAN-2013', 'DD-MON-YYYY')
+    );
+  dbms_output.put_line(v_business_days); 
+END;
+/
+
+---invoking the default value
+
+declare
+  v_business_days NUMBER;
+begin
+  v_business_days :=
+    business_days(
+      to_date( '22-DEC-2012', 'DD-MON-YYYY'),
+      to_date('03-JAN-2013', 'DD-MON-YYYY')
+    );
+  dbms_output.put_line(v_business_days); 
+END;
+/
+
+
+---we can use this in the SQL statements also..
+call_business_days.sql
+SELECT business_days(
+      p_start_date => to_date( '22-DEC-2012', 'DD-MON-YYYY'),
+      p_end_date => to_date('03-JAN-2013', 'DD-MON-YYYY')) biz_days
+FROM DUAL;
+/
+
+
+---using the name notations
+call_business_days.sql
+declare
+  v_business_days NUMBER;
+begin
+  v_business_days :=
+    business_days(
+      p_start_date => to_date( '22-DEC-2012', 'DD-MON-YYYY'),
+      p_end_date => to_date('03-JAN-2013', 'DD-MON-YYYY'),
+      p_debug => 'WHATEVER'
+    );
+
+  dbms_output.put_line(v_business_days); 
+end;
+/
+
+--- NESTED FUNCTION--
+=======================
+---USING AND CALLING FUNCTION IN THE AB itself
+---let us take the for loop scenarios and
+
+DECLARE
+  v_increment NUMBER := 3;
+BEGIN
+
+  FOR I IN REVERSE 1..10
+  LOOP
+    IF mod(i,v_increment) != 0
+    THEN
+      CONTINUE;
+    END IF;
+
+    dbms_output.put_line(i);
+  END LOOP;
+END;
+/
+
+--now let us modularize the logic
+
+nested_function.sql
+DECLARE
+  v_increment NUMBER := 3;
+
+  FUNCTION modit(
+    p_dividend IN NUMBER,
+    p_divisior IN NUMBER )
+  RETURN BOOLEAN
+  AS
+  BEGIN
+    RETURN (mod(p_dividend,p_divisior) = 0);
+  END;
+
+BEGIN
+
+  FOR I IN REVERSE 1..10
+  LOOP
+    IF modit(i,v_increment)
+    THEN
+      dbms_output.put_line(i);
+    END IF;
+  END LOOP;
+END;
+/
+
+
+
+
+
+
+

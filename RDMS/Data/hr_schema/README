@@ -1,0 +1,5 @@
+To install the:
+
+  (*) HR schema tables, run hr.sql in the hr_schema directory.
+
+  (*) SCOTT schema tables, run scott.sql in the scott_schema directory.

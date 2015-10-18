@@ -1,0 +1,4060 @@
+SQL> --
+SQL> ALTER SESSION SET NLS_LANGUAGE=American;
+
+Session altered.
+
+SQL> ALTER SESSION SET NLS_TERRITORY=America;
+
+Session altered.
+
+SQL> 
+SQL> --
+SQL> -- create tables, sequences and constraint
+SQL> --
+SQL> 
+SQL> @@hr_cre
+SQL> Rem
+SQL> Rem $Header: hr_cre.sql 29-aug-2002.11:44:03 hyeh Exp $
+SQL> Rem
+SQL> Rem hr_cre.sql
+SQL> Rem
+SQL> Rem Copyright (c) 2001, 2002, Oracle Corporation.  All rights reserved.
+SQL> Rem
+SQL> Rem    NAME
+SQL> Rem      hr_cre.sql - Create data objects for HR schema
+SQL> Rem
+SQL> Rem    DESCRIPTION
+SQL> Rem      This script creates six tables, associated constraints
+SQL> Rem      and indexes in the human resources (HR) schema.
+SQL> Rem
+SQL> Rem    NOTES
+SQL> Rem
+SQL> Rem    CREATED by Nancy Greenberg, Nagavalli Pataballa - 06/01/00
+SQL> Rem
+SQL> Rem    MODIFIED   (MM/DD/YY)
+SQL> Rem    hyeh        08/29/02 - hyeh_mv_comschema_to_rdbms
+SQL> Rem    ahunold     09/14/00 - Added emp_details_view
+SQL> Rem    ahunold     02/20/01 - New header
+SQL> Rem    vpatabal  03/02/01 - Added regions table, modified regions
+SQL> Rem                                 column in countries table to NUMBER.
+SQL> Rem                                 Added foreign key from countries table
+SQL> Rem                                 to regions table on region_id.
+SQL> Rem                                 Removed currency name, currency symbol
+SQL> Rem                                 columns from the countries table.
+SQL> Rem                                 Removed dn columns from employees and
+SQL> Rem                                 departments tables.
+SQL> Rem                                 Added sequences.
+SQL> Rem                                 Removed not null constraint from
+SQL> Rem                                 salary column of the employees table.
+SQL> 
+SQL> SET FEEDBACK 1
+SQL> SET NUMWIDTH 10
+SQL> SET LINESIZE 80
+SQL> SET TRIMSPOOL ON
+SQL> SET TAB OFF
+SQL> SET PAGESIZE 100
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the REGIONS table to hold region information for locations
+SQL> REM HR.LOCATIONS table has a foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating REGIONS table ....
+******  Creating REGIONS table ....
+SQL> 
+SQL> CREATE TABLE regions
+  2      ( region_id      NUMBER
+  3         CONSTRAINT  region_id_nn NOT NULL
+  4      , region_name    VARCHAR2(25)
+  5      );
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX reg_id_pk
+  2  ON regions (region_id);
+
+Index created.
+
+SQL> 
+SQL> ALTER TABLE regions
+  2  ADD ( CONSTRAINT reg_id_pk
+  3                   PRIMARY KEY (region_id)
+  4      ) ;
+
+Table altered.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the COUNTRIES table to hold country information for customers
+SQL> REM and company locations.
+SQL> REM OE.CUSTOMERS table and HR.LOCATIONS have a foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating COUNTRIES table ....
+******  Creating COUNTRIES table ....
+SQL> 
+SQL> CREATE TABLE countries
+  2      ( country_id      CHAR(2)
+  3         CONSTRAINT  country_id_nn NOT NULL
+  4      , country_name    VARCHAR2(40)
+  5      , region_id       NUMBER
+  6      , CONSTRAINT     country_c_id_pk
+  7                       PRIMARY KEY (country_id)
+  8      )
+  9      ORGANIZATION INDEX;
+
+Table created.
+
+SQL> 
+SQL> ALTER TABLE countries
+  2  ADD ( CONSTRAINT countr_reg_fk
+  3                   FOREIGN KEY (region_id)
+  4                    REFERENCES regions(region_id)
+  5      ) ;
+
+Table altered.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the LOCATIONS table to hold address information for company departments.
+SQL> REM HR.DEPARTMENTS has a foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating LOCATIONS table ....
+******  Creating LOCATIONS table ....
+SQL> 
+SQL> CREATE TABLE locations
+  2      ( location_id    NUMBER(4)
+  3      , street_address VARCHAR2(40)
+  4      , postal_code    VARCHAR2(12)
+  5      , city       VARCHAR2(30)
+  6          CONSTRAINT     loc_city_nn  NOT NULL
+  7      , state_province VARCHAR2(25)
+  8      , country_id     CHAR(2)
+  9      ) ;
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX loc_id_pk
+  2  ON locations (location_id) ;
+
+Index created.
+
+SQL> 
+SQL> ALTER TABLE locations
+  2  ADD ( CONSTRAINT loc_id_pk
+  3                   PRIMARY KEY (location_id)
+  4      , CONSTRAINT loc_c_id_fk
+  5                   FOREIGN KEY (country_id)
+  6                    REFERENCES countries(country_id)
+  7      ) ;
+
+Table altered.
+
+SQL> 
+SQL> Rem     Useful for any subsequent addition of rows to locations table
+SQL> Rem     Starts with 3300
+SQL> 
+SQL> CREATE SEQUENCE locations_seq
+  2   START WITH     3300
+  3   INCREMENT BY   100
+  4   MAXVALUE       9900
+  5   NOCACHE
+  6   NOCYCLE;
+
+Sequence created.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the DEPARTMENTS table to hold company department information.
+SQL> REM HR.EMPLOYEES and HR.JOB_HISTORY have a foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating DEPARTMENTS table ....
+******  Creating DEPARTMENTS table ....
+SQL> 
+SQL> CREATE TABLE departments
+  2      ( department_id    NUMBER(4)
+  3      , department_name  VARCHAR2(30)
+  4          CONSTRAINT  dept_name_nn  NOT NULL
+  5      , manager_id       NUMBER(6)
+  6      , location_id      NUMBER(4)
+  7      ) ;
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX dept_id_pk
+  2  ON departments (department_id) ;
+
+Index created.
+
+SQL> 
+SQL> ALTER TABLE departments
+  2  ADD ( CONSTRAINT dept_id_pk
+  3                   PRIMARY KEY (department_id)
+  4      , CONSTRAINT dept_loc_fk
+  5                   FOREIGN KEY (location_id)
+  6                    REFERENCES locations (location_id)
+  7       ) ;
+
+Table altered.
+
+SQL> 
+SQL> Rem     Useful for any subsequent addition of rows to departments table
+SQL> Rem     Starts with 280
+SQL> 
+SQL> CREATE SEQUENCE departments_seq
+  2   START WITH     280
+  3   INCREMENT BY   10
+  4   MAXVALUE       9990
+  5   NOCACHE
+  6   NOCYCLE;
+
+Sequence created.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the JOBS table to hold the different names of job roles within the company.
+SQL> REM HR.EMPLOYEES has a foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating JOBS table ....
+******  Creating JOBS table ....
+SQL> 
+SQL> CREATE TABLE jobs
+  2      ( job_id         VARCHAR2(10)
+  3      , job_title      VARCHAR2(35)
+  4          CONSTRAINT     job_title_nn  NOT NULL
+  5      , min_salary     NUMBER(6)
+  6      , max_salary     NUMBER(6)
+  7      ) ;
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX job_id_pk
+  2  ON jobs (job_id) ;
+
+Index created.
+
+SQL> 
+SQL> ALTER TABLE jobs
+  2  ADD ( CONSTRAINT job_id_pk
+  3                   PRIMARY KEY(job_id)
+  4      ) ;
+
+Table altered.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the EMPLOYEES table to hold the employee personnel
+SQL> REM information for the company.
+SQL> REM HR.EMPLOYEES has a self referencing foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating EMPLOYEES table ....
+******  Creating EMPLOYEES table ....
+SQL> 
+SQL> CREATE TABLE employees
+  2      ( employee_id    NUMBER(6)
+  3      , first_name     VARCHAR2(20)
+  4      , last_name      VARCHAR2(25)
+  5           CONSTRAINT     emp_last_name_nn  NOT NULL
+  6      , email          VARCHAR2(25)
+  7          CONSTRAINT     emp_email_nn  NOT NULL
+  8      , phone_number   VARCHAR2(20)
+  9      , hire_date      DATE
+ 10          CONSTRAINT     emp_hire_date_nn  NOT NULL
+ 11      , job_id         VARCHAR2(10)
+ 12          CONSTRAINT     emp_job_nn  NOT NULL
+ 13      , salary         NUMBER(8,2)
+ 14      , commission_pct NUMBER(2,2)
+ 15      , manager_id     NUMBER(6)
+ 16      , department_id  NUMBER(4)
+ 17      , CONSTRAINT     emp_salary_min
+ 18                       CHECK (salary > 0)
+ 19      , CONSTRAINT     emp_email_uk
+ 20                       UNIQUE (email)
+ 21      ) ;
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX emp_emp_id_pk
+  2  ON employees (employee_id) ;
+
+Index created.
+
+SQL> 
+SQL> 
+SQL> ALTER TABLE employees
+  2  ADD ( CONSTRAINT     emp_emp_id_pk
+  3                       PRIMARY KEY (employee_id)
+  4      , CONSTRAINT     emp_dept_fk
+  5                       FOREIGN KEY (department_id)
+  6                        REFERENCES departments
+  7      , CONSTRAINT     emp_job_fk
+  8                       FOREIGN KEY (job_id)
+  9                        REFERENCES jobs (job_id)
+ 10      , CONSTRAINT     emp_manager_fk
+ 11                       FOREIGN KEY (manager_id)
+ 12                        REFERENCES employees
+ 13      ) ;
+
+Table altered.
+
+SQL> 
+SQL> ALTER TABLE departments
+  2  ADD ( CONSTRAINT dept_mgr_fk
+  3                   FOREIGN KEY (manager_id)
+  4                    REFERENCES employees (employee_id)
+  5      ) ;
+
+Table altered.
+
+SQL> 
+SQL> 
+SQL> Rem     Useful for any subsequent addition of rows to employees table
+SQL> Rem     Starts with 207
+SQL> 
+SQL> 
+SQL> CREATE SEQUENCE employees_seq
+  2   START WITH     207
+  3   INCREMENT BY   1
+  4   NOCACHE
+  5   NOCYCLE;
+
+Sequence created.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the JOB_HISTORY table to hold the history of jobs that
+SQL> REM employees have held in the past.
+SQL> REM HR.JOBS, HR_DEPARTMENTS, and HR.EMPLOYEES have a foreign key to this table.
+SQL> 
+SQL> Prompt ******  Creating JOB_HISTORY table ....
+******  Creating JOB_HISTORY table ....
+SQL> 
+SQL> CREATE TABLE job_history
+  2      ( employee_id   NUMBER(6)
+  3           CONSTRAINT    jhist_employee_nn  NOT NULL
+  4      , start_date    DATE
+  5          CONSTRAINT    jhist_start_date_nn  NOT NULL
+  6      , end_date      DATE
+  7          CONSTRAINT    jhist_end_date_nn  NOT NULL
+  8      , job_id        VARCHAR2(10)
+  9          CONSTRAINT    jhist_job_nn  NOT NULL
+ 10      , department_id NUMBER(4)
+ 11      , CONSTRAINT    jhist_date_interval
+ 12                      CHECK (end_date > start_date)
+ 13      ) ;
+
+Table created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX jhist_emp_id_st_date_pk
+  2  ON job_history (employee_id, start_date) ;
+
+Index created.
+
+SQL> 
+SQL> ALTER TABLE job_history
+  2  ADD ( CONSTRAINT jhist_emp_id_st_date_pk
+  3        PRIMARY KEY (employee_id, start_date)
+  4      , CONSTRAINT     jhist_job_fk
+  5                       FOREIGN KEY (job_id)
+  6                       REFERENCES jobs
+  7      , CONSTRAINT     jhist_emp_fk
+  8                       FOREIGN KEY (employee_id)
+  9                       REFERENCES employees
+ 10      , CONSTRAINT     jhist_dept_fk
+ 11                       FOREIGN KEY (department_id)
+ 12                       REFERENCES departments
+ 13      ) ;
+
+Table altered.
+
+SQL> 
+SQL> REM ********************************************************************
+SQL> REM Create the EMP_DETAILS_VIEW that joins the employees, jobs,
+SQL> REM departments, jobs, countries, and locations table to provide details
+SQL> REM about employees.
+SQL> 
+SQL> Prompt ******  Creating EMP_DETAILS_VIEW view ...
+******  Creating EMP_DETAILS_VIEW view ...
+SQL> 
+SQL> CREATE OR REPLACE VIEW emp_details_view
+  2    (employee_id,
+  3     job_id,
+  4     manager_id,
+  5     department_id,
+  6     location_id,
+  7     country_id,
+  8     first_name,
+  9     last_name,
+ 10     salary,
+ 11     commission_pct,
+ 12     department_name,
+ 13     job_title,
+ 14     city,
+ 15     state_province,
+ 16     country_name,
+ 17     region_name)
+ 18  AS SELECT
+ 19    e.employee_id,
+ 20    e.job_id,
+ 21    e.manager_id,
+ 22    e.department_id,
+ 23    d.location_id,
+ 24    l.country_id,
+ 25    e.first_name,
+ 26    e.last_name,
+ 27    e.salary,
+ 28    e.commission_pct,
+ 29    d.department_name,
+ 30    j.job_title,
+ 31    l.city,
+ 32    l.state_province,
+ 33    c.country_name,
+ 34    r.region_name
+ 35  FROM
+ 36    employees e,
+ 37    departments d,
+ 38    jobs j,
+ 39    locations l,
+ 40    countries c,
+ 41    regions r
+ 42  WHERE e.department_id = d.department_id
+ 43    AND d.location_id = l.location_id
+ 44    AND l.country_id = c.country_id
+ 45    AND c.region_id = r.region_id
+ 46    AND j.job_id = e.job_id
+ 47  WITH READ ONLY;
+
+View created.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --
+SQL> -- populate tables
+SQL> --
+SQL> 
+SQL> @@hr_popul
+SQL> rem
+SQL> rem Header: hr_popul.sql 09-jan-01
+SQL> rem
+SQL> rem Copyright (c) 2001, 2002, Oracle Corporation.  All rights reserved.
+SQL> rem
+SQL> rem Owner  : ahunold
+SQL> rem
+SQL> rem NAME
+SQL> rem   hr_popul.sql - Populate script for HR schema
+SQL> rem
+SQL> rem DESCRIPTON
+SQL> rem
+SQL> rem
+SQL> rem NOTES
+SQL> rem   There is a circular foreign key reference between
+SQL> rem   EMPLOYESS and DEPARTMENTS. That's why we disable
+SQL> rem   the FK constraints here
+SQL> rem
+SQL> rem CREATED
+SQL> rem   Nancy Greenberg, Nagavalli Pataballa - 06/01/00
+SQL> rem
+SQL> rem MODIFIED   (MM/DD/YY)
+SQL> rem   hyeh      08/29/02 - hyeh_mv_comschema_to_rdbms
+SQL> rem   ahunold   03/07/01 - small data errors corrected
+SQL> rem                      - Modified region values of countries table
+SQL> rem                      - Replaced ID sequence values for employees
+SQL> rem                        and departments tables with numbers
+SQL> rem                      - Moved create sequence statements to hr_cre
+SQL> rem                      - Removed dn values for employees and
+SQL> rem                        departments tables
+SQL> rem                      - Removed currency columns values from
+SQL> rem                        countries table
+SQL> rem   ngreenbe           - Updated employee 178 for no department
+SQL> rem   pnathan            - Insert new rows to job_history table
+SQL> rem   ahunold   02/20/01 - NLS_LANGUAGE, replacing non American
+SQL> rem   ahunold   01/09/01 - checkin ADE
+SQL> 
+SQL> SET VERIFY OFF
+SQL> ALTER SESSION SET NLS_LANGUAGE=American;
+
+Session altered.
+
+SQL> 
+SQL> REM ***************************insert data into the REGIONS table
+SQL> 
+SQL> Prompt ******  Populating REGIONS table ....
+******  Populating REGIONS table ....
+SQL> 
+SQL> INSERT INTO regions VALUES
+  2          ( 1
+  3          , 'Europe'
+  4          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO regions VALUES
+  2          ( 2
+  3          , 'Americas'
+  4          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO regions VALUES
+  2          ( 3
+  3          , 'Asia'
+  4          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO regions VALUES
+  2          ( 4
+  3          , 'Middle East and Africa'
+  4          );
+
+1 row created.
+
+SQL> 
+SQL> REM ***************************insert data into the COUNTRIES table
+SQL> 
+SQL> Prompt ******  Populating COUNTIRES table ....
+******  Populating COUNTIRES table ....
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'IT'
+  3          , 'Italy'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'JP'
+  3          , 'Japan'
+  4          , 3
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'US'
+  3          , 'United States of America'
+  4          , 2
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'CA'
+  3          , 'Canada'
+  4          , 2
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'CN'
+  3          , 'China'
+  4          , 3
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'IN'
+  3          , 'India'
+  4          , 3
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'AU'
+  3          , 'Australia'
+  4          , 3
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'ZW'
+  3          , 'Zimbabwe'
+  4          , 4
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'SG'
+  3          , 'Singapore'
+  4          , 3
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'UK'
+  3          , 'United Kingdom'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'FR'
+  3          , 'France'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'DE'
+  3          , 'Germany'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'ZM'
+  3          , 'Zambia'
+  4          , 4
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'EG'
+  3          , 'Egypt'
+  4          , 4
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'BR'
+  3          , 'Brazil'
+  4          , 2
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'CH'
+  3          , 'Switzerland'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'NL'
+  3          , 'Netherlands'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'MX'
+  3          , 'Mexico'
+  4          , 2
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'KW'
+  3          , 'Kuwait'
+  4          , 4
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'IL'
+  3          , 'Israel'
+  4          , 4
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'DK'
+  3          , 'Denmark'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'HK'
+  3          , 'HongKong'
+  4          , 3
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'NG'
+  3          , 'Nigeria'
+  4          , 4
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'AR'
+  3          , 'Argentina'
+  4          , 2
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO countries VALUES
+  2          ( 'BE'
+  3          , 'Belgium'
+  4          , 1
+  5          );
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> REM ***************************insert data into the LOCATIONS table
+SQL> 
+SQL> Prompt ******  Populating LOCATIONS table ....
+******  Populating LOCATIONS table ....
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1000
+  3          , '1297 Via Cola di Rie'
+  4          , '00989'
+  5          , 'Roma'
+  6          , NULL
+  7          , 'IT'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1100
+  3          , '93091 Calle della Testa'
+  4          , '10934'
+  5          , 'Venice'
+  6          , NULL
+  7          , 'IT'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1200
+  3          , '2017 Shinjuku-ku'
+  4          , '1689'
+  5          , 'Tokyo'
+  6          , 'Tokyo Prefecture'
+  7          , 'JP'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1300
+  3          , '9450 Kamiya-cho'
+  4          , '6823'
+  5          , 'Hiroshima'
+  6          , NULL
+  7          , 'JP'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1400
+  3          , '2014 Jabberwocky Rd'
+  4          , '26192'
+  5          , 'Southlake'
+  6          , 'Texas'
+  7          , 'US'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1500
+  3          , '2011 Interiors Blvd'
+  4          , '99236'
+  5          , 'South San Francisco'
+  6          , 'California'
+  7          , 'US'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1600
+  3          , '2007 Zagora St'
+  4          , '50090'
+  5          , 'South Brunswick'
+  6          , 'New Jersey'
+  7          , 'US'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1700
+  3          , '2004 Charade Rd'
+  4          , '98199'
+  5          , 'Seattle'
+  6          , 'Washington'
+  7          , 'US'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1800
+  3          , '147 Spadina Ave'
+  4          , 'M5V 2L7'
+  5          , 'Toronto'
+  6          , 'Ontario'
+  7          , 'CA'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 1900
+  3          , '6092 Boxwood St'
+  4          , 'YSW 9T2'
+  5          , 'Whitehorse'
+  6          , 'Yukon'
+  7          , 'CA'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2000
+  3          , '40-5-12 Laogianggen'
+  4          , '190518'
+  5          , 'Beijing'
+  6          , NULL
+  7          , 'CN'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2100
+  3          , '1298 Vileparle (E)'
+  4          , '490231'
+  5          , 'Bombay'
+  6          , 'Maharashtra'
+  7          , 'IN'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2200
+  3          , '12-98 Victoria Street'
+  4          , '2901'
+  5          , 'Sydney'
+  6          , 'New South Wales'
+  7          , 'AU'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2300
+  3          , '198 Clementi North'
+  4          , '540198'
+  5          , 'Singapore'
+  6          , NULL
+  7          , 'SG'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2400
+  3          , '8204 Arthur St'
+  4          , NULL
+  5          , 'London'
+  6          , NULL
+  7          , 'UK'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2500
+  3          , 'Magdalen Centre, The Oxford Science Park'
+  4          , 'OX9 9ZB'
+  5          , 'Oxford'
+  6          , 'Oxford'
+  7          , 'UK'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2600
+  3          , '9702 Chester Road'
+  4          , '09629850293'
+  5          , 'Stretford'
+  6          , 'Manchester'
+  7          , 'UK'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2700
+  3          , 'Schwanthalerstr. 7031'
+  4          , '80925'
+  5          , 'Munich'
+  6          , 'Bavaria'
+  7          , 'DE'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2800
+  3          , 'Rua Frei Caneca 1360 '
+  4          , '01307-002'
+  5          , 'Sao Paulo'
+  6          , 'Sao Paulo'
+  7          , 'BR'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 2900
+  3          , '20 Rue des Corps-Saints'
+  4          , '1730'
+  5          , 'Geneva'
+  6          , 'Geneve'
+  7          , 'CH'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 3000
+  3          , 'Murtenstrasse 921'
+  4          , '3095'
+  5          , 'Bern'
+  6          , 'BE'
+  7          , 'CH'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 3100
+  3          , 'Pieter Breughelstraat 837'
+  4          , '3029SK'
+  5          , 'Utrecht'
+  6          , 'Utrecht'
+  7          , 'NL'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO locations VALUES
+  2          ( 3200
+  3          , 'Mariano Escobedo 9991'
+  4          , '11932'
+  5          , 'Mexico City'
+  6          , 'Distrito Federal,'
+  7          , 'MX'
+  8          );
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> REM ****************************insert data into the DEPARTMENTS table
+SQL> 
+SQL> Prompt ******  Populating DEPARTMENTS table ....
+******  Populating DEPARTMENTS table ....
+SQL> 
+SQL> REM disable integrity constraint to EMPLOYEES to load data
+SQL> 
+SQL> ALTER TABLE departments
+  2    DISABLE CONSTRAINT dept_mgr_fk;
+
+Table altered.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 10
+  3          , 'Administration'
+  4          , 200
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 20
+  3          , 'Marketing'
+  4          , 201
+  5          , 1800
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 30
+  3          , 'Purchasing'
+  4          , 114
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 40
+  3          , 'Human Resources'
+  4          , 203
+  5          , 2400
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 50
+  3          , 'Shipping'
+  4          , 121
+  5          , 1500
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 60
+  3          , 'IT'
+  4          , 103
+  5          , 1400
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 70
+  3          , 'Public Relations'
+  4          , 204
+  5          , 2700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 80
+  3          , 'Sales'
+  4          , 145
+  5          , 2500
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 90
+  3          , 'Executive'
+  4          , 100
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 100
+  3          , 'Finance'
+  4          , 108
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 110
+  3          , 'Accounting'
+  4          , 205
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 120
+  3          , 'Treasury'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 130
+  3          , 'Corporate Tax'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 140
+  3          , 'Control And Credit'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 150
+  3          , 'Shareholder Services'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 160
+  3          , 'Benefits'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 170
+  3          , 'Manufacturing'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 180
+  3          , 'Construction'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 190
+  3          , 'Contracting'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 200
+  3          , 'Operations'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 210
+  3          , 'IT Support'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 220
+  3          , 'NOC'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 230
+  3          , 'IT Helpdesk'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 240
+  3          , 'Government Sales'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 250
+  3          , 'Retail Sales'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 260
+  3          , 'Recruiting'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO departments VALUES
+  2          ( 270
+  3          , 'Payroll'
+  4          , NULL
+  5          , 1700
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> REM ***************************insert data into the JOBS table
+SQL> 
+SQL> Prompt ******  Populating JOBS table ....
+******  Populating JOBS table ....
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'AD_PRES'
+  3          , 'President'
+  4          , 20000
+  5          , 40000
+  6          );
+
+1 row created.
+
+SQL> INSERT INTO jobs VALUES
+  2          ( 'AD_VP'
+  3          , 'Administration Vice President'
+  4          , 15000
+  5          , 30000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'AD_ASST'
+  3          , 'Administration Assistant'
+  4          , 3000
+  5          , 6000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'FI_MGR'
+  3          , 'Finance Manager'
+  4          , 8200
+  5          , 16000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'FI_ACCOUNT'
+  3          , 'Accountant'
+  4          , 4200
+  5          , 9000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'AC_MGR'
+  3          , 'Accounting Manager'
+  4          , 8200
+  5          , 16000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'AC_ACCOUNT'
+  3          , 'Public Accountant'
+  4          , 4200
+  5          , 9000
+  6          );
+
+1 row created.
+
+SQL> INSERT INTO jobs VALUES
+  2          ( 'SA_MAN'
+  3          , 'Sales Manager'
+  4          , 10000
+  5          , 20000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'SA_REP'
+  3          , 'Sales Representative'
+  4          , 6000
+  5          , 12000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'PU_MAN'
+  3          , 'Purchasing Manager'
+  4          , 8000
+  5          , 15000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'PU_CLERK'
+  3          , 'Purchasing Clerk'
+  4          , 2500
+  5          , 5500
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'ST_MAN'
+  3          , 'Stock Manager'
+  4          , 5500
+  5          , 8500
+  6          );
+
+1 row created.
+
+SQL> INSERT INTO jobs VALUES
+  2          ( 'ST_CLERK'
+  3          , 'Stock Clerk'
+  4          , 2000
+  5          , 5000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'SH_CLERK'
+  3          , 'Shipping Clerk'
+  4          , 2500
+  5          , 5500
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'IT_PROG'
+  3          , 'Programmer'
+  4          , 4000
+  5          , 10000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'MK_MAN'
+  3          , 'Marketing Manager'
+  4          , 9000
+  5          , 15000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'MK_REP'
+  3          , 'Marketing Representative'
+  4          , 4000
+  5          , 9000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'HR_REP'
+  3          , 'Human Resources Representative'
+  4          , 4000
+  5          , 9000
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO jobs VALUES
+  2          ( 'PR_REP'
+  3          , 'Public Relations Representative'
+  4          , 4500
+  5          , 10500
+  6          );
+
+1 row created.
+
+SQL> 
+SQL> 
+SQL> REM ***************************insert data into the EMPLOYEES table
+SQL> 
+SQL> Prompt ******  Populating EMPLOYEES table ....
+******  Populating EMPLOYEES table ....
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 100
+  3          , 'Steven'
+  4          , 'King'
+  5          , 'SKING'
+  6          , '515.123.4567'
+  7          , TO_DATE('17-JUN-1987', 'dd-MON-yyyy')
+  8          , 'AD_PRES'
+  9          , 24000
+ 10          , NULL
+ 11          , NULL
+ 12          , 90
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 101
+  3          , 'Neena'
+  4          , 'Kochhar'
+  5          , 'NKOCHHAR'
+  6          , '515.123.4568'
+  7          , TO_DATE('21-SEP-1989', 'dd-MON-yyyy')
+  8          , 'AD_VP'
+  9          , 17000
+ 10          , NULL
+ 11          , 100
+ 12          , 90
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 102
+  3          , 'Lex'
+  4          , 'De Haan'
+  5          , 'LDEHAAN'
+  6          , '515.123.4569'
+  7          , TO_DATE('13-JAN-1993', 'dd-MON-yyyy')
+  8          , 'AD_VP'
+  9          , 17000
+ 10          , NULL
+ 11          , 100
+ 12          , 90
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 103
+  3          , 'Alexander'
+  4          , 'Hunold'
+  5          , 'AHUNOLD'
+  6          , '590.423.4567'
+  7          , TO_DATE('03-JAN-1990', 'dd-MON-yyyy')
+  8          , 'IT_PROG'
+  9          , 9000
+ 10          , NULL
+ 11          , 102
+ 12          , 60
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 104
+  3          , 'Bruce'
+  4          , 'Ernst'
+  5          , 'BERNST'
+  6          , '590.423.4568'
+  7          , TO_DATE('21-MAY-1991', 'dd-MON-yyyy')
+  8          , 'IT_PROG'
+  9          , 6000
+ 10          , NULL
+ 11          , 103
+ 12          , 60
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 105
+  3          , 'David'
+  4          , 'Austin'
+  5          , 'DAUSTIN'
+  6          , '590.423.4569'
+  7          , TO_DATE('25-JUN-1997', 'dd-MON-yyyy')
+  8          , 'IT_PROG'
+  9          , 4800
+ 10          , NULL
+ 11          , 103
+ 12          , 60
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 106
+  3          , 'Valli'
+  4          , 'Pataballa'
+  5          , 'VPATABAL'
+  6          , '590.423.4560'
+  7          , TO_DATE('05-FEB-1998', 'dd-MON-yyyy')
+  8          , 'IT_PROG'
+  9          , 4800
+ 10          , NULL
+ 11          , 103
+ 12          , 60
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 107
+  3          , 'Diana'
+  4          , 'Lorentz'
+  5          , 'DLORENTZ'
+  6          , '590.423.5567'
+  7          , TO_DATE('07-FEB-1999', 'dd-MON-yyyy')
+  8          , 'IT_PROG'
+  9          , 4200
+ 10          , NULL
+ 11          , 103
+ 12          , 60
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 108
+  3          , 'Nancy'
+  4          , 'Greenberg'
+  5          , 'NGREENBE'
+  6          , '515.124.4569'
+  7          , TO_DATE('17-AUG-1994', 'dd-MON-yyyy')
+  8          , 'FI_MGR'
+  9          , 12000
+ 10          , NULL
+ 11          , 101
+ 12          , 100
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 109
+  3          , 'Daniel'
+  4          , 'Faviet'
+  5          , 'DFAVIET'
+  6          , '515.124.4169'
+  7          , TO_DATE('16-AUG-1994', 'dd-MON-yyyy')
+  8          , 'FI_ACCOUNT'
+  9          , 9000
+ 10          , NULL
+ 11          , 108
+ 12          , 100
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 110
+  3          , 'John'
+  4          , 'Chen'
+  5          , 'JCHEN'
+  6          , '515.124.4269'
+  7          , TO_DATE('28-SEP-1997', 'dd-MON-yyyy')
+  8          , 'FI_ACCOUNT'
+  9          , 8200
+ 10          , NULL
+ 11          , 108
+ 12          , 100
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 111
+  3          , 'Ismael'
+  4          , 'Sciarra'
+  5          , 'ISCIARRA'
+  6          , '515.124.4369'
+  7          , TO_DATE('30-SEP-1997', 'dd-MON-yyyy')
+  8          , 'FI_ACCOUNT'
+  9          , 7700
+ 10          , NULL
+ 11          , 108
+ 12          , 100
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 112
+  3          , 'Jose Manuel'
+  4          , 'Urman'
+  5          , 'JMURMAN'
+  6          , '515.124.4469'
+  7          , TO_DATE('07-MAR-1998', 'dd-MON-yyyy')
+  8          , 'FI_ACCOUNT'
+  9          , 7800
+ 10          , NULL
+ 11          , 108
+ 12          , 100
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 113
+  3          , 'Luis'
+  4          , 'Popp'
+  5          , 'LPOPP'
+  6          , '515.124.4567'
+  7          , TO_DATE('07-DEC-1999', 'dd-MON-yyyy')
+  8          , 'FI_ACCOUNT'
+  9          , 6900
+ 10          , NULL
+ 11          , 108
+ 12          , 100
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 114
+  3          , 'Den'
+  4          , 'Raphaely'
+  5          , 'DRAPHEAL'
+  6          , '515.127.4561'
+  7          , TO_DATE('07-DEC-1994', 'dd-MON-yyyy')
+  8          , 'PU_MAN'
+  9          , 11000
+ 10          , NULL
+ 11          , 100
+ 12          , 30
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 115
+  3          , 'Alexander'
+  4          , 'Khoo'
+  5          , 'AKHOO'
+  6          , '515.127.4562'
+  7          , TO_DATE('18-MAY-1995', 'dd-MON-yyyy')
+  8          , 'PU_CLERK'
+  9          , 3100
+ 10          , NULL
+ 11          , 114
+ 12          , 30
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 116
+  3          , 'Shelli'
+  4          , 'Baida'
+  5          , 'SBAIDA'
+  6          , '515.127.4563'
+  7          , TO_DATE('24-DEC-1997', 'dd-MON-yyyy')
+  8          , 'PU_CLERK'
+  9          , 2900
+ 10          , NULL
+ 11          , 114
+ 12          , 30
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 117
+  3          , 'Sigal'
+  4          , 'Tobias'
+  5          , 'STOBIAS'
+  6          , '515.127.4564'
+  7          , TO_DATE('24-JUL-1997', 'dd-MON-yyyy')
+  8          , 'PU_CLERK'
+  9          , 2800
+ 10          , NULL
+ 11          , 114
+ 12          , 30
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 118
+  3          , 'Guy'
+  4          , 'Himuro'
+  5          , 'GHIMURO'
+  6          , '515.127.4565'
+  7          , TO_DATE('15-NOV-1998', 'dd-MON-yyyy')
+  8          , 'PU_CLERK'
+  9          , 2600
+ 10          , NULL
+ 11          , 114
+ 12          , 30
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 119
+  3          , 'Karen'
+  4          , 'Colmenares'
+  5          , 'KCOLMENA'
+  6          , '515.127.4566'
+  7          , TO_DATE('10-AUG-1999', 'dd-MON-yyyy')
+  8          , 'PU_CLERK'
+  9          , 2500
+ 10          , NULL
+ 11          , 114
+ 12          , 30
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 120
+  3          , 'Matthew'
+  4          , 'Weiss'
+  5          , 'MWEISS'
+  6          , '650.123.1234'
+  7          , TO_DATE('18-JUL-1996', 'dd-MON-yyyy')
+  8          , 'ST_MAN'
+  9          , 8000
+ 10          , NULL
+ 11          , 100
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 121
+  3          , 'Adam'
+  4          , 'Fripp'
+  5          , 'AFRIPP'
+  6          , '650.123.2234'
+  7          , TO_DATE('10-APR-1997', 'dd-MON-yyyy')
+  8          , 'ST_MAN'
+  9          , 8200
+ 10          , NULL
+ 11          , 100
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 122
+  3          , 'Payam'
+  4          , 'Kaufling'
+  5          , 'PKAUFLIN'
+  6          , '650.123.3234'
+  7          , TO_DATE('01-MAY-1995', 'dd-MON-yyyy')
+  8          , 'ST_MAN'
+  9          , 7900
+ 10          , NULL
+ 11          , 100
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 123
+  3          , 'Shanta'
+  4          , 'Vollman'
+  5          , 'SVOLLMAN'
+  6          , '650.123.4234'
+  7          , TO_DATE('10-OCT-1997', 'dd-MON-yyyy')
+  8          , 'ST_MAN'
+  9          , 6500
+ 10          , NULL
+ 11          , 100
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 124
+  3          , 'Kevin'
+  4          , 'Mourgos'
+  5          , 'KMOURGOS'
+  6          , '650.123.5234'
+  7          , TO_DATE('16-NOV-1999', 'dd-MON-yyyy')
+  8          , 'ST_MAN'
+  9          , 5800
+ 10          , NULL
+ 11          , 100
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 125
+  3          , 'Julia'
+  4          , 'Nayer'
+  5          , 'JNAYER'
+  6          , '650.124.1214'
+  7          , TO_DATE('16-JUL-1997', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3200
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 126
+  3          , 'Irene'
+  4          , 'Mikkilineni'
+  5          , 'IMIKKILI'
+  6          , '650.124.1224'
+  7          , TO_DATE('28-SEP-1998', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2700
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 127
+  3          , 'James'
+  4          , 'Landry'
+  5          , 'JLANDRY'
+  6          , '650.124.1334'
+  7          , TO_DATE('14-JAN-1999', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2400
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 128
+  3          , 'Steven'
+  4          , 'Markle'
+  5          , 'SMARKLE'
+  6          , '650.124.1434'
+  7          , TO_DATE('08-MAR-2000', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2200
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 129
+  3          , 'Laura'
+  4          , 'Bissot'
+  5          , 'LBISSOT'
+  6          , '650.124.5234'
+  7          , TO_DATE('20-AUG-1997', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3300
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 130
+  3          , 'Mozhe'
+  4          , 'Atkinson'
+  5          , 'MATKINSO'
+  6          , '650.124.6234'
+  7          , TO_DATE('30-OCT-1997', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2800
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 131
+  3          , 'James'
+  4          , 'Marlow'
+  5          , 'JAMRLOW'
+  6          , '650.124.7234'
+  7          , TO_DATE('16-FEB-1997', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2500
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 132
+  3          , 'TJ'
+  4          , 'Olson'
+  5          , 'TJOLSON'
+  6          , '650.124.8234'
+  7          , TO_DATE('10-APR-1999', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2100
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 133
+  3          , 'Jason'
+  4          , 'Mallin'
+  5          , 'JMALLIN'
+  6          , '650.127.1934'
+  7          , TO_DATE('14-JUN-1996', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3300
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 134
+  3          , 'Michael'
+  4          , 'Rogers'
+  5          , 'MROGERS'
+  6          , '650.127.1834'
+  7          , TO_DATE('26-AUG-1998', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2900
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 135
+  3          , 'Ki'
+  4          , 'Gee'
+  5          , 'KGEE'
+  6          , '650.127.1734'
+  7          , TO_DATE('12-DEC-1999', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2400
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 136
+  3          , 'Hazel'
+  4          , 'Philtanker'
+  5          , 'HPHILTAN'
+  6          , '650.127.1634'
+  7          , TO_DATE('06-FEB-2000', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2200
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 137
+  3          , 'Renske'
+  4          , 'Ladwig'
+  5          , 'RLADWIG'
+  6          , '650.121.1234'
+  7          , TO_DATE('14-JUL-1995', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3600
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 138
+  3          , 'Stephen'
+  4          , 'Stiles'
+  5          , 'SSTILES'
+  6          , '650.121.2034'
+  7          , TO_DATE('26-OCT-1997', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3200
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 139
+  3          , 'John'
+  4          , 'Seo'
+  5          , 'JSEO'
+  6          , '650.121.2019'
+  7          , TO_DATE('12-FEB-1998', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2700
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 140
+  3          , 'Joshua'
+  4          , 'Patel'
+  5          , 'JPATEL'
+  6          , '650.121.1834'
+  7          , TO_DATE('06-APR-1998', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2500
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 141
+  3          , 'Trenna'
+  4          , 'Rajs'
+  5          , 'TRAJS'
+  6          , '650.121.8009'
+  7          , TO_DATE('17-OCT-1995', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3500
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 142
+  3          , 'Curtis'
+  4          , 'Davies'
+  5          , 'CDAVIES'
+  6          , '650.121.2994'
+  7          , TO_DATE('29-JAN-1997', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 3100
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 143
+  3          , 'Randall'
+  4          , 'Matos'
+  5          , 'RMATOS'
+  6          , '650.121.2874'
+  7          , TO_DATE('15-MAR-1998', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2600
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 144
+  3          , 'Peter'
+  4          , 'Vargas'
+  5          , 'PVARGAS'
+  6          , '650.121.2004'
+  7          , TO_DATE('09-JUL-1998', 'dd-MON-yyyy')
+  8          , 'ST_CLERK'
+  9          , 2500
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 145
+  3          , 'John'
+  4          , 'Russell'
+  5          , 'JRUSSEL'
+  6          , '011.44.1344.429268'
+  7          , TO_DATE('01-OCT-1996', 'dd-MON-yyyy')
+  8          , 'SA_MAN'
+  9          , 14000
+ 10          , .4
+ 11          , 100
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 146
+  3          , 'Karen'
+  4          , 'Partners'
+  5          , 'KPARTNER'
+  6          , '011.44.1344.467268'
+  7          , TO_DATE('05-JAN-1997', 'dd-MON-yyyy')
+  8          , 'SA_MAN'
+  9          , 13500
+ 10          , .3
+ 11          , 100
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 147
+  3          , 'Alberto'
+  4          , 'Errazuriz'
+  5          , 'AERRAZUR'
+  6          , '011.44.1344.429278'
+  7          , TO_DATE('10-MAR-1997', 'dd-MON-yyyy')
+  8          , 'SA_MAN'
+  9          , 12000
+ 10          , .3
+ 11          , 100
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 148
+  3          , 'Gerald'
+  4          , 'Cambrault'
+  5          , 'GCAMBRAU'
+  6          , '011.44.1344.619268'
+  7          , TO_DATE('15-OCT-1999', 'dd-MON-yyyy')
+  8          , 'SA_MAN'
+  9          , 11000
+ 10          , .3
+ 11          , 100
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 149
+  3          , 'Eleni'
+  4          , 'Zlotkey'
+  5          , 'EZLOTKEY'
+  6          , '011.44.1344.429018'
+  7          , TO_DATE('29-JAN-2000', 'dd-MON-yyyy')
+  8          , 'SA_MAN'
+  9          , 10500
+ 10          , .2
+ 11          , 100
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 150
+  3          , 'Peter'
+  4          , 'Tucker'
+  5          , 'PTUCKER'
+  6          , '011.44.1344.129268'
+  7          , TO_DATE('30-JAN-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 10000
+ 10          , .3
+ 11          , 145
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 151
+  3          , 'David'
+  4          , 'Bernstein'
+  5          , 'DBERNSTE'
+  6          , '011.44.1344.345268'
+  7          , TO_DATE('24-MAR-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 9500
+ 10          , .25
+ 11          , 145
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 152
+  3          , 'Peter'
+  4          , 'Hall'
+  5          , 'PHALL'
+  6          , '011.44.1344.478968'
+  7          , TO_DATE('20-AUG-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 9000
+ 10          , .25
+ 11          , 145
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 153
+  3          , 'Christopher'
+  4          , 'Olsen'
+  5          , 'COLSEN'
+  6          , '011.44.1344.498718'
+  7          , TO_DATE('30-MAR-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 8000
+ 10          , .2
+ 11          , 145
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 154
+  3          , 'Nanette'
+  4          , 'Cambrault'
+  5          , 'NCAMBRAU'
+  6          , '011.44.1344.987668'
+  7          , TO_DATE('09-DEC-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7500
+ 10          , .2
+ 11          , 145
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 155
+  3          , 'Oliver'
+  4          , 'Tuvault'
+  5          , 'OTUVAULT'
+  6          , '011.44.1344.486508'
+  7          , TO_DATE('23-NOV-1999', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7000
+ 10          , .15
+ 11          , 145
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 156
+  3          , 'Janette'
+  4          , 'King'
+  5          , 'JKING'
+  6          , '011.44.1345.429268'
+  7          , TO_DATE('30-JAN-1996', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 10000
+ 10          , .35
+ 11          , 146
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 157
+  3          , 'Patrick'
+  4          , 'Sully'
+  5          , 'PSULLY'
+  6          , '011.44.1345.929268'
+  7          , TO_DATE('04-MAR-1996', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 9500
+ 10          , .35
+ 11          , 146
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 158
+  3          , 'Allan'
+  4          , 'McEwen'
+  5          , 'AMCEWEN'
+  6          , '011.44.1345.829268'
+  7          , TO_DATE('01-AUG-1996', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 9000
+ 10          , .35
+ 11          , 146
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 159
+  3          , 'Lindsey'
+  4          , 'Smith'
+  5          , 'LSMITH'
+  6          , '011.44.1345.729268'
+  7          , TO_DATE('10-MAR-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 8000
+ 10          , .3
+ 11          , 146
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 160
+  3          , 'Louise'
+  4          , 'Doran'
+  5          , 'LDORAN'
+  6          , '011.44.1345.629268'
+  7          , TO_DATE('15-DEC-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7500
+ 10          , .3
+ 11          , 146
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 161
+  3          , 'Sarath'
+  4          , 'Sewall'
+  5          , 'SSEWALL'
+  6          , '011.44.1345.529268'
+  7          , TO_DATE('03-NOV-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7000
+ 10          , .25
+ 11          , 146
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 162
+  3          , 'Clara'
+  4          , 'Vishney'
+  5          , 'CVISHNEY'
+  6          , '011.44.1346.129268'
+  7          , TO_DATE('11-NOV-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 10500
+ 10          , .25
+ 11          , 147
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 163
+  3          , 'Danielle'
+  4          , 'Greene'
+  5          , 'DGREENE'
+  6          , '011.44.1346.229268'
+  7          , TO_DATE('19-MAR-1999', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 9500
+ 10          , .15
+ 11          , 147
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 164
+  3          , 'Mattea'
+  4          , 'Marvins'
+  5          , 'MMARVINS'
+  6          , '011.44.1346.329268'
+  7          , TO_DATE('24-JAN-2000', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7200
+ 10          , .10
+ 11          , 147
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 165
+  3          , 'David'
+  4          , 'Lee'
+  5          , 'DLEE'
+  6          , '011.44.1346.529268'
+  7          , TO_DATE('23-FEB-2000', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 6800
+ 10          , .1
+ 11          , 147
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 166
+  3          , 'Sundar'
+  4          , 'Ande'
+  5          , 'SANDE'
+  6          , '011.44.1346.629268'
+  7          , TO_DATE('24-MAR-2000', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 6400
+ 10          , .10
+ 11          , 147
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 167
+  3          , 'Amit'
+  4          , 'Banda'
+  5          , 'ABANDA'
+  6          , '011.44.1346.729268'
+  7          , TO_DATE('21-APR-2000', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 6200
+ 10          , .10
+ 11          , 147
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 168
+  3          , 'Lisa'
+  4          , 'Ozer'
+  5          , 'LOZER'
+  6          , '011.44.1343.929268'
+  7          , TO_DATE('11-MAR-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 11500
+ 10          , .25
+ 11          , 148
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 169
+  3          , 'Harrison'
+  4          , 'Bloom'
+  5          , 'HBLOOM'
+  6          , '011.44.1343.829268'
+  7          , TO_DATE('23-MAR-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 10000
+ 10          , .20
+ 11          , 148
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 170
+  3          , 'Tayler'
+  4          , 'Fox'
+  5          , 'TFOX'
+  6          , '011.44.1343.729268'
+  7          , TO_DATE('24-JAN-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 9600
+ 10          , .20
+ 11          , 148
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 171
+  3          , 'William'
+  4          , 'Smith'
+  5          , 'WSMITH'
+  6          , '011.44.1343.629268'
+  7          , TO_DATE('23-FEB-1999', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7400
+ 10          , .15
+ 11          , 148
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 172
+  3          , 'Elizabeth'
+  4          , 'Bates'
+  5          , 'EBATES'
+  6          , '011.44.1343.529268'
+  7          , TO_DATE('24-MAR-1999', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7300
+ 10          , .15
+ 11          , 148
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 173
+  3          , 'Sundita'
+  4          , 'Kumar'
+  5          , 'SKUMAR'
+  6          , '011.44.1343.329268'
+  7          , TO_DATE('21-APR-2000', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 6100
+ 10          , .10
+ 11          , 148
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 174
+  3          , 'Ellen'
+  4          , 'Abel'
+  5          , 'EABEL'
+  6          , '011.44.1644.429267'
+  7          , TO_DATE('11-MAY-1996', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 11000
+ 10          , .30
+ 11          , 149
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 175
+  3          , 'Alyssa'
+  4          , 'Hutton'
+  5          , 'AHUTTON'
+  6          , '011.44.1644.429266'
+  7          , TO_DATE('19-MAR-1997', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 8800
+ 10          , .25
+ 11          , 149
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 176
+  3          , 'Jonathon'
+  4          , 'Taylor'
+  5          , 'JTAYLOR'
+  6          , '011.44.1644.429265'
+  7          , TO_DATE('24-MAR-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 8600
+ 10          , .20
+ 11          , 149
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 177
+  3          , 'Jack'
+  4          , 'Livingston'
+  5          , 'JLIVINGS'
+  6          , '011.44.1644.429264'
+  7          , TO_DATE('23-APR-1998', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 8400
+ 10          , .20
+ 11          , 149
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 178
+  3          , 'Kimberely'
+  4          , 'Grant'
+  5          , 'KGRANT'
+  6          , '011.44.1644.429263'
+  7          , TO_DATE('24-MAY-1999', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 7000
+ 10          , .15
+ 11          , 149
+ 12          , NULL
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 179
+  3          , 'Charles'
+  4          , 'Johnson'
+  5          , 'CJOHNSON'
+  6          , '011.44.1644.429262'
+  7          , TO_DATE('04-JAN-2000', 'dd-MON-yyyy')
+  8          , 'SA_REP'
+  9          , 6200
+ 10          , .10
+ 11          , 149
+ 12          , 80
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 180
+  3          , 'Winston'
+  4          , 'Taylor'
+  5          , 'WTAYLOR'
+  6          , '650.507.9876'
+  7          , TO_DATE('24-JAN-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3200
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 181
+  3          , 'Jean'
+  4          , 'Fleaur'
+  5          , 'JFLEAUR'
+  6          , '650.507.9877'
+  7          , TO_DATE('23-FEB-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3100
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 182
+  3          , 'Martha'
+  4          , 'Sullivan'
+  5          , 'MSULLIVA'
+  6          , '650.507.9878'
+  7          , TO_DATE('21-JUN-1999', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2500
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 183
+  3          , 'Girard'
+  4          , 'Geoni'
+  5          , 'GGEONI'
+  6          , '650.507.9879'
+  7          , TO_DATE('03-FEB-2000', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2800
+ 10          , NULL
+ 11          , 120
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 184
+  3          , 'Nandita'
+  4          , 'Sarchand'
+  5          , 'NSARCHAN'
+  6          , '650.509.1876'
+  7          , TO_DATE('27-JAN-1996', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 4200
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 185
+  3          , 'Alexis'
+  4          , 'Bull'
+  5          , 'ABULL'
+  6          , '650.509.2876'
+  7          , TO_DATE('20-FEB-1997', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 4100
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 186
+  3          , 'Julia'
+  4          , 'Dellinger'
+  5          , 'JDELLING'
+  6          , '650.509.3876'
+  7          , TO_DATE('24-JUN-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3400
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 187
+  3          , 'Anthony'
+  4          , 'Cabrio'
+  5          , 'ACABRIO'
+  6          , '650.509.4876'
+  7          , TO_DATE('07-FEB-1999', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3000
+ 10          , NULL
+ 11          , 121
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 188
+  3          , 'Kelly'
+  4          , 'Chung'
+  5          , 'KCHUNG'
+  6          , '650.505.1876'
+  7          , TO_DATE('14-JUN-1997', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3800
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 189
+  3          , 'Jennifer'
+  4          , 'Dilly'
+  5          , 'JDILLY'
+  6          , '650.505.2876'
+  7          , TO_DATE('13-AUG-1997', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3600
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 190
+  3          , 'Timothy'
+  4          , 'Gates'
+  5          , 'TGATES'
+  6          , '650.505.3876'
+  7          , TO_DATE('11-JUL-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2900
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 191
+  3          , 'Randall'
+  4          , 'Perkins'
+  5          , 'RPERKINS'
+  6          , '650.505.4876'
+  7          , TO_DATE('19-DEC-1999', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2500
+ 10          , NULL
+ 11          , 122
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 192
+  3          , 'Sarah'
+  4          , 'Bell'
+  5          , 'SBELL'
+  6          , '650.501.1876'
+  7          , TO_DATE('04-FEB-1996', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 4000
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 193
+  3          , 'Britney'
+  4          , 'Everett'
+  5          , 'BEVERETT'
+  6          , '650.501.2876'
+  7          , TO_DATE('03-MAR-1997', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3900
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 194
+  3          , 'Samuel'
+  4          , 'McCain'
+  5          , 'SMCCAIN'
+  6          , '650.501.3876'
+  7          , TO_DATE('01-JUL-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3200
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 195
+  3          , 'Vance'
+  4          , 'Jones'
+  5          , 'VJONES'
+  6          , '650.501.4876'
+  7          , TO_DATE('17-MAR-1999', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2800
+ 10          , NULL
+ 11          , 123
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 196
+  3          , 'Alana'
+  4          , 'Walsh'
+  5          , 'AWALSH'
+  6          , '650.507.9811'
+  7          , TO_DATE('24-APR-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3100
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 197
+  3          , 'Kevin'
+  4          , 'Feeney'
+  5          , 'KFEENEY'
+  6          , '650.507.9822'
+  7          , TO_DATE('23-MAY-1998', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 3000
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 198
+  3          , 'Donald'
+  4          , 'OConnell'
+  5          , 'DOCONNEL'
+  6          , '650.507.9833'
+  7          , TO_DATE('21-JUN-1999', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2600
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 199
+  3          , 'Douglas'
+  4          , 'Grant'
+  5          , 'DGRANT'
+  6          , '650.507.9844'
+  7          , TO_DATE('13-JAN-2000', 'dd-MON-yyyy')
+  8          , 'SH_CLERK'
+  9          , 2600
+ 10          , NULL
+ 11          , 124
+ 12          , 50
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 200
+  3          , 'Jennifer'
+  4          , 'Whalen'
+  5          , 'JWHALEN'
+  6          , '515.123.4444'
+  7          , TO_DATE('17-SEP-1987', 'dd-MON-yyyy')
+  8          , 'AD_ASST'
+  9          , 4400
+ 10          , NULL
+ 11          , 101
+ 12          , 10
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 201
+  3          , 'Michael'
+  4          , 'Hartstein'
+  5          , 'MHARTSTE'
+  6          , '515.123.5555'
+  7          , TO_DATE('17-FEB-1996', 'dd-MON-yyyy')
+  8          , 'MK_MAN'
+  9          , 13000
+ 10          , NULL
+ 11          , 100
+ 12          , 20
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 202
+  3          , 'Pat'
+  4          , 'Fay'
+  5          , 'PFAY'
+  6          , '603.123.6666'
+  7          , TO_DATE('17-AUG-1997', 'dd-MON-yyyy')
+  8          , 'MK_REP'
+  9          , 6000
+ 10          , NULL
+ 11          , 201
+ 12          , 20
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 203
+  3          , 'Susan'
+  4          , 'Mavris'
+  5          , 'SMAVRIS'
+  6          , '515.123.7777'
+  7          , TO_DATE('07-JUN-1994', 'dd-MON-yyyy')
+  8          , 'HR_REP'
+  9          , 6500
+ 10          , NULL
+ 11          , 101
+ 12          , 40
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 204
+  3          , 'Hermann'
+  4          , 'Baer'
+  5          , 'HBAER'
+  6          , '515.123.8888'
+  7          , TO_DATE('07-JUN-1994', 'dd-MON-yyyy')
+  8          , 'PR_REP'
+  9          , 10000
+ 10          , NULL
+ 11          , 101
+ 12          , 70
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 205
+  3          , 'Shelley'
+  4          , 'Higgins'
+  5          , 'SHIGGINS'
+  6          , '515.123.8080'
+  7          , TO_DATE('07-JUN-1994', 'dd-MON-yyyy')
+  8          , 'AC_MGR'
+  9          , 12000
+ 10          , NULL
+ 11          , 101
+ 12          , 110
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO employees VALUES
+  2          ( 206
+  3          , 'William'
+  4          , 'Gietz'
+  5          , 'WGIETZ'
+  6          , '515.123.8181'
+  7          , TO_DATE('07-JUN-1994', 'dd-MON-yyyy')
+  8          , 'AC_ACCOUNT'
+  9          , 8300
+ 10          , NULL
+ 11          , 205
+ 12          , 110
+ 13          );
+
+1 row created.
+
+SQL> 
+SQL> REM ********* insert data into the JOB_HISTORY table
+SQL> 
+SQL> Prompt ******  Populating JOB_HISTORY table ....
+******  Populating JOB_HISTORY table ....
+SQL> 
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES (102
+  3         , TO_DATE('13-JAN-1993', 'dd-MON-yyyy')
+  4         , TO_DATE('24-JUL-1998', 'dd-MON-yyyy')
+  5         , 'IT_PROG'
+  6         , 60);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES (101
+  3         , TO_DATE('21-SEP-1989', 'dd-MON-yyyy')
+  4         , TO_DATE('27-OCT-1993', 'dd-MON-yyyy')
+  5         , 'AC_ACCOUNT'
+  6         , 110);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES (101
+  3         , TO_DATE('28-OCT-1993', 'dd-MON-yyyy')
+  4         , TO_DATE('15-MAR-1997', 'dd-MON-yyyy')
+  5         , 'AC_MGR'
+  6         , 110);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES (201
+  3         , TO_DATE('17-FEB-1996', 'dd-MON-yyyy')
+  4         , TO_DATE('19-DEC-1999', 'dd-MON-yyyy')
+  5         , 'MK_REP'
+  6         , 20);
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES  (114
+  3          , TO_DATE('24-MAR-1998', 'dd-MON-yyyy')
+  4          , TO_DATE('31-DEC-1999', 'dd-MON-yyyy')
+  5          , 'ST_CLERK'
+  6          , 50
+  7          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES  (122
+  3          , TO_DATE('01-JAN-1999', 'dd-MON-yyyy')
+  4          , TO_DATE('31-DEC-1999', 'dd-MON-yyyy')
+  5          , 'ST_CLERK'
+  6          , 50
+  7          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES  (200
+  3          , TO_DATE('17-SEP-1987', 'dd-MON-yyyy')
+  4          , TO_DATE('17-JUN-1993', 'dd-MON-yyyy')
+  5          , 'AD_ASST'
+  6          , 90
+  7          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES  (176
+  3          , TO_DATE('24-MAR-1998', 'dd-MON-yyyy')
+  4          , TO_DATE('31-DEC-1998', 'dd-MON-yyyy')
+  5          , 'SA_REP'
+  6          , 80
+  7          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES  (176
+  3          , TO_DATE('01-JAN-1999', 'dd-MON-yyyy')
+  4          , TO_DATE('31-DEC-1999', 'dd-MON-yyyy')
+  5          , 'SA_MAN'
+  6          , 80
+  7          );
+
+1 row created.
+
+SQL> 
+SQL> INSERT INTO job_history
+  2  VALUES  (200
+  3          , TO_DATE('01-JUL-1994', 'dd-MON-yyyy')
+  4          , TO_DATE('31-DEC-1998', 'dd-MON-yyyy')
+  5          , 'AC_ACCOUNT'
+  6          , 90
+  7          );
+
+1 row created.
+
+SQL> 
+SQL> REM enable integrity constraint to DEPARTMENTS
+SQL> 
+SQL> ALTER TABLE departments
+  2    ENABLE CONSTRAINT dept_mgr_fk;
+
+Table altered.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- create indexes
+SQL> --
+SQL> 
+SQL> @@hr_idx
+SQL> Rem
+SQL> Rem $Header: hr_idx.sql 29-aug-2002.11:44:09 hyeh Exp $
+SQL> Rem
+SQL> Rem hr_idx.sql
+SQL> Rem
+SQL> Rem Copyright (c) 2001, 2002, Oracle Corporation.  All rights reserved.
+SQL> Rem
+SQL> Rem    NAME
+SQL> Rem      hr_idx.sql - Create indexes for HR schema
+SQL> Rem
+SQL> Rem    DESCRIPTION
+SQL> Rem
+SQL> Rem
+SQL> Rem    NOTES
+SQL> Rem
+SQL> Rem
+SQL> Rem    CREATED by Nancy Greenberg - 06/01/00
+SQL> Rem    MODIFIED   (MM/DD/YY)
+SQL> Rem    hyeh        08/29/02 - hyeh_mv_comschema_to_rdbms
+SQL> Rem    ahunold     02/20/01 - New header
+SQL> Rem    vpatabal    03/02/01 - Removed DROP INDEX statements
+SQL> 
+SQL> SET FEEDBACK 1
+SQL> SET NUMWIDTH 10
+SQL> SET LINESIZE 80
+SQL> SET TRIMSPOOL ON
+SQL> SET TAB OFF
+SQL> SET PAGESIZE 100
+SQL> 
+SQL> CREATE INDEX emp_department_ix
+  2         ON employees (department_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX emp_job_ix
+  2         ON employees (job_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX emp_manager_ix
+  2         ON employees (manager_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX emp_name_ix
+  2         ON employees (last_name, first_name);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX dept_location_ix
+  2         ON departments (location_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX jhist_job_ix
+  2         ON job_history (job_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX jhist_employee_ix
+  2         ON job_history (employee_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX jhist_department_ix
+  2         ON job_history (department_id);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX loc_city_ix
+  2         ON locations (city);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX loc_state_province_ix
+  2         ON locations (state_province);
+
+Index created.
+
+SQL> 
+SQL> CREATE INDEX loc_country_ix
+  2         ON locations (country_id);
+
+Index created.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- create procedural objects
+SQL> --
+SQL> 
+SQL> @@hr_code
+SQL> Rem
+SQL> Rem $Header: hr_code.sql 29-aug-2002.11:44:01 hyeh Exp $
+SQL> Rem
+SQL> Rem hr_code.sql
+SQL> Rem
+SQL> Rem Copyright (c) 2001, 2002, Oracle Corporation.  All rights reserved.
+SQL> Rem
+SQL> Rem    NAME
+SQL> Rem      hr_code.sql - Create procedural objects for HR schema
+SQL> Rem
+SQL> Rem    DESCRIPTION
+SQL> Rem      Create a statement level trigger on EMPLOYEES
+SQL> Rem      to allow DML during business hours.
+SQL> Rem      Create a row level trigger on the EMPLOYEES table,
+SQL> Rem      after UPDATES on the department_id or job_id columns.
+SQL> Rem      Create a stored procedure to insert a row into the
+SQL> Rem      JOB_HISTORY table.  Have the above row level trigger
+SQL> Rem      row level trigger call this stored procedure.
+SQL> Rem
+SQL> Rem    NOTES
+SQL> Rem
+SQL> Rem    CREATED by Nancy Greenberg - 06/01/00
+SQL> Rem
+SQL> Rem    MODIFIED   (MM/DD/YY)
+SQL> Rem    hyeh        08/29/02 - hyeh_mv_comschema_to_rdbms
+SQL> Rem    ahunold     05/11/01 - disable
+SQL> Rem    ahunold     03/03/01 - HR simplification, REGIONS table
+SQL> Rem    ahunold     02/20/01 - Created
+SQL> Rem
+SQL> 
+SQL> SET FEEDBACK 1
+SQL> SET NUMWIDTH 10
+SQL> SET LINESIZE 80
+SQL> SET TRIMSPOOL ON
+SQL> SET TAB OFF
+SQL> SET PAGESIZE 100
+SQL> 
+SQL> REM **************************************************************************
+SQL> 
+SQL> REM procedure and statement trigger to allow dmls during business hours:
+SQL> CREATE OR REPLACE PROCEDURE secure_dml
+  2  IS
+  3  BEGIN
+  4    IF TO_CHAR (SYSDATE, 'HH24:MI') NOT BETWEEN '08:00' AND '18:00'
+  5          OR TO_CHAR (SYSDATE, 'DY') IN ('SAT', 'SUN') THEN
+  6          RAISE_APPLICATION_ERROR (-20205,
+  7                  'You may only make changes during normal office hours');
+  8    END IF;
+  9  END secure_dml;
+ 10  /
+
+Procedure created.
+
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER secure_employees
+  2    BEFORE INSERT OR UPDATE OR DELETE ON employees
+  3  BEGIN
+  4    secure_dml;
+  5  END secure_employees;
+  6  /
+
+Trigger created.
+
+SQL> 
+SQL> ALTER TRIGGER secure_employees DISABLE;
+
+Trigger altered.
+
+SQL> 
+SQL> REM **************************************************************************
+SQL> REM procedure to add a row to the JOB_HISTORY table and row trigger
+SQL> REM to call the procedure when data is updated in the job_id or
+SQL> REM department_id columns in the EMPLOYEES table:
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE add_job_history
+  2    (  p_emp_id          job_history.employee_id%type
+  3     , p_start_date      job_history.start_date%type
+  4     , p_end_date        job_history.end_date%type
+  5     , p_job_id          job_history.job_id%type
+  6     , p_department_id   job_history.department_id%type
+  7     )
+  8  IS
+  9  BEGIN
+ 10    INSERT INTO job_history (employee_id, start_date, end_date,
+ 11                             job_id, department_id)
+ 12      VALUES(p_emp_id, p_start_date, p_end_date, p_job_id, p_department_id);
+ 13  END add_job_history;
+ 14  /
+
+Procedure created.
+
+SQL> 
+SQL> CREATE OR REPLACE TRIGGER update_job_history
+  2    AFTER UPDATE OF job_id, department_id ON employees
+  3    FOR EACH ROW
+  4  BEGIN
+  5    add_job_history(:old.employee_id, :old.hire_date, sysdate,
+  6                    :old.job_id, :old.department_id);
+  7  END;
+  8  /
+
+Trigger created.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> 
+SQL> --
+SQL> -- add comments to tables and columns
+SQL> --
+SQL> 
+SQL> @@hr_comnt
+SQL> Rem
+SQL> Rem $Header: hr_comnt.sql 29-aug-2002.11:44:02 hyeh Exp $
+SQL> Rem
+SQL> Rem hr_comnt.sql
+SQL> Rem
+SQL> Rem Copyright (c) 2001, 2002, Oracle Corporation.  All rights reserved.
+SQL> Rem
+SQL> Rem    NAME
+SQL> Rem      hr_comnt.sql - Create comments for HR schema
+SQL> Rem
+SQL> Rem    DESCRIPTION
+SQL> Rem
+SQL> Rem
+SQL> Rem    CREATED by Nancy Greenberg, Nagavalli Pataballa - 06/01/00
+SQL> Rem    MODIFIED   (MM/DD/YY)
+SQL> Rem    hyeh        08/29/02 - hyeh_mv_comschema_to_rdbms
+SQL> Rem    ahunold     02/20/01 - New header
+SQL> Rem    vpatabal    03/02/01 - Added comments for Regions table
+SQL> Rem                         - Removed references to currency symbol
+SQL> Rem                           and currency name columns of countries
+SQL> Rem                         - Removed comments to DN column of
+SQL> Rem                           employees and departments.
+SQL> Rem                         - Removed references to sequences
+SQL> 
+SQL> SET FEEDBACK 1
+SQL> SET NUMWIDTH 10
+SQL> SET LINESIZE 80
+SQL> SET TRIMSPOOL ON
+SQL> SET TAB OFF
+SQL> SET PAGESIZE 100
+SQL> 
+SQL> COMMENT ON TABLE regions
+  2  IS 'Regions table that contains region numbers and names. Contains 4 rows; references with the Countries table.'
+  3  
+SQL> COMMENT ON COLUMN regions.region_id
+  2  IS 'Primary key of regions table.'
+  3  
+SQL> COMMENT ON COLUMN regions.region_name
+  2  IS 'Names of regions. Locations are in the countries of these regions.'
+  3  
+SQL> COMMENT ON TABLE locations
+  2  IS 'Locations table that contains specific address of a specific office,
+  3  warehouse, and/or production site of a company. Does not store addresses /
+  4  locations of customers. Contains 23 rows; references with the
+  5  departments and countries tables. ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN locations.location_id
+  2  IS 'Primary key of locations table';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN locations.street_address
+  2  IS 'Street address of an office, warehouse, or production site of a company.
+  3  Contains building number and street name';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN locations.postal_code
+  2  IS 'Postal code of the location of an office, warehouse, or production site
+  3  of a company. ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN locations.city
+  2  IS 'A not null column that shows city where an office, warehouse, or
+  3  production site of a company is located. ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN locations.state_province
+  2  IS 'State or Province where an office, warehouse, or production site of a
+  3  company is located.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN locations.country_id
+  2  IS 'Country where an office, warehouse, or production site of a company is
+  3  located. Foreign key to country_id column of the countries table.';
+
+Comment created.
+
+SQL> 
+SQL> 
+SQL> REM *********************************************
+SQL> 
+SQL> COMMENT ON TABLE departments
+  2  IS 'Departments table that shows details of departments where employees
+  3  work. Contains 27 rows; references with locations, employees, and job_history tables.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN departments.department_id
+  2  IS 'Primary key column of departments table.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN departments.department_name
+  2  IS 'A not null column that shows name of a department. Administration,
+  3  Marketing, Purchasing, Human Resources, Shipping, IT, Executive, Public
+  4  Relations, Sales, Finance, and Accounting. ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN departments.manager_id
+  2  IS 'Manager_id of a department. Foreign key to employee_id column of employees table. The manager_id column of the employee table references this column.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN departments.location_id
+  2  IS 'Location id where a department is located. Foreign key to location_id column of locations table.';
+
+Comment created.
+
+SQL> 
+SQL> 
+SQL> REM *********************************************
+SQL> 
+SQL> COMMENT ON TABLE job_history
+  2  IS 'Table that stores job history of the employees. If an employee
+  3  changes departments within the job or changes jobs within the department,
+  4  new rows get inserted into this table with old job information of the
+  5  employee. Contains a complex primary key: employee_id+start_date.
+  6  Contains 25 rows. References with jobs, employees, and departments tables.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN job_history.employee_id
+  2  IS 'A not null column in the complex primary key employee_id+start_date.
+  3  Foreign key to employee_id column of the employee table';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN job_history.start_date
+  2  IS 'A not null column in the complex primary key employee_id+start_date.
+  3  Must be less than the end_date of the job_history table. (enforced by
+  4  constraint jhist_date_interval)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN job_history.end_date
+  2  IS 'Last day of the employee in this job role. A not null column. Must be
+  3  greater than the start_date of the job_history table.
+  4  (enforced by constraint jhist_date_interval)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN job_history.job_id
+  2  IS 'Job role in which the employee worked in the past; foreign key to
+  3  job_id column in the jobs table. A not null column.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN job_history.department_id
+  2  IS 'Department id in which the employee worked in the past; foreign key to deparment_id column in the departments table';
+
+Comment created.
+
+SQL> 
+SQL> 
+SQL> REM *********************************************
+SQL> 
+SQL> COMMENT ON TABLE countries
+  2  IS 'country table. Contains 25 rows. References with locations table.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN countries.country_id
+  2  IS 'Primary key of countries table.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN countries.country_name
+  2  IS 'Country name';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN countries.region_id
+  2  IS 'Region ID for the country. Foreign key to region_id column in the departments table.';
+
+Comment created.
+
+SQL> 
+SQL> REM *********************************************
+SQL> 
+SQL> COMMENT ON TABLE jobs
+  2  IS 'jobs table with job titles and salary ranges. Contains 19 rows.
+  3  References with employees and job_history table.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN jobs.job_id
+  2  IS 'Primary key of jobs table.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN jobs.job_title
+  2  IS 'A not null column that shows job title, e.g. AD_VP, FI_ACCOUNTANT';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN jobs.min_salary
+  2  IS 'Minimum salary for a job title.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN jobs.max_salary
+  2  IS 'Maximum salary for a job title';
+
+Comment created.
+
+SQL> 
+SQL> REM *********************************************
+SQL> 
+SQL> COMMENT ON TABLE employees
+  2  IS 'employees table. Contains 107 rows. References with departments,
+  3  jobs, job_history tables. Contains a self reference.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.employee_id
+  2  IS 'Primary key of employees table.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.first_name
+  2  IS 'First name of the employee. A not null column.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.last_name
+  2  IS 'Last name of the employee. A not null column.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.email
+  2  IS 'Email id of the employee';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.phone_number
+  2  IS 'Phone number of the employee; includes country code and area code';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.hire_date
+  2  IS 'Date when the employee started on this job. A not null column.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.job_id
+  2  IS 'Current job of the employee; foreign key to job_id column of the
+  3  jobs table. A not null column.';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.salary
+  2  IS 'Monthly salary of the employee. Must be greater
+  3  than zero (enforced by constraint emp_salary_min)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.commission_pct
+  2  IS 'Commission percentage of the employee; Only employees in sales
+  3  department elgible for commission percentage';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.manager_id
+  2  IS 'Manager id of the employee; has same domain as manager_id in
+  3  departments table. Foreign key to employee_id column of employees table.
+  4  (useful for reflexive joins and CONNECT BY query)';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN employees.department_id
+  2  IS 'Department id where employee works; foreign key to department_id
+  3  column of the departments table';
+
+Comment created.
+
+SQL> 
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> --
+SQL> -- gather schema statistics
+SQL> --
+SQL> 
+SQL> @@hr_analz
+SQL> Rem
+SQL> Rem $Header: hr_analz.sql 12-oct-2002.10:24:59 ahunold Exp $
+SQL> Rem
+SQL> Rem hr_analz.sql
+SQL> Rem
+SQL> Rem Copyright (c) 2001, 2002, Oracle Corporation.  All rights reserved.
+SQL> Rem
+SQL> Rem    NAME
+SQL> Rem      hr_analz.sql - Gathering statistics for HR schema
+SQL> Rem
+SQL> Rem    DESCRIPTION
+SQL> Rem      Staistics are used by the cost based optimizer to
+SQL> Rem      choose the best physical access strategy
+SQL> Rem
+SQL> Rem    NOTES
+SQL> Rem      Results can be viewed in columns of DBA_TABLES,
+SQL> Rem      DBA_TAB_COLUMNS and such
+SQL> Rem
+SQL> Rem    MODIFIED   (MM/DD/YY)
+SQL> Rem    ahunold     10/12/02 - gather_schema_stats instead of gather_table_stats
+SQL> Rem    hyeh        08/29/02 - hyeh_mv_comschema_to_rdbms
+SQL> Rem    ahunold     03/12/01 - cleanup b3
+SQL> Rem    ahunold     03/07/01 - Merged ahunold_hr_analz
+SQL> Rem    ahunold     03/07/01 - Created
+SQL> Rem
+SQL> 
+SQL> SET FEEDBACK 1
+SQL> SET NUMWIDTH 10
+SQL> SET LINESIZE 80
+SQL> SET TRIMSPOOL ON
+SQL> SET TAB OFF
+SQL> SET PAGESIZE 100
+SQL> 
+SQL> EXECUTE dbms_stats.gather_schema_stats( -
+>         USER                            ,       -
+>         granularity => 'ALL'            ,       -
+>         cascade => TRUE                 ,       -
+>         block_sample => TRUE            );
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> spool off

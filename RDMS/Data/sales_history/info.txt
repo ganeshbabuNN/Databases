@@ -1,0 +1,11 @@
+Script Name	Description
+sh_analz.sql	Gathers statistics on the schema objects
+sh_comnt.sql	Creates comments for the objects in the schema
+sh_cons.sql0	Modifies constraints on objects in the schema
+sh_cre.sql	Creates the objects in the schema
+sh_cremv.sql	Creates materialized views and bitmapped indexes
+sh_drop.sql	Drops the SH schema and all its objects
+sh_idx.sql	Creates indexes on tables in the schema
+sh_main.sql	Main script for the SH schema; calls other scripts
+olp_v3.sql	Creates dimensions and hierarchies used by the OLAP server
+sh_olp_d.sql	Drops the objects used by the OLAP server
