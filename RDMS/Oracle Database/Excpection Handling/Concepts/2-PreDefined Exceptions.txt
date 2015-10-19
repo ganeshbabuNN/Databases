@@ -1,0 +1,95 @@
+BUILT-IN EXCEPTIONS
+====================
+-- Most of the built-in exception are shipped from the Oracle
+-- we see most of them are the named exception like value_error,no_data_found..etc
+
+-- Name exception are something which can Read Properly. Most of the exception have the error code.
+
+bad_abc5_loop.sql
+
+CREATE OR REPLACE PROCEDURE bad_abc
+AS
+  v_what NUMBER;
+BEGIN
+
+  FOR i IN 1..5
+  LOOP
+    BEGIN
+      v_what := 'abc';
+    EXCEPTION
+      WHEN VALUE_ERROR
+      THEN
+        v_what := 123;
+    END;
+
+    dbms_output.put_line('i= ' || i || ' ' || v_what);
+
+  END LOOP;  
+
+  dbms_output.put_line('Finished');
+END;
+/
+---now commit the exception block and check the error code
+
+BEGIN
+  bad_abc;
+END;
+/
+
+
+---- You can handled the Exception using Exception Code.
+bad_abc6_builtinexception.sql
+CREATE OR REPLACE PROCEDURE bad_abc
+AS
+  v_what NUMBER;
+BEGIN
+  BEGIN
+    v_what := 'abc';
+  EXCEPTION
+    WHEN OTHERS
+    THEN
+      IF SQLCODE = -06502 
+      THEN
+        v_what := 123;
+      ELSE
+        RAISE;
+      END IF;
+  END;
+  
+  dbms_output.put_line(v_what);
+END;
+/
+
+Getting the List of Built-In Exceptions
+=======================================
+
+-sqlerrm which gives the list of exception 
+
+
+list_all_builtin_exceptions.sql
+DECLARE
+  i NUMBER := -99999;
+  v_errm VARCHAR2(2001);
+BEGIN
+  LOOP
+    EXIT WHEN i >= 2;    
+    v_errm := sqlerrm(i);
+    IF v_errm NOT LIKE '%: Message % not found;%'
+      AND
+      v_errm NOT LIKE '%: non-ORACLE exception%'
+    THEN
+      dbms_output.put_line(v_errm);
+    END IF;      
+    i := i + 1;
+  END LOOP;  
+END;
+/
+
+Getting the list of Named Exceptions
+====================================
+list_standard_excp.sql
+SELECT text
+FROM all_source
+WHERE name = 'STANDARD'
+  AND upper(text) like '%EXCEPTION%';
+
