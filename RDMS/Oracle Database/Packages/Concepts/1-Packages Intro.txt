@@ -1,0 +1,301 @@
+Packages
+========
+
+-we have seen how to create the standalone procedures, we have to use the functions and procedures content of packages
+-A package is sort of the libraries, its a logical related program units of other PLSQL constructs such as variables and cursors
+-There are many reason why use packages instead of using standalone procedures,functions
+-there are other reasons also like performance issues , where the packages is loaded once and every uses it whereas the standalone procedures ,functions loads every time when they call modularity ,application design 
+--if you thinking how to group logical related constructs then always put more time into thought of modularity what can be re-used like that also like information hiding i,e ablitity to separate the public declarations from backend code which works
+
+BASIC PACKAGE SPECIFICATION
+============================
+
+--its basically looks like any other block structures programming unit that we have been looking at
+
+mypackage_spec.sql
+create or replace
+PACKAGE myPackage
+AS
+
+  PROCEDURE abc;
+  
+END;
+
+--the whole purpose of this specification is to provide the public definiations , so we can think the package spec is a contract that anyone call into the code/block.
+--the specifications is here set of procedures ,functions and data structures,that you can call to happen certains things to happen in the program
+--basically spec is all about the informations hiding and encapsulations
+--By providing the public specification , you can provide the stable interface , most of the features changes will be body of the package where the real code.
+--- in our previous example, we have the following scenarios in SQL in PLSQL session 
+1)emp_insert_rec.sql
+2)emp_insert_params_rec.sql
+3)emp_update_params_constants.sql
+4)emp_delete.sql
+--the above all are logical related where logical related working on the employees tables, this may be the ideal solutions of the packages or ideal program for package solutions
+--Now let us combine all the above procedures into a packages called the employees_api
+
+CREATE or REPLACE PACKAGE employee_api
+as
+---
+--
+END;
+---Now combine all the declarations into the package
+employee_api_spec1.sql
+
+CREATE or REPLACE PACKAGE employee_api
+as
+
+PROCEDURE emp_insert(
+  p_employees_rec IN EMPLOYEES%ROWTYPE );
+
+PROCEDURE emp_insert(
+  p_employee_id IN employees.employee_id%TYPE,
+  p_first_name IN employees.first_name%TYPE,
+  p_last_name IN employees.last_name%TYPE,
+  p_email IN employees.email%TYPE,
+  p_phone_number IN employees.phone_number%TYPE,
+  p_hire_date IN employees.hire_date%TYPE,
+  p_job_id IN employees.job_id%TYPE,
+  p_salary IN employees.salary%TYPE,
+  p_commission_pct IN employees.commission_pct%TYPE,
+  p_manager_id IN employees.manager_id%TYPE,
+  p_department_id IN employees.department_id%TYPE
+  );
+
+PROCEDURE emp_update(
+  p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+  p_first_name IN employees.first_name%TYPE DEFAULT '*',
+  p_last_name IN employees.last_name%TYPE DEFAULT '*',
+  p_email IN employees.email%TYPE DEFAULT '*',
+  p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+  p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+  p_job_id IN employees.job_id%TYPE DEFAULT '*',
+  p_salary IN employees.salary%TYPE DEFAULT -1,
+  p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+  p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+  p_department_id IN employees.department_id%TYPE DEFAULT -1
+  );
+
+PROCEDURE emp_delete(
+  p_employee_id IN employees.employee_id%TYPE );
+
+END;
+
+--There is a concept call package overloading where it carries the same proc/function name which different signatures or parameters. this will be discussed in the upcoming chapters
+
+PACKAGE BODY
+============
+
+
+--if package spec is a public contracts where it can be read where the body cannot be read, where body is the actual implementations of the spec
+-- For creating the package body 
+*SQL Developer --> 
+1)Navigate to the object explorer
+2)Right click on the API which you are create i,e employee_api(in this example)
+3)Click on "create Body" on the Package spec  which will create a stub on the spec, which create the null block carried with the procedures definiations with the null block.
+4) you will observer a name called XXXX_BODY with the suffix create on the sub package spec.
+5) click on the compile options and check the spec with the body is compiled properly. this ensure you have a stable package.
+
+CREATE or REPLACE PACKAGE employee_api
+as
+
+PROCEDURE emp_insert(
+  p_employees_rec IN EMPLOYEES%ROWTYPE ) AS
+BEGIN
+  ----- implemenations code
+NULL
+END emp_insert;
+
+---
+---
+---
+
+END;
+
+--- implement all the code inside the null block
+
+employee_api_body1.sql
+
+CREATE OR REPLACE PACKAGE BODY EMPLOYEE_API 
+AS
+  PROCEDURE emp_insert(
+    p_employees_rec IN EMPLOYEES%ROWTYPE ) AS
+  BEGIN
+    INSERT INTO employees VALUES p_employees_rec;
+
+  END emp_insert;
+
+  PROCEDURE emp_insert(
+    p_employee_id IN employees.employee_id%TYPE,
+    p_first_name IN employees.first_name%TYPE,
+    p_last_name IN employees.last_name%TYPE,
+    p_email IN employees.email%TYPE,
+    p_phone_number IN employees.phone_number%TYPE,
+    p_hire_date IN employees.hire_date%TYPE,
+    p_job_id IN employees.job_id%TYPE,
+    p_salary IN employees.salary%TYPE,
+    p_commission_pct IN employees.commission_pct%TYPE,
+    p_manager_id IN employees.manager_id%TYPE,
+    p_department_id IN employees.department_id%TYPE
+  ) AS
+    v_employees_rec employees%ROWTYPE;
+  BEGIN
+
+    v_employees_rec.employee_id := p_employee_id;
+    v_employees_rec.first_name := p_first_name;
+    v_employees_rec.last_name := p_last_name;
+    v_employees_rec.email := p_email;
+    v_employees_rec.phone_number := p_phone_number;
+    v_employees_rec.hire_date := p_hire_date;
+    v_employees_rec.job_id := p_job_id;
+    v_employees_rec.salary := p_salary;
+    v_employees_rec.commission_pct := p_commission_pct;
+    v_employees_rec.manager_id := p_manager_id;
+    v_employees_rec.department_id := p_department_id;
+  
+    INSERT INTO employees VALUES v_employees_rec;
+  END emp_insert;
+
+  PROCEDURE emp_update(
+    p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+    p_first_name IN employees.first_name%TYPE DEFAULT '*',
+    p_last_name IN employees.last_name%TYPE DEFAULT '*',
+    p_email IN employees.email%TYPE DEFAULT '*',
+    p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+    p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+    p_job_id IN employees.job_id%TYPE DEFAULT '*',
+    p_salary IN employees.salary%TYPE DEFAULT -1,
+    p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+    p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+    p_department_id IN employees.department_id%TYPE DEFAULT -1
+  )
+  AS
+    v_char_default CONSTANT VARCHAR2(1) := '*';
+    v_whole_number_default CONSTANT NUMBER := -1;
+    v_fractional_number_default CONSTANT NUMBER := -0.01;
+    v_date_default CONSTANT DATE := to_date('01-JAN-9999', 'DD-MON-YYYY');
+  BEGIN
+    UPDATE employees 
+       SET
+        first_name = CASE WHEN p_first_name = v_char_default THEN first_name ELSE p_first_name END,
+        last_name = CASE WHEN p_last_name = v_char_default THEN last_name ELSE p_last_name END,
+        email = CASE WHEN p_email = v_char_default THEN email ELSE p_email END,
+        phone_number = CASE WHEN p_phone_number = v_char_default THEN phone_number ELSE p_phone_number END,
+        hire_date = CASE WHEN p_hire_date = v_date_default
+	                    THEN hire_date ELSE p_hire_date END,
+        job_id = CASE WHEN p_job_id = v_char_default THEN job_id ELSE p_job_id END,
+        salary = CASE WHEN p_salary = -1 THEN salary ELSE p_salary END,
+        commission_pct = CASE WHEN p_commission_pct = -0.01 THEN commission_pct ELSE p_commission_pct END,
+        manager_id = CASE WHEN p_manager_id = -1 THEN manager_id ELSE p_manager_id END,
+        department_id = CASE WHEN p_department_id = -1 THEN department_id ELSE p_department_id END
+      WHERE employee_id = p_employee_id;
+  END emp_update;
+
+
+  PROCEDURE emp_delete(
+    p_employee_id IN employees.employee_id%TYPE ) AS
+  BEGIN
+    DELETE FROM employees 
+      WHERE employee_id = p_employee_id;
+  END emp_delete;
+
+END EMPLOYEE_API;
+/
+
+---Now let us test the api with the individual blocks in a AB ,but this will not work coz its carrying the same procedure name which is getting conflict but using the package, you call the procedure in the package with different parameters which is called as overloading.
+
+DECLARE
+  v_employees_rec employees%ROWTYPE;
+  
+BEGIN
+  
+  -- Initialize record
+  v_employees_rec.employee_id := 998;
+  v_employees_rec.first_name := 'Ganesh';
+  v_employees_rec.last_name := 'babu';
+  v_employees_rec.email := 'Ganeshc@yahoo.com';
+  v_employees_rec.phone_number := '937372833';
+  v_employees_rec.hire_date := sysdate;
+  v_employees_rec.job_id := 'IT_PROG';
+  v_employees_rec.salary := 50000;
+  v_employees_rec.commission_pct := 0;
+  v_employees_rec.manager_id := 100;
+  v_employees_rec.department_id := 60;
+  
+  -- Called record based API
+  emp_insert( v_employees_rec );
+  
+  -- Call parameterized api
+  emp_insert(
+   p_employee_id => 9991,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'ganeshc@yahoo.com',
+   p_phone_number => '937372833',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+  -- call update api
+  emp_update(
+   p_employee_id => 99911,
+   p_email => 'ganesh@testit.com' );
+  
+  -- call delete api
+  emp_delete(
+   p_employee_id => 999111 );
+  
+END;
+/
+
+
+
+
+--- Here to work just add the package name as a prefix on each procedures
+
+call_employee_api.sql
+DECLARE
+  v_employees_rec employees%ROWTYPE;
+BEGIN
+  
+  -- Initialize record
+  v_employees_rec.employee_id := 998;
+  v_employees_rec.first_name := 'Logan';
+  v_employees_rec.last_name := 'Cunningham';
+  v_employees_rec.email := 'loganc@databasewisdom.com';
+  v_employees_rec.phone_number := '813-555-5555';
+  v_employees_rec.hire_date := sysdate;
+  v_employees_rec.job_id := 'IT_PROG';
+  v_employees_rec.salary := 50000;
+  v_employees_rec.commission_pct := 0;
+  v_employees_rec.manager_id := 100;
+  v_employees_rec.department_id := 60;
+  
+  -- Called record based API
+  employee_api.emp_insert( 
+  ---
+  );
+  
+  -- Call parameterized api
+  employee_api.emp_insert(
+  ----
+  ---- 
+  );
+  
+  -- call update api
+  employee_api.emp_update(
+  ----
+  ----
+  );
+  
+  -- call delete api
+  employee_api.emp_delete(
+  ---
+  ---
+  );
+  
+END;
+/
+

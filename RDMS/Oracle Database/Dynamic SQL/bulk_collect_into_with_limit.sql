@@ -1,4 +1,3 @@
-
 DECLARE
 
   CURSOR c_emps IS
