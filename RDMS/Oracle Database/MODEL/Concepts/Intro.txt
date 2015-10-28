@@ -1,0 +1,133 @@
+MODEL
+=====
+
+-The model statement allows us to do calculations on a column in a row based on other rows in a result set.
+-its like a multi-dimensional array
+-its also called as SPREADSHEET QUERY
+
+Syntax
+------
+PRIOR CLAUSES OF sele¢t STATEMENT.
+model (MAIN)
+(REFERENCE MODELS)
+(Partition bffi (,COLS.))
+dimension bffi (,COLS.)
+measUres (,COLS.)
+(iGnore naff) | (KeeP naff)
+(rUles
+(UPsert | UPdate)
+(aUtomati¢ order | seQUential order)
+(iterate (N) (Until ,CONDITION.) )
+( ,CELL-ASSIGNMENT. = ,EXPRESSION. ...
+
+Explainations by example
+========================
+select product,location,amount,amt_cal
+from sales
+Spreadsheet
+partition by (product)
+dimension by (location,amount)
+measures(amount amt_cal) INGORE NAV
+rules(amt_cal['Pensacola',ANY] = amt_cal['Pensacola',currentv(amount)]*2)
+order by product,location;
+
+In brief
+-PARTITIONS BY clause partitions the sales table by one of the attributes i,e Product.
+-DIMENSION BY clause determines the variables that will be used compute results within each PARTITIONS i,e location,amount.
+-MEASURES involes RULES that affect the computations i,e calculations part
+-MEASURES and RULES use the DIMENSIONed columns such that the rows where the locations.
+
+Rules
+-----
+1. The Result Set.
+-Query
+ select product,location,amount,amt_cal from sales
+-Result set where of the data where carried over by PARTITIONS BY column first,then to DIMENSION  BY Columns, Then the MEASURES columns(s)
+
+2.PARTITION BY
+-A must for atleast one columns  unless there is one value
+-In the above example, PARTITION BY is by product and they are four product values like BLueBerries,Lumber,Cotton and Plastic
+-The sense of PARTITION BY is that 
+a)the final result set will be logically "Blocked off" by Partition column
+b)the RULES Clause may pertain to only one partition at a time.
+-Notice resultset will return the sorted by product i,e the column which you are partitioning
+
+3.DIMENSION BY
+-Comparions is Where PARTITION BY defines rows on which the output is blocked off, where as the DIMESION BY defines the columns on which spreadsheet calculations will be performed. 
+-if there is n items in the result set , (n-p-m) columns must be included in the DIMESNION BY clause, where p is number of columns partitioned and m is the number of columns measured.
+-in the above example, there are four columns in this example, so n=4,One column is used by PARTITIONED BY (p=1) and one column will be used for the SPREADSHEET( or MODEL) calculation( m=1), leaving (n-1-1) or two to Columns to DIMENSION BY.
+-its a good pratice to use DIMENSION BY columns second and third in the result set.
+
+4.MEASURES
+-It defines the calculations on the "spreadsheet" columns(s) per RULES
+-the DIMENSION clause defines which columns in the partition will be affected by the RULES. in this part of the statement
+
+	measures(amount amt_cal)
+
+-RULES clause to define the calculation that will take place based on the amt_cal. we are aliasing the column 'amount' with 'amt_cal'; the 'amt_cal' will be in the result set
+-the optional 'IGNORE NAV' transforms the null values as zeros for numerical calcluations as null strings for character type.
+
+In a Excel Sense
+----------------
+---the MEASURES clause identifies a "cell" that will be used in the RULES part of the clause that follows.
+---the sense of the "cell" in spreadsheet is a locations on the spreadsheet that is defined by calculations based on other "cells"  on the spreadsheet.
+
+5.RULES
+---The RULES will identify cell indexes(column values) based on DIMENSION clause for each  PARTITION.
+--- The syntax of the RULES clause is a before ( LHS) and after (RHS) calcluation based on the values of the DIMENSIONS Columns.
+
+       amt_cal[dimensions columns] = calculations
+
+--ANY is a wildcard designation, here we are setting amt_cal is a constant for all values of locations ,amount with this RULES clause.
+-Restriction of MEASURES/RULES to cover only one of the dimensions.
+-the rules will work on the each value of that dimensions of that parititions.
+
+CV(current Value)
+----------------
+--it is referring to the current value of that cell. this is basically used in RULES for the RHS evaluations.
+-In other way, The CV Function copies the values from the LHS and uses it in a calculations,we can use also the logical offsets from the current value
+-cv()-1 can be used to getting proceeding values
+--CV is mainly used for handling the offsets
+
+SYMBOLIC AND POSITIONAL REFERENCE
+---------------------------------
+using the any expression and condition in the LHS 
+
+
+AUTOMATIC ORDER vs SEQUENTIAL ORDER
+-----------------------------------
+-When Writing RULES , particularly if the RULES are more complex than this example,you may phrase RULES to be executed either way. it is neccesaary to known which rule ordering is to be applied when one calcluation depends on another.
+-this is well tell the SQL that you want to compute these values automatically. let SQL engine
+determine which need to be computed first.the phrase AUTOMATIC ORDER may be put in the RULES -if you actually wanted your RULES to be evaluated in the order in which they are written, then appropriate phrase would be SEQUENTIAL ORDER
+
+
+FOR STATEMENT
+==============
+
+syntax
+------
+FOR column-name IN (appropriate set)
+or
+FOR column-name IN (SELECT clause with a result set matching
+column type)
+Suppose
+
+---When using FOR Loop, control can be exercised as to whether or not one wants to see the rows for which the data does not apply by using the UPSERT or UPDATE
+
+UPSERT
+========
+-it means update and insert
+-When using FOR loop when you want to all all the records updated or not.
+-it is by default
+
+UPDATE
+------
+--When using FOR loop, only updated rows will be reflected 
+
+ITERATION
+---------
+-the model statement also allows us to use iterations to calculate values.Iteration calculations are often used for approximations.
+
+
+
+
