@@ -9,3 +9,6 @@ BEGIN
 END;
 /
 
+
+
+--call the procedures

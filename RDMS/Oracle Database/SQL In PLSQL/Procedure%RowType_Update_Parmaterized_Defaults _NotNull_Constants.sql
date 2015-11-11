@@ -1,5 +1,4 @@
-create or replace
-PROCEDURE emp_update(
+create or replace PROCEDURE emp_update(
   p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
   p_first_name IN employees.first_name%TYPE DEFAULT '*',
   p_last_name IN employees.last_name%TYPE DEFAULT '*',
@@ -13,7 +12,7 @@ PROCEDURE emp_update(
   p_department_id IN employees.department_id%TYPE DEFAULT -1
   )
 AS
-
+  ---Constants
   v_char_default CONSTANT VARCHAR2(1) := '*';
   v_whole_number_default CONSTANT NUMBER := -1;
   v_fractional_number_default CONSTANT NUMBER := -0.01;
@@ -36,3 +35,22 @@ BEGIN
 END;
 /
 
+--Name notations is based for making update
+
+BEGIN
+
+  emp_update(
+   p_employee_id => 999,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'gb@gbcom',
+   p_phone_number => '232',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+END;
+/

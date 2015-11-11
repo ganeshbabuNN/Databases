@@ -4,14 +4,9 @@ DECLARE
       FROM employees
       WHERE rownum < p_cnt;
 BEGIN
-
   FOR v_local_record IN c1(10)
   LOOP
-
     logit(v_local_record.email, 'D');
-
-  END LOOP;
-  
+  END LOOP;  
 END;
 /
-

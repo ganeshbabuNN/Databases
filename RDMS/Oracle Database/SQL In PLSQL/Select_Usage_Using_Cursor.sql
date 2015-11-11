@@ -1,8 +1,8 @@
 DECLARE
-  CURSOR c1 IS
+  CURSOR c1(p_employee_id IN employees.employee_id%TYPE ) IS
     SELECT first_name, last_name, email, phone_number, hire_date
       FROM employees
-      WHERE employee_id = 101;
+      WHERE employee_id = p_employee_id;
       
   v_local_record C1%ROWTYPE;
 BEGIN
@@ -12,4 +12,3 @@ BEGIN
 	WHERE employee_id = 101;
 END;
 /
-

@@ -25,3 +25,28 @@ BEGIN
     
 END;
 /
+
+--call procedures using Named Notations
+BEGIN
+
+  emp_insert(
+   p_employee_id => 231,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'gb@gbcom',
+   p_phone_number => '232',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+END;
+/
+
+--calling without the named notations which is not a good pratice
+BEGIN
+  emp_insert (646,'ganesh','babu','g@gacc.com','3432432',SYSDATE,'IT_PROG',50000,0,100,60);
+END;
+/

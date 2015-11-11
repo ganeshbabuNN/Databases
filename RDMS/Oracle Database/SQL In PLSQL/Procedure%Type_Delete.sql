@@ -1,5 +1,4 @@
-create or replace
-PROCEDURE emp_delete(
+create or replace PROCEDURE emp_delete(
   p_employee_id IN employees.employee_id%TYPE )
 AS
 BEGIN
@@ -8,3 +7,10 @@ BEGIN
 END;
 /
 
+--call the procedures
+BEGIN
+  emp_delete(
+   p_employee_id => 999
+  );
+END;
+/

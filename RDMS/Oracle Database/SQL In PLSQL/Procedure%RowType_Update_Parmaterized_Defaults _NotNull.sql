@@ -1,4 +1,4 @@
-create or replace
+create or replace 
 PROCEDURE emp_update(
   p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
   p_first_name IN employees.first_name%TYPE DEFAULT '*',
@@ -39,6 +39,23 @@ BEGIN
       department_id = CASE WHEN p_department_id = -1 THEN department_id ELSE p_department_id END
     WHERE employee_id = p_employee_id;
 END;
+
+--Name notations is based for making update
+
+BEGIN
+
+  emp_update(
+   p_employee_id => 999,
+   p_first_name => 'ganesh',
+   p_last_name => 'babu',
+   p_email => 'gb@gbcom',
+   p_phone_number => '232',
+   p_hire_date => sysdate,
+   p_job_id => 'IT_PROG',
+   p_salary => 50000,
+   p_commission_pct => 0,
+   p_manager_id => 100,
+   p_department_id => 60 );
+  
+END;
 /
-
-
