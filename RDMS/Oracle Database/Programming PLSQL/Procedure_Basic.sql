@@ -1,10 +1,8 @@
-create or replace
-PROCEDURE logit(
-  v_message IN VARCHAR2 DEFAULT 'Hello World!')
-AS
+CREATE OR REPLACE procedure logit
+AS 
+  v_message CONSTANT VARCHAR2(100) := 'Hello World!';
   v_date DATE := SYSDATE;
 BEGIN
-/*
   DBMS_OUTPUT.put_line(
         v_message ||
         ' The date and time is ' ||
@@ -13,11 +11,10 @@ BEGIN
         ' @ ' ||
         to_char(v_date, 'HH24:MI:SS')
         );
-*/
-
-  insert into log_table
-    (date_and_time, message)
-    VALUES (v_date, v_message);
-
 END;
 /
+
+---call the procedure
+begin
+  logit;
+end;

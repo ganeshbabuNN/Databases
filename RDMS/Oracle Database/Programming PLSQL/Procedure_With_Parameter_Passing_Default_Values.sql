@@ -1,5 +1,6 @@
-DECLARE
-  v_message CONSTANT VARCHAR2(100) := 'Hello World!';
+Create or replace PROCEDURE logit(
+  v_message IN VARCHAR2 DEFAULT 'Hello World!')
+AS
   v_date DATE := SYSDATE;
 BEGIN
   DBMS_OUTPUT.put_line(
@@ -13,3 +14,12 @@ BEGIN
 END;
 /
 
+--call
+begin
+  logit;
+end;
+
+--calling with passing some value
+begin
+  logit('D');
+end;
