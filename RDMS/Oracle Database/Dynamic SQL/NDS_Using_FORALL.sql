@@ -1,10 +1,10 @@
+---create the table
+drop table emp_name_nds;
 CREATE TABLE emp_names_nds (
   last_name VARCHAR2(25),
   first_name VARCHAR2(20) );
-  
-  and the code
-  
-  
+
+---calling the
 DECLARE
   v_CURSOR_string VARCHAR2(2000) := '
     SELECT last_name, first_name
@@ -25,7 +25,7 @@ BEGIN
     BULK COLLECT INTO v_local_emps
     USING 100;
 
-  FORALL i IN v_local_emps.FIRST..v_local_emps.LAST
+  FORALL i IN v_local_emps.FIRST..v_local_emps.LAST  --- FOR ALL
     EXECUTE IMMEDIATE
     'INSERT INTO emp_names_nds (last_name, first_name)
       VALUES (:lastname, :firstname)'
@@ -33,3 +33,8 @@ BEGIN
       
 END;
 /
+
+---check the table
+select * from emp_names_nds;
+  
+  

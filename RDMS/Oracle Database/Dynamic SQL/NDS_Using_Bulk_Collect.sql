@@ -1,15 +1,11 @@
 DECLARE
-
   v_CURSOR_string VARCHAR2(2000) := '
     SELECT *
       FROM employees
       WHERE rownum < :rowsproc';
-
   TYPE t_local_emps 
     IS TABLE OF employees%ROWTYPE;
-    
   v_local_emps t_local_emps;
-
 BEGIN
 
   EXECUTE IMMEDIATE v_cursor_string

@@ -3,19 +3,16 @@ DECLARE
     SELECT first_name, last_name, email, phone_number, hire_date
       FROM employees
       WHERE employee_id = :p_employee_id
-';
-      
+';      
   --v_cursor_id NUMBER;
-  v_cursor sys_refcursor;
-  
+  v_cursor sys_refcursor;  
   v_local_record employees%ROWTYPE;
   --v_rows_fetched NUMBER;
 BEGIN
-
   --v_cursor_id := DBMS_SQL.open_cursor;
-  OPEN v_cursor FOR v_cursor_string USING 101;
-  
+  OPEN v_cursor FOR v_cursor_string USING 101;  
   /*
+  the above one line code replaced with just using clasue
   DBMS_SQL.parse(v_cursor_id, v_cursor_string, DBMS_SQL.native );
   
   DBMS_SQL.define_column( v_cursor_id, 1, v_local_record.first_name, 20);
@@ -27,8 +24,7 @@ BEGIN
   DBMS_SQL.bind_variable( v_cursor_id, 'p_employee_id', 101);
   
   v_rows_fetched := DBMS_SQL.execute(v_cursor_id);
-	*/
-  
+	*/  
   LOOP 
     FETCH v_cursor INTO 
          v_local_record.first_name, 
@@ -36,8 +32,7 @@ BEGIN
          v_local_record.email, 
          v_local_record.phone_number, 
          v_local_record.hire_date;
-    EXIT WHEN v_cursor%NOTFOUND;
-         
+    EXIT WHEN v_cursor%NOTFOUND;         
     /*
     IF DBMS_SQL.FETCH_ROWS(v_cursor_id)> 0 THEN 
       DBMS_SQL.COLUMN_VALUE( v_cursor_id, 1, v_local_record.first_name);
