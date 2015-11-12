@@ -1,4 +1,4 @@
-/* 
+/*
 This compound triggers consists of all the DML level , where it may be insert or delete or update
 */
 
@@ -31,3 +31,23 @@ CREATE OR REPLACE TRIGGER compound_trigger
    END compound_trigger;
 /
 
+
+
+---create a view
+CREATE OR REPLACE VIEW hr_emps_by_dept
+AS
+  SELECT first_name, 
+         last_name, 
+         department_id, 
+         count(*) over (partition by department_id) dept_cnt
+    FROM employees;
+    
+select * from hr_emps_by_dept where last_name='Grant';
+
+---update
+
+UPDATE hr_emps_by_dept
+  SET department_id = 10
+  WHERE last_name='Grant';
+
+--this is will not work, on directly on view, we need to use instead Of Trigger
