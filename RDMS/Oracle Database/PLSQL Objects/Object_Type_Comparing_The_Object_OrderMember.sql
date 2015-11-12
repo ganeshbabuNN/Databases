@@ -1,3 +1,6 @@
+--ORDER Function can be used , since it passes one instance of one object to another instance object which gives the uniqness 
+--it always return 1(it means greater then the other) ,0(mean equal to other) and -1(less then the other)
+--object Type
 CREATE OR REPLACE TYPE emp_obj
 AS OBJECT 
 (
@@ -8,7 +11,7 @@ AS OBJECT
   hire_date DATE,
   salary NUMBER(8,2),
   
-  ORDER MEMBER FUNCTION comp( 
+  ORDER MEMBER FUNCTION comp(  --- Order Member
        p_emp_obj IN emp_obj )
     RETURN NUMBER,
     
@@ -25,13 +28,13 @@ AS OBJECT
     email IN VARCHAR2 )      
     RETURN SELF AS RESULT
 )  
-NOT FINAL 
+NOT FINAL ;
 /
 
-create or replace
-TYPE BODY emp_obj
-AS 
+--Object Type Body
 
+create or replace TYPE BODY emp_obj
+AS
   ORDER MEMBER FUNCTION comp( 
        p_emp_obj IN emp_obj )
     RETURN NUMBER
@@ -58,8 +61,7 @@ AS
   AS
   BEGIN
     RETURN SELF.salary * p_percent;
-  END;
-  
+  END;  
   MEMBER PROCEDURE print
   IS
   BEGIN
@@ -86,4 +88,38 @@ AS
     RETURN;
   END;
 END;
+/
+
+---Call the object
+DECLARE  
+  v_emp_obj emp_obj;
+  v_emp_obj2 emp_obj;
+BEGIN
+  v_emp_obj := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@yahoo.com',
+    phone_number => '9663895384',
+    hire_date => sysdate,
+    salary => 5000);	
+  v_emp_obj2 := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@yahoo.com',
+    phone_number => '32432',
+    hire_date => sysdate,
+    salary => 3000);
+  IF v_emp_obj = v_emp_obj2
+  THEN
+    DBMS_OUTPUT.PUT_LINE('equality');
+  ELSIF v_emp_obj < v_emp_obj2
+  THEN
+    DBMS_OUTPUT.PUT_LINE('less than');
+  ELSIF v_emp_obj > v_emp_obj2
+  THEN
+    DBMS_OUTPUT.PUT_LINE('greater than');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('else');
+  END IF;  
+END;  
 /

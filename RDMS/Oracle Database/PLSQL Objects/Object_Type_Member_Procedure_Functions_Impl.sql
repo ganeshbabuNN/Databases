@@ -1,3 +1,5 @@
+--member implementing procedures and functions
+--object Type
 CREATE OR REPLACE TYPE emp_obj
 AS OBJECT 
 (
@@ -10,6 +12,10 @@ AS OBJECT
   
   MEMBER PROCEDURE print,
   
+  MEMBER FUNCTION bonus(
+    p_percent IN NUMBER )
+    RETURN NUMBER,
+  
   CONSTRUCTOR FUNCTION emp_obj
     RETURN SELF AS RESULT,
     
@@ -17,13 +23,21 @@ AS OBJECT
     email IN VARCHAR2 )      
     RETURN SELF AS RESULT
 )  
-NOT FINAL 
+NOT FINAL;
 /
 
-create or replace
-TYPE BODY emp_obj
+--Object Type Body
+create or replace TYPE BODY emp_obj
 AS 
 
+  MEMBER FUNCTION bonus(
+    p_percent IN NUMBER )
+    RETURN NUMBER
+  AS
+  BEGIN
+    RETURN SELF.salary * p_percent;
+  END;
+  
   MEMBER PROCEDURE print
   IS
   BEGIN
@@ -45,9 +59,25 @@ AS
     RETURN SELF AS RESULT
   IS
   BEGIN
-    SELF.email := email;
-    
+    SELF.email := email;    
     RETURN;
   END;
 END;
+/
+
+--calling the object type
+DECLARE  
+  v_emp_obj emp_obj;
+BEGIN  
+  v_emp_obj := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'baba',
+    email => 'gbag@gmail.com',
+    phone_number => '13423423',
+    hire_date => sysdate,
+    salary => 3344);
+  v_emp_obj.print;    
+  dbms_output.put_line(
+    v_emp_obj.bonus(0.10));    
+END;  
 /

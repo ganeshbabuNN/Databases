@@ -1,3 +1,5 @@
+/*MAP MEMBER function is a simplest type of functions and map returns the scalar value when try to compare and the return compared result must be a valid sql data type like boolean, string ,number ...etc */
+--object Type
 CREATE OR REPLACE TYPE emp_obj
 AS OBJECT 
 (
@@ -27,8 +29,8 @@ AS OBJECT
 NOT FINAL 
 /
 
-create or replace
-TYPE BODY emp_obj
+--Object Type Body
+create or replace TYPE BODY emp_obj
 AS 
 
   MAP MEMBER FUNCTION comp
@@ -70,10 +72,37 @@ AS
     RETURN SELF AS RESULT
   IS
   BEGIN
-    SELF.email := email;
-    
+    SELF.email := email;    
     RETURN;
   END;
 END;
+/
 
+---Comparing the object which is not possible these way
+DECLARE  
+  v_emp_obj emp_obj;
+  v_emp_obj2 emp_obj;
+BEGIN
+  v_emp_obj := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@gmail.com',
+    phone_number => '9663895384',
+    hire_date => sysdate,
+    salary => 5000);
+	
+  v_emp_obj2 := emp_obj(
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@yahoo.com', -- change if required
+    phone_number => '9663895384',
+    hire_date => SYSDATE,
+    salary => 5000);
+  IF v_emp_obj = v_emp_obj2
+  THEN
+    DBMS_OUTPUT.PUT_LINE('equality');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('inequality');
+  END IF;  
+END; 
 /
