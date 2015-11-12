@@ -1,0 +1,119 @@
+/* finding the shortest path between two nodes */
+
+WHENEVER SQLERROR EXIT
+EXEC EXECUTE IMMEDIATE 'DROP TABLE PATH'; EXCEPTION WHEN OTHERS THEN NULL
+ 
+-- Create Table
+
+CREATE TABLE
+   PATH
+(
+   SRC VARCHAR2(3),
+   DST VARCHAR2(3),
+   DISTANCE NUMBER
+);
+ 
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'A', 'A', 0);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'A', 'B', 8);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'A', 'C', null);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'A', 'D', 40);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'B', 'A', 8);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'B', 'B', 0);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'B', 'C', 15);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'B', 'D', 50);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'C', 'A', null);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'C', 'B', 15);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'C', 'C', 0);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'C', 'D', 1);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'D', 'A', 40);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'D', 'B', 50);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'D', 'C', 1);
+INSERT INTO
+   PATH(SRC,DST,DISTANCE)
+VALUES
+   ( 'D', 'D', 0);
+ 
+COMMIT;
+
+
+CREATE FUNCTION EVAL(EXPR VARCHAR2) RETURN NUMBER IS 
+   RC NUMBER;
+BEGIN
+   EXECUTE IMMEDIATE 'BEGIN :1 := '||EXPR||'; END;' USING OUT RC;
+   RETURN RC;
+END;
+/
+
+SELECT
+   ROOTSRC,
+   DST,
+   MIN(N)
+FROM
+(
+   SELECT
+      CONNECT_BY_ROOT SRC ROOTSRC,
+      DST,
+      EVAL(SYS_CONNECT_BY_PATH(NVL(TO_CHAR(DISTANCE),'NULL'),'+')) N
+   FROM
+      PATH
+   CONNECT BY
+   NOCYCLE
+      PRIOR DST=SRC
+   )
+GROUP BY
+   ROOTSRC,
+   DST
+ORDER BY
+   ROOTSRC,
+   DST;
+
+--There are multiple ways to go from B to D, 
+--but the shortest is via C for a cost of 15+1=16. 
+--To evaluate the cost of the path, 
+--the SYS_CONNECT_BY_PATH returns a plus-separated string.
+--This string is evaluated in the function EVAL that uses dynamic SQL   
