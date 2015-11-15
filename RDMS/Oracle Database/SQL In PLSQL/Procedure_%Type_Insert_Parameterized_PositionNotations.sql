@@ -1,5 +1,4 @@
-create or replace
-PROCEDURE emp_insert(
+create or replace PROCEDURE emp_insert(
   p_employee_id IN employees.employee_id%TYPE,
   p_first_name IN employees.first_name%TYPE,
   p_last_name IN employees.last_name%TYPE,

@@ -1,0 +1,39 @@
+CREATE
+  TABLE LOG_TABLE
+  (
+    DATE_AND_TIME DATE,
+    MESSAGE VARCHAR2(100 BYTE)
+ ) ;
+ 
+create or replace PROCEDURE logit(
+  v_message IN VARCHAR2 DEFAULT 'Hello World!',
+  v_output_target IN VARCHAR2 DEFAULT 'T')
+AS
+  PRAGMA AUTONOMOUS_TRANSACTION;
+  v_date DATE := SYSDATE;
+BEGIN
+  CASE v_output_target
+  WHEN 'T'
+  THEN
+    insert into log_table
+      (date_and_time, message)
+      VALUES (v_date, v_message);
+  WHEN 'D'
+  THEN
+    DBMS_OUTPUT.put_line(
+        v_message ||
+        ' The date and time is ' ||
+        to_char(v_date, 'Day') || ' on ' ||
+        to_char(v_date, 'FMDD Month, YYYY') ||
+        ' @ ' ||
+        to_char(v_date, 'HH24:MI:SS')
+        );
+
+  ELSE
+    logit('ERROR v_output_target: ' ||
+          v_output_target ||
+          ' not found.', 'T' );
+  END CASE;
+  COMMIT;
+END;
+/
