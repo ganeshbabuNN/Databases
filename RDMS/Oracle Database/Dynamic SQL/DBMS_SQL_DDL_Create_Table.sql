@@ -1,5 +1,5 @@
 --- All the variables which are passed as a string are recongised as a binding variables
--Grant Create Table to the Users
+---Grant Create Table to the UsersGrant Create Table to the Users
 
 grant  CREATE TABLE  to hr;
 
