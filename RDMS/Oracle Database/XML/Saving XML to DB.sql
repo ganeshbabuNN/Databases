@@ -11,10 +11,26 @@ customerXML XMLTYPE);
 *Oracle provides XML Type as a built-in data type that allows storing XML Data.
 *by default XMLTYPE column stores the XML data as text in a CLOB[Character large Objects]
 
+--sysdba acess
+grant create any DIRECTORY to HR;
+
 --Create a directly which those xml file are allowed
 CREATE OR REPLACE DIRECTORY "CustXML" as '/MyData/Customer';
+or
+CREATE OR REPLACE DIRECTORY CustXML AS 'C:\emp_demo';
 *the user issuing this command need sufficient privileges to do so
 *CustXML is the directory Name.
+
+--Access
+grant all on directory "CustXML" to HR ;
+
+GRANT permission ON DIRECTORY alias TO {user | role | PUBLIC};
+
+permission is one of the following:
+
+READ for read-only access
+WRITE for write-only access
+ALL for read and write access
 
 -insert that XML file to the customer table
 INSERT INTO customer (receiptDate,customerXML) VALUES 
