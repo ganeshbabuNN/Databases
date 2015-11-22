@@ -1,0 +1,1 @@
+alter table employees drop column addnewno;

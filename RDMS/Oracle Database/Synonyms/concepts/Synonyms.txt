@@ -1,0 +1,47 @@
+intro
+=====
+-A Synonyms is an alternative name for objects such as tables, view, sequences, stored procedures and other database objects
+-the CREATE SYNONYM command is used to provide an alternate name for a table or a view that is present in the same schema or another schema
+-it can also be create for other synonyms, resulting in nested synonyms
+-A synonyms once created can be instead of the orginal qualified table or view name in SELECT ,INSERT,UPDATE, DELETE or LOCK TABLE Statements
+-it shares the same name space
+
+
+Creating the synonyms
+=====================
+
+syntax
+-------
+CREATE[OR REPLACE][PUBLIC] SYNONYMS [SCHEMA.]<SynonymName>
+FOR[SCHEMA.]<ObjectName>[@DBLINK];
+
+uses
+-OR REPLACE allowes recreating the synonyms
+-PUBLIC indicates the synomym is public synonym and is accessable to all users. A DBA can create the public synonyma
+-SCHMEA is the apporpriate schema. If this is ommitted, it creates on the users own schema
+-OBJECT_NAME for the objects where synonyms beginig created.
+*Table
+*Package
+*View
+*Materialized View
+*Sequence
+*Java Class Schema Object
+*Stored Procedures
+*User-Defined Object
+*Functions
+*Synonyms
+
+Dropping the Synonyms
+=====================
+
+syntax
+------
+DROP [PUBLIC] SYNONYMS [SCHEMA.] <synonyms>[FORCE];
+
+where
+-PUBLIC allows to drop a public synonms,
+-FORCE forces oracle to drop the synonyms even if it has dependencies.
+
+
+
+

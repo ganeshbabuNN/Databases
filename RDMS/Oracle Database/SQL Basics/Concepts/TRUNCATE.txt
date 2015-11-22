@@ -1,0 +1,12 @@
+TRUNCATE
+========
+-its similar to DELETE Statement with no WHERE clause, both of them remove all rows in the table, but TRUNCATE TABLE is faster and user fewer system resources than DELETE
+-this command removes rows one at time and records an entry in the transaction log for each delete row.This TRUNCATE TABLE removes the data by de-allocating the data pages used to store the table data and only the page de-allocations are recorded in the transaction log.
+-TRUNCATE TABLE Removes all rows from a table,but the table structure and its columns,constraints,indexes and so on remain 
+intact.
+
+syntax
+------
+TRUNCATE TABLE <TableName>;
+
+

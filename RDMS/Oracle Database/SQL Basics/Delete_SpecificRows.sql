@@ -1,0 +1,1 @@
+delete bankmaster where accountno=1;

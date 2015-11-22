@@ -1,0 +1,26 @@
+Destorying the tables
+=====================
+
+-to remove that table from the database
+-it removes a table definintion and all the data it holds along with indexes,triggers,constraints and permission spec for that able.
+-Any view or stored procedures that reference the dropped table must be explicilty dropped by using the DROP VIEW or DROP Procedure statmenent
+
+syntax
+------
+
+DROP TABLE <TableName>;
+
+-if the table has been dropped all records held within it are lost and cannot be recovered.
+-it cannot be used to drop a table referenced by a FOREIGN KEY constraint.the referecing FOREIGN KEY Constraints or the referencing table must first be dropped
+
+Destorying the View
+=====================
+
+DROP VIEW <ViewName>;
+
+Destorying the Procedures
+=====================
+
+DROP PROCEDURES <procedureName>;
+
+

@@ -1,0 +1,80 @@
+Altering the Table Strucutres
+=============================
+
+-the ALTER TABLE Comand is used to modify the structure of an existing table.
+-scenarios
+1)Adding or Deleting columns
+2)Creating or destroying indexes
+3)Changing the dataType of existing columns
+4)Renaming columns and tables
+
+-Uses
+1)Spawns a temporary copy of the orginal table
+2)Alters the copy of the table
+3)deletes the orginal table
+4)renames the new tables
+
+-to use the ALTER TABLE Command , the ALTER INSERT and CREATE privileges for the table are required.
+
+Adding a new column to existing tables
+======================================
+
+Syntax
+------
+ALTER TABLE <TableName>
+	ADD (<NewColumnName> <DataType> (<Size>),
+	     NewColumnName><DataType>(<Size>)..);
+
+Dropping a column form from an existing table
+==============================================
+
+Syntax
+------
+ALTER TABLE <TableName> DROP COLUMN <ColumnName>;
+
+
+logically dropping a column from an existing table
+==================================================
+-Usually in product db, table columns are not deleted physically. they are always marked as UNUSED. marking a table column as unusedin called logical Delete.
+-physically removing a column can be very tie consuming for extermely larget tables. Hence a logical delete can be a good choice.
+
+syntax
+------
+ALTER TABLE <TableName> SET UNUSED (<ColumnName>);
+ALTER TABLE <TableName> SET UNUSED (<ColumnName1>,<ColumnName2>,<ColumnName3>,<ColumnName2>);
+
+
+Modifying Existing COlumns of an existing table
+================================================
+
+Syntax
+------
+ALTER TABLE <TableName>
+	MODIFY (<ColumnName> <NewDataType>(<NewSize>));
+
+Renaming tables 
+===============
+
+sytnax
+------
+ALTER TABLE <TableName> RENAME TO <NewTableName>;
+
+
+Renaming tables using RENAME Command
+====================================
+-tables can also be renamed using the Rename command
+-it carries out the rename operations atomically. this means that no other thread can access any of the tables while the rename process is running
+
+sytnax
+------
+
+RENAME <TableName> to <newTableName>;
+
+Renaming columns
+================
+
+syntax
+------
+ALTER TABLE <TableName>
+	RENAME COLUMN <Oldcolumnname> to <newcolumnName>;
+

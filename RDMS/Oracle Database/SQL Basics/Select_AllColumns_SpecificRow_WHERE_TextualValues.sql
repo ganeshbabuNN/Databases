@@ -1,0 +1,1 @@
+select * from bankmaster where firstname ='Ganesh';
