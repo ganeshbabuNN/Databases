@@ -2,9 +2,11 @@ SQL
 ---
 
 SQL Basics
+	-Synonyms
 SET Operator
+SQL Operator
+	Psuedo-Columns
 External Tables
-Synonyms
 SubQuery
 Analytical Functions
 XML

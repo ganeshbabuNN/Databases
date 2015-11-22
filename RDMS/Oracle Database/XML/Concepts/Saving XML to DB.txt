@@ -1,0 +1,61 @@
+--Ofen data is received in XML format
+--the supplier need to vie and understand the order details to deliver the ordered product to the respective customers
+-to Query and process such data , oracle allows storing it as a colum value in the database table.
+
+
+--create the table
+CREATE TABLE customers(
+receiptDate DATE,
+customerXML XMLTYPE);
+
+/*
+Oracle provides XML Type as a built-in data type that allows storing XML Data.
+by default XMLTYPE column stores the XML data as text in a CLOB[Character large Objects]
+*/
+
+--get the privilage for creating the directory from dba
+grant CREATE ANY DIRECTORY to HR;
+
+--Create a directly which those xml file are allowed
+CREATE OR REPLACE DIRECTORY "CustXML" as '/MyData/Customer';
+*the user issuing this command need sufficient privileges to do so
+*CustXML is the directory Name.
+
+--customers.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<customers>
+	<customer cid="C-101" status="Active">
+		<cname>Ganesh</cname>
+		<email>g@j.com</email>
+		<phone>111</phone>
+		<city>Blore</city>
+	</customer>
+	<customer cid="C-102" status="Active">
+		<cname>Vedha</cname>
+		<email>Ved@j.com</email>
+		<phone>3243</phone>
+		<city>Blore</city>
+	</customer>
+	<customer cid="C-103" status="InActive">
+		<cname>Baba</cname>
+		<email>baba@j.com</email>
+		<phone>6756</phone>
+		<city>BBBB</city>
+	</customer>
+</customers>
+
+--put the customers.xml into the mydata/customer folder.
+
+--insert that XML file to the customer table
+INSERT INTO customers (receiptDate,customerXML) VALUES 
+(SYSDATE,XMLType(BFILENAME('CustXML','customers.xml'),NLS_CHARSET_ID('ÁL32UTF8')));
+
+/*
+-XMLType() accepts two parameter 
+-first parameter pointer to an external file specified using BFILE 
+-second paramter is the character set of the XML test in the external file.
+-the character set specified is AL32UTF8,which is standard UTF-8 encoding.
+- when insert command is issues, oracle reads the XML file content and stores IN DB as CLOB text.
+*/
+
