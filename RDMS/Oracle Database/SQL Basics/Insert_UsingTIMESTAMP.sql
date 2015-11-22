@@ -21,3 +21,5 @@ TimeStamp '2007-01-23 05:45:25.45');
 
 
 select * from EmployeeMaster;
+
+drop table EmployeeMaster;

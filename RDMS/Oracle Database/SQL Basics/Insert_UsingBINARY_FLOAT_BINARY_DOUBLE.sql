@@ -9,3 +9,7 @@ insert into bankbook(bookno,accountno,bookdate,opbal,clbal)
 values (1,'GB100','03-jan-2008',232.2f,234.3d);
 insert into bankbook(bookno,accountno,bookdate,opbal,clbal)
 values (3,'GB103','08-jan-2008',433.2f,775.32323432d);
+
+select * from bankbook;
+
+drop table bankbook;

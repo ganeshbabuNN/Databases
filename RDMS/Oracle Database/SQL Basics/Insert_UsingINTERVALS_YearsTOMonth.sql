@@ -9,3 +9,5 @@ insert into bookrentals(rentno,bookname,memberno,rentdate,duration)
 values(3,'Ganesh',1,'01-JAN-2007',INTERVAL '1-3'YEAR TO MONTH); -- One year  3 months
 
 select * from bookrentals;
+
+drop table bookrentals;
