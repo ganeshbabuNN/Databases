@@ -1,0 +1,64 @@
+JOINS
+=====
+
+-A JOIN is an SQL query that combines records from two or more tables. Oracle performs a join whenever multiple tables appears in the FROM clause
+-it specified how to relate multiple tables in the SQL Query
+-When data need to be retrieved from more then one table, in that situations JOINS are used.
+-Mostly JOIN key is the primary key of one table and a foreign key in another table.
+-as long as the column are matched, the join can be performed
+
+TYPES OF JOINS
+--------------
+
+
+Syntax
+=======
+
+ANSI Style
+----------
+
+
+
+Theta Style
+-----------
+
+
+
+1)Inner join
+------------
+
+
+2)Outer Join
+-----------
+
+
+
+3)Cross Join
+------------
+
+
+Cartesian Product
+-----------------
+
+
+4)Self Join
+-----------
+
+
+
+
+Non-Equi Joins
+=============
+- it uses an operator other than the equality operator [=] in the join.
+
+some of the operators are
+-Not-Equal [<>]
+-Less than [<]
+-Greater Than [>]
+-Less than or equal to [<=]
+-Greate then or equal to [>=]
+-LIKE
+-IN
+-BETWEEN
+
+-Non-Equi join are rarely used
