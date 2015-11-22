@@ -1,9 +1,9 @@
---be default privilegs is required by dba
+--privilages if required
 grant DROP public SYNONYM to <UserName>;
 
 --creating
 CREATE or replace public SYNONYM employeedetails
 FOR employees;
 
---deleting the public synonym
+--droping the public synonym on done by DBA
 Drop public synonym employeedetails;

@@ -42,6 +42,7 @@ where
 -PUBLIC allows to drop a public synonms,
 -FORCE forces oracle to drop the synonyms even if it has dependencies.
 
+-only dba can drop the public synonyms
 
 
 
