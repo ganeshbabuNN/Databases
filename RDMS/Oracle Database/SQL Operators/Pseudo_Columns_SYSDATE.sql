@@ -1,0 +1,1 @@
+select sysdate,first_name from employees;
