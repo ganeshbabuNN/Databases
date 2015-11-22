@@ -1,0 +1,102 @@
+SQL
+---
+
+SQL Basics
+SET Operator
+External Tables
+Synonyms
+SubQuery
+Analytical Functions
+XML
+JOins
+Hierachies Queries
+MODEL
+PIVOT
+
+
+PLSQL
+-----
+Overview PLSQL
+	Diff between SQL and PLSQL
+	Oracle SQL Developer
+	Block structure
+	Function
+	Procedures
+	Packages
+	Data Types
+	Complex Types
+	Variable
+	Constants
+	Parmeter
+	FlowControl
+	Error Exception
+	Comments
+Data Types in Details
+	Strings
+	Numbers
+	Date and Time
+	Boolean 
+	Complex Data Structure
+	  Record type
+	  ROW TYPE
+	  TYPE
+	ASSOCIATE ARRAY
+	NESTED TABLE
+	VARRAY
+	ARRAY OF records
+Programming PL/SQL
+	Procedures
+	Autonomous Transaction
+Flow Control
+	IF Statment
+	CASE Statement
+	LOOPS SIMPLE
+	LOOPS EXIT
+	LOOPS CONTINUE
+	LOOPS WHILE
+	FOR LOOP
+	FOR LOOP REVERSE
+	FOR LOOP SKIP
+Functions
+	Functions
+	Built-In Functions
+Exceptions
+	Expection
+	Pre-Defined Exception
+	Raising Exception
+	User Defined Exception
+SQL in PLSQL
+	Insert/Delete/Update in PLSQL
+	Cursor
+	  Types of Cursor
+	  Cursor Attributes
+	  CursorLoops
+	Bulk Collect
+Packages
+	Package Specification
+	Package bodies
+	PUblic and private packages
+	Package initialization
+	Foward declarations
+	Package cursors
+	UTL File
+	Overloading
+Triggers
+	DML Triggers
+	Compound Triggers
+	InsteadOfTriggers
+	Database Triggers
+PLSQL Objects
+	Object Types
+	Constructor
+	Members
+	Equality
+	Inheritance
+Dynamic SQL
+	Dynamic SQL
+	DMBS_SQL package
+	NDS
+
+
+
+
