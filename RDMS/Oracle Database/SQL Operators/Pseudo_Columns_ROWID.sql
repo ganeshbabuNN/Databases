@@ -1,4 +1,4 @@
-select rowid,first_name from employees;
+select ROWID,first_name from employees;
 
 /* output
 AAAR5kAAFAAAADNABK	Ellen

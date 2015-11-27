@@ -1,4 +1,6 @@
-select * from orders where orderamount is NAN or OrderAmount is infinite;
+select * from orders 
+where orderamount is NAN     ----
+or OrderAmount is infinite;  ---
 
    ORDERNO ORDERDATE CUSTOMERNO ORDERAMOUNT ORDERSTATUS          ORDERCODE          
 ---------- --------- ---------- ----------- -------------------- --------------------

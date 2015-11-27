@@ -1,1 +1,1 @@
-select uid from dual;
+select UID from dual;

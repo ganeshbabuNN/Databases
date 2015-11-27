@@ -1,1 +1,1 @@
-select user,first_name from employees;
+select USER,first_name from employees;

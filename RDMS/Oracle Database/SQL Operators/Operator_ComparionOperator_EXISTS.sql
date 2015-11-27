@@ -3,7 +3,7 @@ SELECT employee_id,
   last_name,
   department_id
 FROM employees
-WHERE EXISTS
+WHERE EXISTS           ---- EXISTS
   (SELECT *
   FROM departments
   WHERE employees.department_id=departments.department_id);

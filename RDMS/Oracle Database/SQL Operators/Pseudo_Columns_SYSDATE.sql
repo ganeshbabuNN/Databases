@@ -1,1 +1,1 @@
-select sysdate,first_name from employees;
+select SYSDATE,first_name from employees;

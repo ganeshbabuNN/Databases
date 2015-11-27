@@ -1,0 +1,3 @@
+--UNION  returns all distinct rwos from different queries
+--INTERSET returns all distinct rows returned by all queries indvidually. 
+--Minus returns all distinct rows returned by the first query , but not by second query

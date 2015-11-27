@@ -2,11 +2,64 @@ SQL
 ---
 
 SQL Basics
-	-Synonyms
-SET Operator
+	SQL DataTypes
+	Working with DB Tables
+	  Creating the Table-CREATE
+	  Creating the Temporary Tables
+	  Inserting Data into Tables-INSERT
+	    Using TimeStamp
+	    Using BINARY_FLOAT and BINARY_DOUBLE
+	    Using INTERVAL
+	    Multi-table insert statement-INSERT [ALL/FIRST]
+	    MERGING ROWS
+	  Viewing Data in the Tables-SELECT
+	  Creating Table form a table
+		Simple Table
+		Temporary Table
+		Another Table
+	  Copying all data from another table
+	  Deleting Data from Table -DELETE
+	  Truncating Data in Existing Tables-TRUNCATE
+	  Modifying Table Data-UPDATE
+	  Destroying Table Data-DROP
+	  TABLE INFORMATION
+	   Retreiving table avaiable in the schema
+	   Describing table structures
+	   Viewing table information
+	   Case Sensitivity
+	  ALTERING THE TABLE Structure-ALTER
+	  Grouping Data
+		GROUP BY
+		HAVING
+		ROLLUP
+		CUBE	  
 SQL Operator
-	Psuedo-Columns
+	Arithematic Operator
+	Logical Operator
+	Comparison Operator
+	Date Operator
+	LIKE Operator
+	NaN and infinite Operator
+	Operator percedance
+	Expression Operator
+		UNION
+		INTERSECT
+		MINUS	
+SET Operations
+	UNION
+	INTERSECT
+	MINUS
+	Other Clauses
+		IN
+		EXISTS
+		MULTI-COLUMN Queries
+		SELF-JOIN
+SQL Functions
+	Character/String Functions
+	Numeric Functions
+	Date Functions	
 External Tables
+Synonyms
 SubQuery
 Analytical Functions
 XML
