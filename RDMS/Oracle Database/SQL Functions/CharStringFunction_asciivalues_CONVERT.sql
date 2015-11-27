@@ -1,0 +1,1 @@
+select CONVERT('? ? ? ? ? A B C D E', 'US7ASCII', 'WE8ISO8859P1') from dual;

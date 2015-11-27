@@ -1,0 +1,1 @@
+select ASCII('a'),ASCII(1),ASCII(0), ASCII('z') from dual;

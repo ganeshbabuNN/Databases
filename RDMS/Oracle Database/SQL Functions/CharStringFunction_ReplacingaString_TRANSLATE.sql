@@ -1,0 +1,1 @@
+select TRANSLATE('1.Ganesh is the Oracle SQL Certified Professional 2','1','1') from dual;

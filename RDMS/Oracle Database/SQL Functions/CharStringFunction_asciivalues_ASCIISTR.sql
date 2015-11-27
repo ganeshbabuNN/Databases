@@ -1,0 +1,1 @@
+select ASCIISTR('å Ø Æ ÿ a c ') from dual;

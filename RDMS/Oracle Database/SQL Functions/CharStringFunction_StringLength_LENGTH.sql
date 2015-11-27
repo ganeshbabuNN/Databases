@@ -1,0 +1,1 @@
+select length('ganeshbabu') from dual;

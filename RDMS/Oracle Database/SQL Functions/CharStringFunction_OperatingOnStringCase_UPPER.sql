@@ -1,0 +1,1 @@
+select UPPER(first_name) from employees;

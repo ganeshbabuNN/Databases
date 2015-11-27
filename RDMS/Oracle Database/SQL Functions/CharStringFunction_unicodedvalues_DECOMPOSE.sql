@@ -1,0 +1,1 @@
+select DECOMPOSE('å Ø Æ ÿ a c') from dual;

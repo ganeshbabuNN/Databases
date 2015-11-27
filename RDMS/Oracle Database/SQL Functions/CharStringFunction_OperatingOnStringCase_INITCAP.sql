@@ -1,0 +1,1 @@
+select initcap(first_name) from employees;
