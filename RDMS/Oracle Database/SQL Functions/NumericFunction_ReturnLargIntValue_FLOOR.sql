@@ -1,0 +1,1 @@
+select FLOOR(36.65) "floor1", floor(45.15) "Floor2" from dual;

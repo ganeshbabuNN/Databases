@@ -1,0 +1,1 @@
+select greatest(8,21,84) "greatest1",greatest(53,21,56) "greatest2" from dual;

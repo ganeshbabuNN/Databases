@@ -1,0 +1,1 @@
+select TRUNC(125.815,1) "Trunc1",TRUNC(125.815,-2) "Trunc1"from dual;

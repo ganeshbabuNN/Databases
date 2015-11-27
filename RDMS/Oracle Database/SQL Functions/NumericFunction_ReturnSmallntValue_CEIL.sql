@@ -1,0 +1,1 @@
+select CEIL(36.22) "ciel1", CEIL(45.15) "ciel2" from dual;

@@ -1,0 +1,1 @@
+select sign(-36.45) "sign1", sign(45.15) "sign2" from dual;

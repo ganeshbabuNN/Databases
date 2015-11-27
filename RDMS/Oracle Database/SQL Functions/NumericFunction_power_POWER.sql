@@ -1,0 +1,1 @@
+select power(3,2) from dual;

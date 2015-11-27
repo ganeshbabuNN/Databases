@@ -1,0 +1,1 @@
+select exp(10) "exponent"from dual;

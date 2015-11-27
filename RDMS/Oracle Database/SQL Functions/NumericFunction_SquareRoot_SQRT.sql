@@ -1,0 +1,1 @@
+select SQRT(64) from dual;

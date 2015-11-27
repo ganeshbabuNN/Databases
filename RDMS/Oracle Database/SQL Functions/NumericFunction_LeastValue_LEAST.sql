@@ -1,0 +1,1 @@
+select LEAST(8,21,84) "leasttest1",LEAST(53,21,56) "leasttest2" from dual;

@@ -1,0 +1,1 @@
+select SYSTIMESTAMP from dual;

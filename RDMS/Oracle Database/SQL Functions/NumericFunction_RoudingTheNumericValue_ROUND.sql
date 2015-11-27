@@ -1,0 +1,1 @@
+select ROUND(20.14,1) "round" from DUAL;
