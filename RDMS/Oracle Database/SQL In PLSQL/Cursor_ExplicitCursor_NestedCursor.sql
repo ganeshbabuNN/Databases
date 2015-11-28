@@ -1,4 +1,4 @@
---storing department and employees information into one Table.
+--storing department and employees information into one Table -- CursorIntoCursors
 DECLARE
 		/* First cursor */
 			CURSOR curDepartments IS SELECT * FROM Departments;
