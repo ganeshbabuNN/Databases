@@ -1,0 +1,1 @@
+select isbn,price,b.getbookprice(10) from bestbooks b;

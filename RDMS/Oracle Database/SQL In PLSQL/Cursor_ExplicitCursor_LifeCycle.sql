@@ -1,4 +1,4 @@
---declaring
+--declaring a Explicit Cursor
 declare 
   cursor curEmployee is select employee_id,first_name,last_name from employees;
 begin

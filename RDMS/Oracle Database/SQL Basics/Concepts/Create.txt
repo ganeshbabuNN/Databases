@@ -10,8 +10,8 @@ Syntax
 ------
 
 CREATE TABLE <TableName>(
-<ColumnName> <DataType>(<Size>),
-<ColumnName> <DataType>(<Szie>),..
+<ColumnName> <DataType>(<Size> [Primary Key] [NOT NULL|NULL][Default]),
+<ColumnName> <DataType>(<Szie> [Primary Key] [NOT NULL|NULL][Default]),..
 );
 
 -Each column that is defined in a table must have data type

@@ -1,5 +1,4 @@
-Create or replace PROCEDURE logit(
-  v_message IN VARCHAR2 DEFAULT 'Hello World!')
+Create or replace PROCEDURE logit( v_message IN VARCHAR2 DEFAULT 'Hello World!')
 AS
   v_date DATE := SYSDATE;
 BEGIN
