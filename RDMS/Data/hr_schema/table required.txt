@@ -1,0 +1,49 @@
+create table employeemuster
+(
+employee_id number(10),
+muster_date date,
+attendence  varchar2(15),
+intime  timestamp(6),
+outtime timestamp(6)
+);
+
+
+drop table RandomNumbers;
+create table RandomNumbers(
+Randno number(10)
+)
+/
+
+CREATE TABLE employeeaccounts
+  (
+    employee_Id          NUMBER(10) NOT NULL ,
+    employee_name  VARCHAR2(25),
+    Account_open_date DATE,
+    account_type        CHAR(2),
+    current_Balance     NUMBER(12,2)
+);
+/
+insert into employeeaccounts values(101,'Ganesh','03-jun-13','SB',50000);
+insert into employeeaccounts values(102,'banu','08-aug-13','SB',80000);
+insert into employeeaccounts values(103,'vedha','12-jan-13','CA',60000);
+insert into employeeaccounts values(104,'kalyani','20-aug-13','SB',80000);
+
+
+drop table trig;
+CREATE TABLE trig
+( trigno NUMBER(10,8));
+
+insert into trig values(0);
+insert into trig values(1);
+insert into trig values(1.570796);
+insert into trig values(3.141592);
+insert into trig values(-1);
+insert into trig values(-1.570796);
+insert into trig values(-3.141592);
+
+
+drop table RandomNumbers
+drop table employeemuster;
+drop table trig;
+drop table employeeaccounts;
+
