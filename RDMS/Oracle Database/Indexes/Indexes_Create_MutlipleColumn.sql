@@ -1,0 +1,1 @@
+create index idx_employee_lookup on employees(employee_Id,last_name);

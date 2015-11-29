@@ -1,0 +1,1 @@
+alter index idx_noofchapter rebuild noreverse;

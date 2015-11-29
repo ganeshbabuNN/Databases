@@ -1,0 +1,1 @@
+alter index kcidx_first_name rebuild nocompress;

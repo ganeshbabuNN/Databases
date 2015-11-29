@@ -1,0 +1,1 @@
+Create bitmap index btidx_employees on employees(first_name,last_name);
