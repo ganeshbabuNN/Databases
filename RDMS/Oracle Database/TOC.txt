@@ -1,0 +1,210 @@
+SQL
+---
+SQL Basics
+	SQL DataTypes
+	Working with DB Tables
+	  Creating the Table-CREATE
+	  Creating the Temporary Tables
+	  Inserting Data into Tables-INSERT
+	    Using TimeStamp
+	    Using BINARY_FLOAT and BINARY_DOUBLE
+	    Using INTERVAL
+	    Multi-table insert statement-INSERT [ALL/FIRST]
+	    MERGING ROWS
+	  Viewing Data in the Tables-SELECT
+	  Creating Table form a table
+		Simple Table
+		Temporary Table
+		Another Table
+	  Copying all data from another table
+	  Deleting Data from Table -DELETE
+	  Truncating Data in Existing Tables-TRUNCATE
+	  Modifying Table Data-UPDATE
+	  Destroying Table Data-DROP
+	  TABLE INFORMATION
+	   Retreiving table avaiable in the schema
+	   Describing table structures
+	   Viewing table information
+	   Case Sensitivity
+	  ALTERING THE TABLE Structure-ALTER
+	  Grouping Data
+		GROUP BY
+		HAVING
+		ROLLUP
+		CUBE	  
+SQL Operator
+	Arithematic Operator
+	Logical Operator
+	Comparison Operator
+	Date Operator
+	LIKE Operator
+	NaN and infinite Operator
+	Operator percedance
+	Expression Operator
+		UNION
+		INTERSECT
+		MINUS	
+SET Operations
+	UNION
+	INTERSECT
+	MINUS
+	Other Clauses
+		IN
+		EXISTS
+		MULTI-COLUMN Queries
+		SELF-JOIN
+SQL Functions
+	Character/String Functions
+	Numeric Functions
+	Date Functions	
+Data Constraints
+	Data COnstraints Type
+		Column Level 
+		Table Level
+	Unique Constraints
+	Primary Key Constraints
+	Foreign Key Constraints
+	User Defined Constraints
+	Constraints on Date Integrity
+		NOT NULL
+		CHECK
+	Viewing Default Constraints
+	Default Constraints
+External Tables
+Synonyms
+SubQuery
+	WHERE CLAUSE
+	NESTED SUBQUERIES
+	FROM CLAUSE
+	HAVING CLAUSE
+	CORRELATED SUBQUERIES
+	MULTICOLUMNS
+	BETWEEN OPERATOR
+	CASE EXPRESSIONS
+	ORDER BY CLAUSE
+	UPDATE/DELETE STATEMENT
+Analytical Functions
+XML
+JOins
+Hierachies Queries
+MODEL
+PIVOT
+INDEXES
+	When indexes invoked
+	When indexes Do not work
+	Create index
+		Explicit Unique Indexes
+		Implicit Unique Indexes
+		Reverse Key Indexes
+		Bitmap Indexes
+		Function Based Index
+		Key Compressed Index
+	Dropping Indexes
+PLSQL
+-----
+Overview PLSQL
+	Diff between SQL and PLSQL
+	Oracle SQL Developer
+	Block structure
+	Function
+	Procedures
+	Packages
+	Data Types
+	Complex Types
+	Variable
+	Constants
+	Parmeter
+	FlowControl
+	Error Exception
+	Comments
+Data Types in Details
+	Strings
+	Numbers
+	Date and Time
+	Boolean 
+	Complex Data Structure
+	  Record type
+	  ROW TYPE
+	  TYPE
+	ASSOCIATE ARRAY
+	NESTED TABLE
+	VARRAY
+	ARRAY OF records
+Programming PL/SQL
+	Procedures
+		Syntax
+		Debugging the Procedures
+		getting information of procedures
+		Dropping the procedures
+	Autonomous Transaction
+Flow Control
+	IF Statment
+	CASE Statement
+	LOOPS SIMPLE
+	LOOPS EXIT
+	LOOPS CONTINUE
+	LOOPS WHILE
+	FOR LOOP
+	FOR LOOP REVERSE
+	FOR LOOP SKIP
+Functions
+	Syntax
+	Debugging the functions
+	Getting information of functions
+	Destroying functions
+	Built-In Functions
+Exceptions
+	Expection
+	Pre-Defined Exception
+	Raising Exception
+	User Defined Exception
+SQL in PLSQL
+	Insert/Delete/Update in PLSQL
+	Cursor
+	 Types of Cursor
+		Implicit Cursor
+		Explicit Cursor						
+	  Cursor Attributes
+		%ISOPEN
+		%FOUND
+		%NOT FOUND
+		%ROWCOUNT
+	  Cursor LOOP
+	  Cursor FOR LOOP
+	  Cursor WHILE LOOP
+	  Cursor InLINE CURSOR
+	  Parameterised Cursor
+	  Locking Cursor
+	  Update/Delete Cursor  
+	Bulk Collect
+Packages
+	Package Specification
+	Package bodies
+	PUblic and private packages
+	Package initialization
+	Foward declarations
+	Package cursors
+	UTL File
+	Overloading
+Triggers
+	DML Triggers
+	Compound Triggers
+	InsteadOfTriggers
+	Database Triggers
+PLSQL Objects
+	Database Objects
+		Creating the Object Tables
+		Describing the Object Tables
+		Columns Objects
+		Object Tables
+		Implementating Object Views
+		Creating View on Object Tables
+	Object Types
+	Constructor
+	Members
+	Equality
+	Inheritance
+Dynamic SQL
+	Dynamic SQL
+	DMBS_SQL package
+	NDS
