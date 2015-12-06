@@ -31,7 +31,9 @@ SQL Basics
 		GROUP BY
 		HAVING
 		ROLLUP
-		CUBE	  
+		CUBE
+		WITH
+		ORDER BY	  
 SQL Operator
 	Arithematic Operator
 	Logical Operator
@@ -100,6 +102,10 @@ INDEXES
 		Function Based Index
 		Key Compressed Index
 	Dropping Indexes
+SEQUENCES
+REGULAR SEQUENCES
+
+
 PLSQL
 -----
 Overview PLSQL
@@ -187,10 +193,19 @@ Packages
 	UTL File
 	Overloading
 Triggers
-	DML Triggers
-	Compound Triggers
-	InsteadOfTriggers
-	Database Triggers
+	Trigger Uses
+	Parts of Trigger
+	Type Of Trigger
+		Row Trigger
+		Statement Trigger
+		Timed Trigger
+	InsteadOfTrigger
+	Compound Trigger
+	DDL Trigger
+	SystemEventTrigger
+	Mutating Table Trigger
+	Corelation Names
+	Dropping Triggers
 PLSQL Objects
 	Database Objects
 		Creating the Object Tables

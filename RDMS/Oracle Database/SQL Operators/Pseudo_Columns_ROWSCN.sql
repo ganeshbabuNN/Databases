@@ -18,6 +18,6 @@ select scn_to_timestamp(ora_rowscn),name from ganesh;
 --insert one record
 insert into ganesh values('kalyani',2);
 
---now check the enter
+--now check the entry
 --dropping the table
 drop table ganesh;
