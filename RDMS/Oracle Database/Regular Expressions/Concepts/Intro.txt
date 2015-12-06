@@ -1,0 +1,195 @@
+Intro
+=====
+-Regular expression(RE) are around since the time of perl or UNIX shell scripting.
+-Editors such as vi on a Unix/Linux OS also has been providing regular expression and pattern matching-
+-RE is a template against which string are compared to determine if the strings fits the template.
+-it can be used both in SQL and PLSQL, it allows a powerful search and manipulation operations on the available data.
+-RE in oracle comply with the POSIX(Portable operating system for UNIX, controlled by the instititute of Electrical and elctronics engineers (IEEE), for ASCII data matching semantics and syntax.
+
+RE Why?
+-the LIKE operator in oracle is the nearest match to regular expression comparisons , which allows matching patterms
+- the Same LIKE can be achieved in the REGEXP_LIKE functions
+-the LIKE OPERATOR allows a simple patterns matcing, however , for a complex pattern matching, the SQL query has to hold a lot of OR and LIKE Combinations
+-in RE can combine multiple OR cases into a single patterns for comparison
+
+RE funcions in Oracle
+=====================
+Oracle supports in form of the following four new functions, which can be used in SQL as well as PL/SQL.
+
+REGEXP_LIKE
+-----------
+-This function is very similar to LIKE operator. it performs regular expression matching instead of simple paattern matching. it returns TRUE if the first argument matches a regular expression
+-This function is usually used with the WHERE clause of a SQL query to return rows matching the regular expression
+sytnax
+	REGEXP_LIKE(SRCTSTR,PATTERN[,MATCH_OPTION])
+where
+*SRCSTR - it is a character expression that serves as the search values. it is commonly a character column and can be any of the data types such as CHAR, VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB
+*PATTERN- it is a regular expression . it is usally a text literal and can be of any of the data type such as CHAR,VARCHAR2,NCHAR or NVARCHAR2. it can contain up to 512 bytes. if the data type of pattern is different from the data type of SRCSTR , oracle DB converts patters to the data type of SRCSTR
+*MATCH_OPTION - it is options to change default matching. this means MATCH_OPTION can hold one ore more of the following values:
+Values	Description
+'c'	Use Case sensitive matching[DEFAULT]
+'i'	Use case insensitive matching
+'n'	Allows match-any-character operator
+'m'	Treats source string as multiple line
+
+REGEXP_INSTR
+------------
+-this function returns an integer indicating the position in the string where the match is found
+-it is very much like the INSTR function except that it allows specifying a pattern instead of a specific search string thus providing greater versatility
+
+sytnax
+	REGEXP_INSTR(SRCSTR,PATTER[,POSITION[,OCCURRENCE[,RETURN_OPTION[,MATCH_OPTION]]]])
+where
+*SRCSTR- it is a character expression that server as the search value. it is commonly a character column and can be of any of the data type as CHAR,VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB.
+*PATTERN- it is RE. it is usally a text literal and can be of any of the data types such as CHAR,VARCHAR2,NCHAR or NVARCHAR2. it can contain up to 512 bytes. if the data type of PATTER is different from the data type of SRCSTR, oracle DB converts pattern to the data type of SRCSTR
+*POSITION- it is positive integer indicating the character of SRCSTR where oracle should begin the search. the default is 1, meaning that oracle begins the search at the  first character of SRCSTR
+*OCCURRENCE is a positive integer indicating which occurence of pattern in SRCSTR oracle should search for. the default is 1, meaning that oracle searches for the first occurrence of patterns
+*RETURN_OPTION allows specifying what oracle should return in relation to the occurrence.
+-If 0 is specified then oracle returns the position of the first character of the occurrence.this is the default
+-if 1 is specified then oracle returns the position of the character following the occurrence
+*MATCH_OPTION is the options to change the default matching, this mean MATCH_OPTION can hold one ore more of the following values.
+Value 	Description
+'c'	Use case sensitive matching[DEFAULT]
+'i'	Use case insensitive matching
+'n'	Allows match-any-character operator
+'m'	treats source string as multiple line
+
+REGEXP_REPLACE
+--------------
+-this function searches for a pattern in a character column and replaces each occurrence of that pattern with the pattern specified.
+
+sytnax
+	REGEXP_REPLACE(SRCSTR,PATTERN[,REPLACESTR[,POSITION[,OCCURRENCE[,MATCH_OPTION]]])
+
+where
+*SRCSTR- it is a character expression that server as the search value. it is commonly a character column and can be of any of the data type as CHAR,VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB.
+*PATTERN- it is RE. it is usally a text literal and can be of any of the data types such as CHAR,VARCHAR2,NCHAR or NVARCHAR2. it can contain up to 512 bytes. if the data type of PATTER is different from the data type of SRCSTR, oracle DB converts pattern to the data type of SRCSTR
+*REPLACESTR can be any of the data types such as CHAR,VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB. if REPLACESTR is a CLOB or NCLOB, then oracle truncates REPLACESTR to 32K. The REPLACESTR can contain up to 500 backreferences to subexpressions in the form \n, where n is a number from 1 to 9. if n is the backslash character in replacestr, then it must be preceded with the escape character[\\]
+*POSITION is a positive integer indicating the character of SRCSTR where oracle should begin the search for. the Default is 1, meaning that oracle searches at the first character of SRCSTR
+*OCCURRENCE is a positive integer which occurrence of pattern in SRCSTR oracle should search for. the default is 1 , meaning that oracle searches for the first occurrence of pattern
+*MATCH_OPTION is the option to change default matching. this means MATCH_OPTION can hold one or more of the following values
+Value	Description
+'c'	Use Case sensitive matching[DEFAULT]
+'i'	Use case insensitive matching
+'n'	Allow match-any-character opeartor
+'m'	Treats source string as multiple line
+
+REGEXP_SUBSTR
+-------------
+-this funciton returns the actual substring matching the regular expression pattern specified.
+
+Sytnax
+	REGEXP_SUBSTR(SRCSTR,PATTERN[,POSITION[,OCCURRENCE[MATCH_OPTION]]]])
+where
+*SRCSTR- it is a character expression that server as the search value. it is commonly a character column and can be of any of the data type as CHAR,VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB.
+*PATTERN- it is RE. it is usally a text literal and can be of any of the data types such as CHAR,VARCHAR2,NCHAR or NVARCHAR2. it can contain up to 512 bytes. if the data type of PATTER is different from the data type of SRCSTR, oracle DB converts pattern to the data type of SRCSTR
+*POSITION is a positive integer indicating the character of SRCSTR where oracle should begin the search for. the Default is 1, meaning that oracle searches at the first character of SRCSTR
+*OCCURRENCE is a positive integer which occurrence of pattern in SRCSTR oracle should search for. the default is 1 , meaning that oracle searches for the first occurrence of pattern
+*MATCH_OPTION is the option to change default matching. this means MATCH_OPTION can hold one or more of the following values
+Value	Description
+'c'	Use Case sensitive matching[DEFAULT]
+'i'	Use case insensitive matching
+'n'	Allow match-any-character opeartor
+'m'	Treats source string as multiple line
+
+****All this functions support only CHAR, VARCHAR2,CLOB ,NCHAR , NVARCHAR and NCLOB data types.
+
+REGEXP_COUNT
+-------------
+-this complements that functionality of the REGEXP_INSTR function by returning the number of times a pattern occurs in a source string.
+-this funciton evaluates strings using characters as defined by the input character set. it returns an integer indicating the number of occurrences of pattern. if no match is found, then the funciton return 0.
+
+sytnax
+	REGEXP_COUNT(SRCSTR,PATTERN[,POSITION[,MATCH_OPTION]]])
+
+*SRCSTR- it is a character expression that server as the search value. it is commonly a character column and can be of any of the data type as CHAR,VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB.
+*PATTERN- it is RE. it is usally a text literal and can be of any of the data types such as CHAR,VARCHAR2,NCHAR or NVARCHAR2. it can contain up to 512 bytes. if the data type of PATTER is different from the data type of SRCSTR, oracle DB converts pattern to the data type of SRCSTR
+*POSITION is a positive integer indicating the character of SRCSTR where oracle should begin the search for. the Default is 1, meaning that oracle searches at the first character of SRCSTR
+*MATCH_OPTION is the option to change default matching. this means MATCH_OPTION can hold one or more of the following values
+Value	Description
+'c'	Use Case sensitive matching[DEFAULT]
+'i'	Use case insensitive matching
+'n'	Allow match-any-character opeartor
+'m'	Treats source string as multiple line
+'x'	ignores white spaces characters
+
+META CHARACTERS
+===============
+- A RE is specified using two types of characters;
+*Meta characters: Operator that specify algorithms for performing the search
+*Literals: the actual character to search for
+
+-Oracle DB supports a set of common meta characters for use in RE
+
+Anchoring META CHARACTER
+------------------------
+Anchoring	Meta Character	Description
+---------	-------------	-----------
+Begining of	^		Anchor the expression to the start of a line
+line anchor.	
+End of line	$		Anchor the expression to the end of a line
+Anchor.
+
+
+Quantifier or Repetition Operator
+---------------------------------
+Anchoring	Meta Character	Description
+---------	-------------	-----------
+Zero or More-	*		Matches zero or more occurrences
+star quantifier.
+Zero or more-	?		Matches zero or one occurrence
+Question Mark 
+Quantifier.
+One or More-	+		Matches one or more occurrences
+Plus Quantifier.
+Any Character-	.		Matches any character in the supported character set , except NULL
+Dot.
+interval-exact	{m}		Matches exactly m times
+count.
+Interval-at  	{m,}		matches at least m times
+least count.
+Interval-between {m,n}		Matches at least m times but no more than n times
+count.
+
+Alternate Matching and grouping expression
+------------------------------------------
+Anchoring	Meta Character	Description
+---------	-------------	-----------
+Or		|		spearates alternates, often used with grouping operator()
+sub expression	()		grouping expression, treated as a single subexpression.
+or grouping,
+Matching 	[]		1.Indicates a character list. most meta character list. most meta character inside a charact charcter list			  charcter list are understood as literals, with the expection of character classes and the 
+				 ^ and -meta characters.
+				2.Bracket expression to specify a list of expressions, matching any one of the expression 
+				  represented in the list.
+
+
+Pre-defined POSIX character classes
+-----------------------------------
+
+Meta Character		Descriptions
+[Alnum:]		all alphanumberic character
+[:alpha:]		all alphabetic character
+[:cntrl:]		all control character [non-printing]
+[:digit:]		All numberic digits
+[:lower:]		All lowercase alphabetic characters
+[:print:]		all printable characters.
+[:punct:]		All punctuation characters.
+[:space:]		All space characters [nonprinint]
+[:upper:]		All uppercase alphabetic characters.
+
+Others
+------
+Anchoring	Meta Character	Description
+---------	-------------	-----------
+Non-matching	[^exp]		Negates the expression [if the caret is inside the bracket]
+character list.
+escape character. \		signifies
+				1.Stand for itself
+				2.Quote the next characters.
+				3.introduce an operator
+				4.Do nothing
+Backreferences	 \n		Backreference expression
+
+
+
