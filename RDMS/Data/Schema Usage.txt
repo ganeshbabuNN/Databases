@@ -1,0 +1,90 @@
+The Oracle Database sample schemas are based on a fictitious company that sells goods through various channels. This chapter describes the fictitious company and contains the following sections:
+
+    Overall Description
+    --------------------
+
+    HR
+
+    OE
+
+    PM
+
+    IX
+
+    SH
+
+Overall Description
+
+The sample company portrayed by the Oracle Database Sample Schemas operates worldwide to fill orders for several products. The company has several divisions:
+
+    The Human Resources division tracks information about the employees and the facilities.
+
+    The Order Entry division tracks product inventories and sales of company's products through various channels.
+
+    The Product Media division maintains descriptions and detailed information about each product sold by the company.
+
+    The Information Exchange division manages shipping through B2B applications.
+
+    The Sales division tracks business statistics to facilitate business decisions.
+
+Each of these divisions is represented by a schema.
+
+HR
+---
+In the Human Resource (HR) records, each employee has an identification number, e-mail address, job identification code, salary, and manager. Some employees earn commissions in addition to their salary.
+
+The company also tracks information about jobs within the organization. Each job has an identification code, job title, and a minimum and maximum salary range for the job. Some employees have been with the company for a long time and have held different positions within the company. When an employee resigns, the duration the employee was working, the job identification number, and the department are recorded.
+
+The sample company is regionally diverse, so it tracks the locations of its warehouses and departments. Each employee is assigned to a department, and each department is identified either by a unique department number or a short name. Each department is associated with one location, and each location has a full address that includes the street name, postal code, city, state or province, and the country code.
+
+In places where the departments and warehouses are located, the company records details such as the country name, currency symbol, currency name, and the region where the country is located geographically.
+
+OE
+--
+
+The company sells several products, such as computer hardware and software, music, clothing, and tools. The company maintains information about these products, such as product identification numbers, the category into which the product falls, order entry (OE), the weight group (for shipping purposes), the warranty period if applicable, the supplier, the availability status of the product, a list price, a minimum price at which a product will be sold, and a URL address for manufacturer information. Inventory information is also recorded for all products, including the warehouse where the product is available and the quantity on hand. Because products are sold worldwide, the company maintains the names of the products and their descriptions in several languages.
+
+The company maintains warehouses in several locations to fulfill customer needs. Each warehouse has a warehouse identification number, name, facility description, and location identification number.
+
+Customer information is also tracked. Each customer has an identification number. Customer records include customer name, street name, city or province, country, phone numbers (up to five phone numbers for each customer), and postal code. Some customers place orders through the Internet, so e-mail addresses are also recorded. Because of language differences among customers, the company records the native language and territory of each customer.
+
+The company places a credit limit on its customers, to limit the amount of products they can purchase at one time. Some customers have an account manager, and this information is also recorded.
+
+When a customer places an order, the company tracks the date of the order, how the order was placed, the current status of the order, shipping mode, total amount of the order, and the sales representative who helped place the order. The sales representative may or may not be the same person as the account manager for a customer. If an order is placed over the Internet, no sales representative is recorded. In addition to order information, the company also tracks the number of items ordered, the unit price, and the products ordered.
+
+The OE schema also contains XML purchase order documents. The XML documents are stored in the Oracle XML DB Repository after validation against the registered XML schema purchaseorder.xsd. You can access these documents in various ways, such as by querying the PURCHASEORDER object-relational table by using SQL, by querying public views RESOURCE_VIEW and PATH_VIEW, and by querying the repository using XPath expressions.
+
+The purchase order XML documents are located in the Oracle XML DB Repository folder $ORACLE_HOME/rdbms/demo/order_entry/2002/month, where month is a three-letter month abbreviation (for example, Jan, Feb, Mar, and so on).
+
+OC Description
+--------------
+
+The Online Catalog (OC) subschema of the OE schema addresses an online catalog merchandising scenario. The same customers and products are used in OC as in the OE schema proper, but the OC subschema organizes the products into a hierarchy of parent categories and subcategories. This hierarchy corresponds to the arrangement on an e-commerce portal site, where users navigate to specific products by drilling down through increasingly specialized categories of products.
+PM
+
+The company stores multimedia and print information about its products in a database. The Product Media (PM) schema is used to store such information. Examples of such information are:
+
+    Promotional audio and video clips
+
+    Product images and thumbnails for Web publishing
+
+    Press release texts
+
+    Print media advertisements
+
+    Other promotional texts and translations
+
+IX
+--
+The company has decided to test the use of messaging to manage its proposed B2B applications. The plan calls for a small test that will allow a user from outside the firewall to place an order and track its status. The order must be booked into the main system. Then, depending on the location of the customer, the order is routed to the nearest region for shipping. The Information Exchange (IX) schema stores such information.
+
+Eventually, the company intends to expand beyond its current in-house distribution system to a system that will allow other businesses to provide the shipping. The messages sent must be in a self-contained format. XML is the perfect format for sending messages, and both Advanced Queueing Servlet and Oracle Internet Directory provide the required routing between the queues.
+
+After the orders are either shipped or back ordered, a message must be sent back to the employee concerned to inform about the status of the order and to initiate the billing. It is important that the message be delivered only once and that there be a system for tracking and reviewing messages to facilitate resolution of any discrepancies with the order.
+
+For the purpose of this test application, the company uses a database server and an application server. The application provides a mechanism for examining the XML messages as well as monitoring the queues. To demonstrate connectivity from outside the firewall, both the generation of a new order and customer service reporting are performed using queues. The new order application directly enables a queue, while the customer service queries require XML messaging to disable a queue.
+SH
+
+The sample company does a high volume of business, so it runs business statistics reports to aid in decision making. Many of these reports are time-based and nonvolatile. That is, they analyze past data trends. The company loads data into its data warehouse regularly to gather statistics for these reports. These reports include annual, quarterly, monthly, and weekly sales figures by product. These reports are stored with the help of Sales History (SH) schema.
+
+The company also runs reports on distribution channels through which its sales are delivered. When the company runs special promotions on its products, it analyzes the impact of the promotions on sales. It also analyzes sales by geographical area

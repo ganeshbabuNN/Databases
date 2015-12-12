@@ -1,0 +1,113 @@
+Intro
+=====
+-It plays a important role in tunning
+-It is a group of one or more tables sharing common columns that are physically stored and used together.
+-A Table cluster is a group of tables that share the same data blocks, since they share common columns and are often used toegther.
+-When Cluster tables are created, Oracle physically stores all rows for each table in the same data blocks. 
+-The Cluster key value is the value of the cluster keys columns for a particular row.
+Example:- Order and orderdetails table have order no as the common column. Usually, the orderdetails table is accessed to retrieve the order details of the order available in the orders table.hence both the tables are always used together.-
+
+-On Such tables a cluster can be created to form a group of both the tables sharing OrderNo as the common column. A Cluster when created stores the rows physically together which improves the disk access time.
+-Clusters are used to store data from different tables in the same physical data blocks.Hence details table rows are stored on the same physical data block as the master table.
+-Since a clusters stores the data in the same data blocks, the number of database block reads needed to fulfill such queries decreases, thereby improving performance.
+-A Clusters should be a choice when recrods are queried frequently from all those tables.
+-Like Indexes, clusters do not affect application design.This means the applications will not be impacted if a cluster is created after it is deployed. An Applications'table that is a part of a cluster is transparent to users and to applications.Data stored in a clustered table is accessed by SQL exactly in the same manner as data stored in a non-clustered table.
+-Each cluster that is created holds the data along with a cluster index that is used to sort table data when required.
+
+When to Cluster
+===============
+The Following guidlines explain when to clusters
+-Tables that are accessed frequently by an applications using joins statements.
+**Do not cluster tables, if the tables are joins occasionally, if the common column used are frequrently modified. Oracles takes longer to modify a rows cluster key thatn the value in a non-clustered table. this is because oracle transfer the modified row to another block to maintain the cluster data.
+-Tables that share a master detailed relationship such as Orders and OrderDetails ,Departments and Employees,... so on...
+Usually in master detail tables often master records are retrieved along with the corresponding details records.
+-if such tables are clustered, the details records are stored in the same data blocks(s) as the master record and hence the details records are still in the memory when retrieved requirement oracle to perform less I/O.
+****Do not cluster those tables that are scanned fully [all rows, all columns], A full table scan of a clustered table takes longer than a full table scan of a non-clustered table. Oracle is likely to read more blocks because the tables are stored together.
+-A detailed table that is often required for a single master record.
+*This improves the performance of queries that select detail records of a the same master, but does not decrease the performance of a full table scan on the master table.
+
+Type of Clusters
+================
+-A cluster can be either indexed cluster or has clusters
+
+Indexed cluster
+---------------
+-In Indexed Cluster,Oracle stores together rows having the same cluster key value.
+-Each Cluster key value is stored only once in each data block, regardless of the number of tables and rows in which it occurs.
+-This save disk space and improves performance for many operations
+-After an Indexed cluster, An index needs to be created on the cluster key before any DML statements are issued against a table in the cluster. this index is called the Cluster Index.
+-A Cluster index provides quick access to rows within a cluster based on cluster key.if an SQL query is fired to search a row in the cluster based on its cluster key value, Oracle searches the cluster index for the cluster key value and then locates the rows in teh cluster based on its RowID.
+
+Hash Cluster
+------------
+-In this, oracle stores together rows that have the same hash key value.
+-The has value for a row is the value returned by the cluster hash functions
+-With an indexed cluster,Oracle database locates the rows in a table using key values that the DB stores in a separate index.
+-To use hashing, a hash cluster is created and tables are loaded into ti. the DB physically stores the rows of a table in a has cluster and retrieves them according to the results of a has functions.
+***Has values are not actually stored in the cluster, although cluster key values are stored for every row in the cluster.
+-A hash cluster can be created either by using a has function or oracle internal hash functions
+-Oracle uses a has functions to generate a distributions of numeric values called has values that are based on specific cluster key values.
+-the key of a has cluster, like a the key of an index cluster, can be a single column or composite key.
+-To find or store a row in a hash cluster, the DB applies the has functions to the cluster key value of the row. the resulting hash value corresponding to a data block in the cluster, which the DB then reads or writes on behalf of the issued statement.
+-this process often results in less I/O than the process for the indexed cluster because the index search is not required.
+****A Cluster index cannot be created on has cluster and there is no need to create an index on a index cluster key.
+-Hashing is useful when dealing with SQL queries that have equality operators applied on the cluster key.
+-The Cluster key in the equality conditions is hashed and the corresponding has key is usually found with a single read. In comparison for a indexed table, the key value must first be found in the index[usually several reads] and then the row is read from the table[another read].
+
+Create Cluster
+===============
+-The CREATE CLUSTER command is used to create a cluster.
+-A cluster is a schema object that contains data from one or more tables, all of which have one or more columns in a common. Oracle DB stores together all the rows from all the tables that share the same cluster key.
+
+Syntax
+	CREATE CLUSTER <ClusterName> (<ColumnName> <DataType>[,<ColumnName> <DataType>]..)[<Other Options>];
+where
+ClusterName
+*---------*
+is the name of the cluster to be created, The Cluster name follows the table naming conventions.
+-A cluster can contain maximum of 32 tables.
+After a cluster is created and tables are added to it, the cluster becomes transperent . The Clustered tables can be accessed using SQL statements in the same manner as non-clustered tables.
+ColumnName
+*--------*
+-Indicates one ore more column names in the cluster key.
+-16 cluster key columns can be specified.These columns must correspond in both data type and size in columns in each of the clustered tables.However, the columns need not correspond in name
+DataType
+*------*
+-Indicates the data type for the column specified
+***Integrity constraints cannot be part of the definitions of a cluster key column.However, integrity constraints can be associated with the tables that belong to the cluster.
+
+Cluster Key
+===========
+-The columns defined by the CREATE CLUSTER command make up the cluster key.
+-These cluster columns must correspond in both data type and size to columns in each of the clustered tables, althought they need not correspond in name.
+-Since the cluster key columns determine the physical placement of rows within the cluster in the cluster key is usually the foriegn key of one table that references the primary key of another table in the cluster.
+-In a cluster, a cluster key value is the value of the cluster key column for particular row.Each cluster key value is stored only once each in the cluster and the cluster index , no matter how many rows of different tables contain the value.
+-After the cluster has been created, the cluster index is created on the cluster key columns , after the cluster key index has been created , data can be entered into the tables stored in the cluster.
+-As rows are inserted , the DB stores a cluster key and its associated rows in each of the cluster's blocks.
+
+Listing Information about Clusters
+==================================
+-To display the clusters in the current schema, issues the following command.
+
+
+Dropping Cluster
+===============
+
+sytnax
+	DROP CLUSTER <CustomerName>
+
+-this drops the cluster if the cluster is empty i,e no tables are held within it
+-if this cluster hold tables, they need to be dropped prior dropping the cluster
+--alternatively, the cluster can be dropped even with tables existing within it by issuing the following command
+
+syntax
+	DROP CLUSTER <CustomerName> INCLUDING TABLES:
+
+
+
+
+
+
+
+
+

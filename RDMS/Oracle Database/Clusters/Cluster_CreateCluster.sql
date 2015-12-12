@@ -1,0 +1,1 @@
+create cluster cli_emp (employee_id number(10));
