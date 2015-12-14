@@ -1,0 +1,6 @@
+Intro
+=====
+-RDMS provides a high degree of data abstractions.
+-It is simply not possible to determine the exact location on the HDD the RDBMS is putting each row of a table.
+-From the SQL Perspective, Oracle allows creating a view. View is a way of building even higher level of data abstractions.
+

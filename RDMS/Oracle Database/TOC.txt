@@ -88,7 +88,7 @@ SubQuery
 Analytical Functions
 XML
 JOins
-Hierachies Queries
+Hiearchical Queries
 MODEL
 PIVOT
 INDEXES
@@ -103,8 +103,25 @@ INDEXES
 		Key Compressed Index
 	Dropping Indexes
 SEQUENCES
-REGULAR SEQUENCES
-
+	Creating Sequences
+	Retreving the current and Next Sequence
+		NEXTVAL
+		CURRVAL
+		NEXTVAL and CURRVAL Usage
+		NEXTVAL and CURRVAL Restrictions
+	Sequences in PL/SQL
+	Querying Existing Sequences
+CLUSTERS
+	When to Cluster
+	Types Of Clusters
+		Indexed Clusters
+		Hash Clusters
+VIEW
+    View
+    Materialized VIEWS
+	PRIMARY KEY
+	ROWID
+	Subquery
 
 PLSQL
 -----
@@ -208,12 +225,12 @@ Triggers
 	Dropping Triggers
 PLSQL Objects
 	Database Objects
-		Creating the Object Tables
-		Describing the Object Tables
 		Columns Objects
 		Object Tables
-		Implementating Object Views
-		Creating View on Object Tables
+	Implementating Object Views
+	Collections
+		Nested Tables
+		Variables Arrays
 	Object Types
 	Constructor
 	Members
