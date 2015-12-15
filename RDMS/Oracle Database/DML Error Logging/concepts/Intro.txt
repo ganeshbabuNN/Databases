@@ -1,0 +1,9 @@
+Intro
+=====
+-Oracle Recently introduced the DML error logging features
+-This features is useful in situations such as
+*Updating 30 millions records. the update operations fails after 30 mintues just because on of the record amongst those 30 millions fails a check constraint
+*An INSERT AS SELECT command fails on the row number 800 out of 1000 just coz one column value is too large.
+
+-The DML Error logging features allows adding a clause to the INSERT statemetns that causes the 999 correct records to the be inserted successfully and the one erroneous record to be written out to a error logging table for resolving laters.
+
