@@ -19,15 +19,26 @@ CREATE TABLE SALARY
 );
 
 --Step 2 – Create an exclude table
+/*
+There will be always some tables which we would like to exclude from the audit. For example if the table is very huge, contains blob or images, or if the table is rarely modified we might not want to audit it. The exclude table will contain a list of such table which we would like to exclude from the audit.
+*/
 
 CREATE TABLE EXAUDIT
 (
    TNAME VARCHAR2 (30) NOT NULL
 );
 
+/*
+In our example let us assume that we want to exclude the department table from the audit. We simply make an entry of this table in our exclude table.
+*/
+
 INSERT INTO EXAUDIT (TNAME) VALUES ('DEPARTMENT');
 
 --Step 3 – Create audit tables
+/*
+Now comes the interesting part. We want to create audit tables that will hold the audit trail of all the tables in our database. This can be achieved with a simple procedure like below
+*/
+
 
 CREATE OR REPLACE PROCEDURE create_audit_tables (table_owner VARCHAR2)
 IS
@@ -97,9 +108,17 @@ BEGIN
 END;
 /
 
+/*
+After the above procedure is created execute it by passing the schema name (owner) of the schema where your main tables were created.
+This will create audit tables corresponding to all main tables and with the additional columns like audit_on,audit_by and audit_action. The tables in the exclude table will be excluded.
+*/
+
 execute create_audit_tables('GANESH');
 
 --Step 4 – Create audit triggers
+/*
+create a small helper function that will give me a comma separated list of columns of a given table (with a prefix if required)
+*/
 
 create or replace FUNCTION get_columns_for_table (
      table_owner   VARCHAR2,
@@ -128,6 +147,9 @@ create or replace FUNCTION get_columns_for_table (
 /
 
 -- helper function
+/*
+Next create a helper function that will give us a comparison between the columns in case of table updates
+*/
 
 create or replace function get_column_comparasion (
      table_owner   VARCHAR2,
@@ -166,6 +188,9 @@ create or replace function get_column_comparasion (
 /
 
 --create our audit triggers
+/*
+Next create the procedure that will create our audit triggers
+*/
 
 CREATE OR REPLACE PROCEDURE create_audit_triggers (table_owner VARCHAR2)
 IS
@@ -304,11 +329,20 @@ BEGIN
 END;
 /
 
+/*
+Finally execute the procedure. This will create all the audit triggers.
+*/
+
 EXECUTE CREATE_AUDIT_TRIGGERS('GANESH');
 
 select * from all_tables where owner='GANESH';
 
 --Step 5 – Test the auditing
+/*
+Now execute a few DML scripts and notice that all changes made to our main tables get audited with appropriate action in the audit tables. Changes to department table will not be audited as we have excluded it.
+All tables will have a primary key which never changes. Using the primary key we can query our audit tables and get the entire audit trail when required. Instead of session user we can also set the user from the middle tier in the SYS_CONTEXT
+*/
+
 insert into employee values(1,'John'); 
 insert into employee values(2,'Smith'); 
 insert into department values(1,'Sales'); 

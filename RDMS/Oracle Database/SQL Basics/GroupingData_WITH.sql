@@ -1,3 +1,5 @@
+--Normal way.
+
 WITH empsalary AS
   (SELECT department_id,
     SUM(salary)as totalsal
@@ -15,6 +17,7 @@ WHERE totalsal > (SELECT avgsalary FROM empavgsalary);
 /
 
 ---another complex calculation by divding query into simple queries
+
 with stevensalary as(select distinct salary s1 from employees where first_name='Steven'),
 Neenasalary as (select salary s2 from employees where first_name='Neena'),
 Lex as (select salary s3 from employees where first_name='Lex')
