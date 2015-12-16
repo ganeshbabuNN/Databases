@@ -333,5 +333,3 @@ update employee set ename = 'Raj' where eid = 2;
 SELECT * FROM employee;
 SELECT * FROM department;
 SELECT * FROM salary
-
-
