@@ -1,0 +1,94 @@
+Intro
+=====
+-Oracle ensures integrity of data using transaciton. A series of SQL statements that helps manipulate data when put together as a logical unit forms a transactions
+-This logical unit is treated as a single entity. Any change to the data in the DB is a two-step process:
+1)The Changes that were requested are made
+2)These changes can either be made permanent by issuing a COMMIT statement
+OR
+3)These changes can either be undone by issuing a ROLLBACk statement to undo all changes or partial changes
+-A Transaction begins with the first executable SQL statements after a COMMIT, ROLLBACK or CONNECTION made to Oracle.
+-A Transaction ends by using either a COMMIT or a ROLLBACK statements
+
+Oracle provides the following commands to control transactions
+
+COMMIT
+======
+-COMMIT makes permanent any DB changes made during the current transactions
+-A COMMIT ends the current transactions and makes permanent any changes made during the transaction. All Transactions locks acquired on tables are released.
+
+Syntax:
+	COMMIT;
+
+Roll back
+=========
+-ROLLBACK ends the current transaction and undoes any changes made since the transaction begin.
+-A ROLLBACK does exactly the opposite of COMMIT.it ends the transaciotn but undeos any changes made during the transaction. All transaction locks acquired on tables are released.
+
+Sytnax:
+	ROLLBACK[WORK][TO[SAVEPOINT]<SavepointName>];
+where
+-WORK: is optional and is provided for ANSI compatibility
+-SAVEPOINT : is optional and is used to rollback a transaction partially, as far as the specified savepoint.
+-SavePointName: is a savepoint created during current transaction
+
+-ROLLBACk can be fired from the SQL prompt with or without the SAVEPOINT clause.
+-the Implication of each is described below.
+-A ROLLBACK operations performed without the SAVEPOINT clauses leads to the following
+a)Ends the Transaction
+b)Undoes all the changes in the current transactions
+c)Erases all savepoint in the transaction
+d)Releases the transactional locks
+
+A ROLLBACK operations performed with the TO SAVEPOINT clause leads to the following
+a)A predetermined portion of the transaction is rolled back.
+b)Retains the save point rolled back to, but loses those created after the named savepoint
+c)Releases all transactional locks that were acquired since the savepoint was taken.
+
+Savepoint
+=========
+-SAVEPOINT marks the current point in the processing of a transaction.
+-When a SAVEPOINT is used with a ROLLBACK statements, parts of a transaction can be undone. 
+-An active SAVE POINT is one that is specified since the Last COMMIT or ROLLBACK
+
+Data Concurrency and Consistency
+================================
+-Oracle Allows managing data concurrency and consistency using Locks
+-Locking is very important aspect of any DBMS. Oracle uses locking implicilty. However, if it is necessary manual locking can be used
+-Often times, in a multi-user environment, multiple users operate on the same data at the same time. to Prevent any serious issues to the data being operated, oracle allows locking a particular data block. this disallows other users from modifying the same data.
+-When data is modified by a user using a transaction, the data is locked by the transaction until the transaction is committed or rollback . The lock is held until the transaction is complete.
+-When the users commits the first transaction only then is the data made available to other users of the systems. Oracle releases the locks only if the usre fires a COMMIT or a ROLLBACk on the transactions
+-There are two kinds of locks that Oracle Provides
+1)Row Level Lock
+2)Table Level lock
+
+Row Level Update
+----------------
+-A row level lock is used to lock a particular row or set of rows for the transactions .this enables other users of the sytsem to update rows in other tables but not the rows that are being modified by an earlier transactions
+
+Table Level Lock
+----------------
+-Once the transaction is committed[Row are unlocked], The users are able to see the updated data, the users are able to modify the desired rows
+-This kind of locking is more efficient than Table Level locking. In table Level Locking, once a particular table is locked, other have to wait to modify data in any of the rows of that table till lock is released
+
+
+-A row level lock can be applied on a row set of rows using the SELECT... FOR UPDATE statement. this staement allows locking a row or a set of rows that are being updated. this statements ensures the any other users do not update the rows that are currently being updated. Once the transaciton is committed, the rows are made avaiable to other usrs for modification.
+-Oracle applies a table lock when a row-level lock is obtained by the transaciton. this is because no DDL statements can be Fired on the table in which the data is currently begind updated.
+
+
+*---Explicit Locking can be achieved on tables using the LOCK TABLE command
+-This command is used to lock the entire table. the users who want to update the data in this table have to wait until the lock is released
+
+Dead LOCK
+=========
+-When two or more users are waiting for access to data that has been locked by each other, it is known as deadlock.
+-When locked occurs, the transactions fail to go ahead they are stuck.
+-In such cases, Oracle breaks the deadlock by forcing one or more transactions to rollback
+-If Oracle's default locking is overridden, the DA or App developer should ensure that the overriding locking procedures operate correctly
+-the Locking procedures must satisfy the following criteria:
+-Data integrity is guaranteed.
+-Data Concurrency is acceptable
+-Deadlocks are prevented and appropriately handled.
+
+
+
+
