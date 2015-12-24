@@ -1,0 +1,1 @@
+DROP table transactions PURGE;

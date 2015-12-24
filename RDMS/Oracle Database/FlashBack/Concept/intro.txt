@@ -1,0 +1,9 @@
+Intro
+=====
+-Most of the times an applications crashes only because of human errors
+-A human errors could result in logical data corruptions due to which the applications can simply halt.
+
+*-The most common errors that causes an application to go down are
+1)Accidental deletions of valuable data
+2)Deleting the wrong data
+3)Dropping the wrong table
