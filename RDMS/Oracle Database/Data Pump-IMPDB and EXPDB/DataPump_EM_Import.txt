@@ -1,0 +1,20 @@
+Data Pump Import
+-------------------------
+1)To export a schema using EM, open a web browser point it to 
+	https://<hostname>:1158/em
+2)Ensure that DBConsole service is switched on for the Enterprise manager to be served
+3)Log in SYSTEM/<password>
+4)Click on Data Movement link. this displays the login entry screen
+5)Click Import from files link
+6)Select the directory object and enter the dump file name.Set the Import type to tables and enter the host username and password.Click Continue.
+7)The import files are read 
+8)Enter <schemaName> ganesh in the schema field and click Go
+9)Select the desired tables using check boxes and click select
+10)Click next
+11)Use this to screen to re-map Schemas if required. this is useful if tables from one schema need to be imported to another schema
+12)Click next. Select appropriate directory object and enter the log file name in the log file.
+13)Click on Next, Enter job name and select Immediately options under the start sections.Click Next.
+14)Click Submit job, after some time
+15)Click IMPORT_GANESHSCHEMA link to view the job_summary. this displays a screen 
+16)Click step:Import link to view the log.
+17)the import has completely successfully.-----with Screenshot

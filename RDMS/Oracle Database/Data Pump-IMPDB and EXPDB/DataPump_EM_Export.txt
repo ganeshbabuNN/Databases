@@ -1,0 +1,19 @@
+Data Pump Export
+-------------------------
+1)To export a schema using EM, open a web browser point it to 
+	https://<hostname>:1158/em
+2)Ensure that DBConsole service is switched on for the Enterprise manager to be served
+3)Log in SYSTEM/<password>
+4)Click on Data Movement link. this displays the login entry screen
+5)Click on Export to Export Files link.Select the Mode, for Example for export tables, select the Tables Button, Enter the OS Username and password
+6)Clickn on Continue. 
+7)Click add button to view the tables that are available for export.Enter Ganesh(Schema Name) in the schema fields and Click Go
+8)Select the desired tables using the checkboxes. Click select
+9)Click Next.Enter 4 for the maximum number of threads in export job and select appropriate directory object if one exists or click create Directory object to create one. Change the name of the export log file to MyBackupLog_<Today's date in mmddyyformat>.log, Click on Next.
+Select the approrpiate directory object and enter the desired file name. %D in the fiel name indicates the data of the job in YYMMDD format.
+Click Next
+10)Enter the job name. select immediately options under the start sections, Click Next
+11)Select the submit job button to submit the export job
+12)the job is successfully create as indicated in the screen
+13)Click the EXPORT_GANESHSCHEMA link to see the job summary .The screen indicates that the job has finished
+14)Click the Step:Export link to see the log
