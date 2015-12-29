@@ -1,0 +1,6 @@
+-Intro
+=====
+-It provides two program to perform a backup and restore process, they are 
+1)EXP- which is used to perform backups,this also known as Logical backup utlitily as it allows taking backup of the DB objects within the DB & it may be taken with or without data being resident in them.
+2)IMP -which is used to perform a restore of the backup taken using EXP
+-this two programs are available in ORACLE_HOME/bin directory and installed when oracle is installed
