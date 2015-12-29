@@ -1,0 +1,16 @@
+You have to provide the 'Log on as a batch job' privilege:
+
+1. Go to control panel/administrative tools
+a. click on "local security policy"
+b. click on "local policies"
+c. click on "user rights assignments"
+d. double click on "log on as a batch job"
+e. click on "add" and add the user that was entered in the "normal username" or "privileged username" section of the EM Console.
+
+2. Go to the Preferences link in the EM GUI
+a. click on Preferred Credentials (link on the left menu)
+b. under "Target Type: Host" click on "set credentials"
+c. enter the OS user who has logon as a batch job privilege into the "normal username" and "normal password" fields
+
+3. Test the connection
+a. while in the Set Credentials window, click on "Test"
