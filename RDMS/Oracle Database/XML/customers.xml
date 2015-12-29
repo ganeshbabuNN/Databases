@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<customers>
+	<customer cid="C-101" status="Active">
+		<cname>Ganesh</cname>
+		<email>g@j.com</email>
+		<phone>111</phone>
+		<city>Blore</city>
+	</customer>
+	<customer cid="C-102" status="Active">
+		<cname>Vedha</cname>
+		<email>Ved@j.com</email>
+		<phone>3243</phone>
+		<city>Blore</city>
+	</customer>
+	<customer cid="C-103" status="InActive">
+		<cname>Baba</cname>
+		<email>baba@j.com</email>
+		<phone>6756</phone>
+		<city>BBBB</city>
+	</customer>
+</customers>
