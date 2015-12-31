@@ -1,0 +1,5 @@
+Intro
+=====
+-A standard SQL query allows matching strings available in the DB, however, since the Text has increased, standard string matching functions will not help. 
+-To Allow performing much more than string matches Oracke, has introduced, new text search features via a tool called Oracle Text, a Complete Text Search solutions, which is part of the oracle standard and enterprise editions
+-It preivously known as intermedia Text and Context, is an extensive full text indexing technology that allows building text queries, support multiple languages and uses advanced relevance-ranking technology to improve search quality.
