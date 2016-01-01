@@ -1,0 +1,10 @@
+TableSpace
+==========
+-An Orcle DB comprises of a number of physical files caleld ata file.
+-These files are logically group together into an oracle[logical] strucutre called a tablespace
+-User Data in an Oracle Database is logically stored in tablespace and physically stored in data files, which are bound to the corresponding tablespace
+-Tablespaces are a mechanism or means by which logical objects such as tables, indexes and views are mappped to a specific data files.
+
+
+
+

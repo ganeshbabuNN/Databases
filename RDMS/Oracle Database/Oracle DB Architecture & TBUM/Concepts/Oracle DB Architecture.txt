@@ -1,0 +1,49 @@
+Intro
+=====
+-Oracle DB is an RDBMS[Relational Database Management System]
+-its all about the understanding the logical and physical structure, here the Logical and physical structures are separate.
+-The advantage,This separations brings, is that the physical storage structures can be changed without affecting the logical struture.
+
+Logical structure
+=================
+-The logical structure of the Oracle DB consists of
+1)TableSpace
+2)Schema
+Physical Strutures
+==================
+The physical layer of the DB consists of three types of files
+1)Data files
+2)Redo log files
+3)Control files
+
+Sytem Global Area[SGA]
+======================
+-The SGA is a shared-memory region that oracle uses to store data and control informations for an Oracle instance
+-It is allocated when the oracle instance starts and it is de-allocated when the oracle instance shuts down.
+-Each Oracle instance that starts has its own SGA
+-The informations stored in SGA is divided into three memory structures
+1)DataBase Buffers cache
+2)Redo log buffers
+3)Shared pool
+
+Program Global Area[PGA]
+========================
+-PGA is a memory buffer that contains data and control informations of server process.
+-A Server process is a process that services a clients request. 
+-A PGA is created by oracle when a server process is started.
+-The informations in a PGA depends on the oracle configurations. The PGA area is a non-shared area of memory created by Oracle when a server process is started
+-The basic difference between SGA and PGA is that PGA cannot be shared between multiple processes, in the sense, that is used only for requirements of a particular process whereas the SGA is used for the whole instance and it is shared.
+
+Background Process
+==================
+-The relationships between the DB physical and Memory strutures are maintained and enforced by background processes.
+-Number of background processes varies depending upon the DB configurations
+-The trace files are only created when there is an problem
+-The following are a few of the many available background processes in oracle
+a)SMON-System Monitor
+b)PMON-Process Monitor
+c)DBWR-Database Writer
+d)LGWR-Log Writer
+e)ARCH-Archiever
+
+
