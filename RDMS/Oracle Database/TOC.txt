@@ -1,5 +1,43 @@
 SQL
 ---
+Oracle DB Architecture & UM
+	Logical structure
+		Tablespace
+			System Tablespace
+		Schema
+	Data File Decomposition
+		Data Files
+		Extents
+		Segements
+	Physical Structures
+		Data files
+		Redo log files
+		Control files
+	System Global Area[SGA]
+		DB Buffers cache
+		Redo log buffers
+		Shared pool
+	Program Global Area[PGA]
+		Background Process
+			SMON
+			PMON
+			DBWR
+			LGWR
+			ARCH
+	TableSpace and Usermanagement
+		Creating Tablespace
+		Managing User(deleteing,modifying)
+		Privileges
+			System Privileges
+				ListOfSystemPrivileges
+			Object Privileges
+				ListOfObjectPrivileges
+			Granting Privileges
+			Refering a Table beloging to other table
+			Revoking the Privileges
+			ROLES
+			Creating DBA Users
+				
 SQL Basics
 	SQL DataTypes
 	Working with DB Tables
@@ -86,11 +124,16 @@ SubQuery
 	ORDER BY CLAUSE
 	UPDATE/DELETE STATEMENT
 Analytical Functions
-XML
+Oracle XML DB
 JOins
 Hiearchical Queries
 MODEL
 PIVOT
+DML ERROR LOGGING
+FLASHBACK
+
+Performance Tuning
+------------------
 INDEXES
 	When indexes invoked
 	When indexes Do not work
@@ -122,6 +165,14 @@ VIEW
 	PRIMARY KEY
 	ROWID
 	Subquery
+
+
+
+Backup,Restore and Data Loading
+-------------------------------
+IMP and EXP Ultilies
+Data Pump -ImpDB AND EXPDB
+SQL* Loader
 
 PLSQL
 -----
@@ -240,4 +291,3 @@ Dynamic SQL
 	Dynamic SQL
 	DMBS_SQL package
 	NDS
-DML Error Logging

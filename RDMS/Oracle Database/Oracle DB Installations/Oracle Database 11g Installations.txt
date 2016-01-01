@@ -1,0 +1,500 @@
+-Installation of Oracle Database 11g depends on the Operating System on which it is begin installed.Beging a server based application, the setup tool that comes with oracle 11g can automatically detect whether the Operating system on which it is beging installed is a Support O/s. If the operating System is not supported then the install process is automatically terminated
+
+Downloading the Product
+======================
+http://www.oracle.com/technetwork/database/enterprise-edition/downloads/index.html
+Under Oracle Database 11g Release 2
+-For windows based
+64 bit --Microsoft Windows (x64)
+32 bit -- Microsoft Windows (32-bit)
+
+-For Linux based
+32,64 bit - Linux x86-64
+
+
+System Requirement for Windows Based Oracle
+--------------------------------------------
+Physical Memory[RAM]- 1 GB Minimum
+Virtual Memory - Double the amount of RAM
+Disk Space-Basic installation type total:4.55 GB
+	   -Advanced installation types total:4.92 GB
+Video Adapter-256 Colors
+Processor- 550 Mhz minimum [ On windows Vista,800 Mhz Minimum]
+Operating System -  Oracle DB for 32-bit windows is supported on the following OS
+		 -Windows 200 with SP1 or later , all editions including terminal services and MLE are supported
+		 -Windows Server 2003-all editions
+		 -Windows Server 2003 R2-All editions
+		 -Windows XP Professional
+		 -Windows Vista-Business,enterprise and Ultimate editions
+		 -Windows NT is not Supported
+
+
+System Requirement for Linuxed Based Oracle
+--------------------------------------------
+Physical Memory[RAM]- 1 GB Minimum
+Virtual Memory - Double the amount of RAM
+Disk Space-Basic installation type total:4.55 GB
+	   -Advanced installation types total:4.92 GB
+Video Adapter-65536 Colors recommended
+Processor- Pentinum IV2 Ghz or faster
+Operating System - Oracle DB for linux x86 is supported on the following OS
+		 -Asianux 2.0 and 3.0
+		 -Oracle Enterprise Linux 4.0 and 5.0
+		 -Red Hat Enterprise Linux 4.0 and 5.0
+		 -SUSE Linux Enterprise Server 10.0
+
+
+Installation of Oracle DB 11g in linux/windows
+=================================================
+Note: for windows start with Step 11
+Step 1-Ensure a full Qualified server name in the host file i,e /etc/hosts file must contain a fully qualified name for the server as shown in diagram
+	<IP-Address> <Fully-qualified-machine-name> <machine-name>
+Step 2- Setting kernal parmeters, oracle recommends the following minimum parameters values
+
+Parameter Name-Value
+Kernel.shmal-2097152
+kernel.shmmax-2147483648
+kernel.shmmni-4096
+kernel.sem-250 32000 100 128
+fs.file-max-65536
+net.ipv4.ip_local_port_range-1024 65000
+net.core.rmem_default-4194304
+net.core.rmem_max-4194304
+net.core.wmem_default-262144
+net.core.wmem_max-262114
+-*the currenc values can be fetched using the following command 
+	/sbin/sysctl -a | grep <param-name>
+-*kernal parameters having values greater than or equal to the onces listed in the table above should be left unaltered.to meet this requirement specification, the /etc/sysctl.conf file needs to be altered.this fileis primarily used during the boot process.
+
+-* i shall discuss on RHEL editions.
+-**Opend the /etc/sysctl.conf file in the text editor and enter the following lines as shown in 
+
+For RHEL 4.5
+************
+Kernel.shmal-2097152
+kernel.shmmax-2147483648
+kernel.shmmni-4096
+kernel.sem-250 32000 100 128
+fs.file-max-65536
+net.ipv4.ip_local_port_range-1024 65000
+net.core.rmem_default-4194304
+net.core.rmem_max-4194304
+net.core.wmem_default-262144
+net.core.wmem_max-262114
+
+For RHEL linux 5.0
+************
+kernel.shmmni-4096
+kernel.sem-250 32000 100 128
+fs.file-max-65536
+net.ipv4.ip_local_port_range-1024 65000
+net.core.rmem_default-4194304
+net.core.rmem_max-4194304
+net.core.wmem_default-262144
+net.core.wmem_max-262114
+
+Step 3-Applying the change made to kernal parameters
+these modification in the sysctl file, causes the system to change the kernel parameters after each boot so as to make the system compatible for runing Oracle 11g. For these change to be effective immediately execute the following command as follows
+	/sbin/sysctl -p
+
+Step 4-Setting file descriptor limits
+Linux limits the number of file descriptors that any one process may open. The default limits are 1024 per process. these limits can prvent optimum performance. to increate the number of ifle descriptors for the Oracle user's process, add the following lines to the /etc/security/limits.conf file 
+
+Step 5 -Setting Login module in Pluggable authentication modules[PAM]
+Add the following line to the /etc/pam.d/login file, if it does not already exist as shown file . this will invoek these modules.
+
+Step 6 -Disabliing security-Enabled linux[SELinux]
+-Disable the security -enchanged linux[SELinux] module by editing the /etc/selinux/config file, making sure the SELINUX flag is set as follows as shown
+	 SELINUX=Disabled
+-Disabling SELINUX prevents any permissions issues, whilst installing oracle DB.
+-Alternatively it can be done using the GUI tool[Applications->system settings -> security Level]. Click the SELinux table and disable the features.
+
+step 7-Meeting the package requirements
+-to install oracle, certain linux package are required, if these are not available, install them.
+
+For RHEL Linux 4.5
+******************
+rpm -qa | gep binutils-2.*
+rpm -qa | gep elfutils-libelf-0.*
+rpm -qa | gep glibc-2.*
+rpm -qa | gep glibc-common-2.*
+rpm -qa | gep libgcc-3.*
+rpm -qa | gep libstdc++-3.*
+rpm -qa | gep compat-libstdc++033*
+rpm -qa | gep make-3.*
+rpm -qa | gep unixODBC-2.*
+rpm -qa | gep glibc-devel-2.*
+rpm -qa | gep gcc-3.*
+rpm -qa | gep gcc-c++-3.*
+rpm -qa | gep libstdc++-devel-3.*
+rpm -qa | gep libaio-0.*
+rpm -qa | gep libaio-devel-0.*
+rpm -qa | gep sysstat-5.*
+rpm -qa | gep elfutils-libelf-devel-0.*
+rpm -qa | gep unixODBC-devel-2.*
+
+For RHEL Linux 5.0
+******************
+rpm -qa | gep binutils-2.*
+rpm -qa | gep elfutils-libelf-0.*
+rpm -qa | gep glibc-2.*
+rpm -qa | gep glibc-common-2.*
+rpm -qa | gep libaio-0.*
+rpm -qa | gep libgcc-4.*
+rpm -qa | gep libstdc++-4.*
+rpm -qa | gep compat-libstdc++033*
+rpm -qa | gep make-3.*
+rpm -qa | gep compat-libstdc++-33*
+rpm -qa | gep elfutils-libefl-devel-0.*
+rpm -qa | gep glibc-devel-2.*
+rpm -qa | gep gcc-4.*
+rpm -qa | gep gcc-c++-4.*
+rpm -qa | gep libaio-devel-0.*
+rpm -qa | gep libstdc++-devel-4.*
+rpm -qa | gep unixODBC-2.*
+rpm -qa | gep unixODBC-devel-2.*
+rpm -qa | gep sysstat-7.*
+
+step 8-Install the packages as:
+
+For RHEL Linux 4.5
+******************
+rpm -Uvh binutils-2.*
+rpm -Uvh elfutils-libelf-0.*
+rpm -Uvh glibc-2.*
+rpm -Uvh glibc-common-2.*
+rpm -Uvh libgcc-3.*
+rpm -Uvh libstdc++-3.*
+rpm -Uvh compat-libstdc++033*
+rpm -Uvh make-3.*
+rpm -Uvh unixODBC-2.*
+rpm -Uvh glibc-devel-2.*
+rpm -Uvh gcc-3.*
+rpm -Uvh gcc-c++-3.*
+rpm -Uvh libstdc++-devel-3.*
+rpm -Uvh libaio-0.*
+rpm -Uvh libaio-devel-0.*
+rpm -Uvh sysstat-5.*
+rpm -Uvh elfutils-libelf-devel-0.*
+rpm -Uvh unixODBC-devel-2.*
+
+
+For RHEL Linux 5.0
+******************
+rpm -Uvh binutils-2.*
+rpm -Uvh elfutils-libelf-0.*
+rpm -Uvh glibc-2.*
+rpm -Uvh glibc-common-2.*
+rpm -Uvh libaio-0.*
+rpm -Uvh libgcc-4.*
+rpm -Uvh libstdc++-4.*
+rpm -Uvh compat-libstdc++033*
+rpm -Uvh make-3.*
+rpm -Uvh compat-libstdc++-33*
+rpm -Uvh elfutils-libefl-devel-0.*
+rpm -Uvh glibc-devel-2.*
+rpm -Uvh gcc-4.*
+rpm -Uvh gcc-c++-4.*
+rpm -Uvh libaio-devel-0.*
+rpm -Uvh libstdc++-devel-4.*
+rpm -Uvh unixODBC-2.*
+rpm -Uvh unixODBC-devel-2.*
+rpm -Uvh sysstat-7.*
+
+step 8-Creating the Oracle User Accounts
+-to install oracle, appropriate user and groups need to be created , using which Oracle will be installed.
+-The new Users/Groups that have to be created are:
+*User: ganesh[Provide any password of choice]
+*Group : oinstall and dba
+-Create the groups and users using the following command as shown
+groupadd to oinstall
+gropuadd dba
+useradd -g oinstall -G dba Oracle
+passwd ganesh
+-Passwd command prompts for a password and its confirmation key . Key in an appropriate password and continue.
+
+step 9-Creating Oracle Directories
+-To install Oracle DB 11g, the following directory structure need to be created
+	mkdir -p /u01/app/oracle/product/11.1.10/db_1
+-Change the owner and group of directories create to oracle and oinstall respectively as 
+	chown -R oracle:oinstall /u01
+	chown -R 775/u01
+
+Step10: 
+Setting Oracle enviroment
+-------------------------
+-Disabling access control :- the xhost command needs to be executed. this is done to disable the access control mechanism of system. Login as root and issue the following command
+	xhost+
+-Doing so allows allows the clients to connect from any host. This is requiredto initiate the oracle installer
+
+Adding Startup Entries
+-loging as the oracle user and add the following lines at the end of the .bashrc files ..
+TMP= /tmp;
+export TMP
+TMPDIR =$TMP;
+export TMPDIR
+
+ORACLE_HOSTNAME=oracle.orchid;
+export ORACLE_HOSTNAME
+ORACLE_BASE=/u01/app/oracle;
+export ORACLE_BASE
+ORACLE_HOME=$ORACLE_BASE/product/11.1.0/db_1;
+export ORACLE_HOME
+ORACLE_SID=orcl;
+export ORACLE_SID
+ORACLE_TERM=xterm;
+export ORACLE_TERM
+PATH=/usr/sbin:$PATH;
+export PATH
+PATH =$ORACLE_HOME/bin:$PATH;
+export PATH
+
+LD_LIBRARY_PATH=$ORACLE_HOME/lib:/lib:/usr/lib;
+export LD_LIBRARY_PATH
+CLASSPATH=$ORACLE_HOME/JRE:$ORACLE_HOME/jlib:$ORACLE_HOME/rdbms/jlib;
+export CLASSPATH
+if[ $USER ='oracle"]; then
+	if[ $SHELL = "/bin/ksh"}; then
+	 ulimit -p 16384
+	 ulimit -n 65536
+ else
+	ulimit -u 16384 -n -65536
+  fi
+fi
+
+
+
+-the .bashrc file will be available inthe user's home directory. in this case it will be /home/oracle/.bashrc. After the file is edited, logout as the user oracle and login again, for the changes to take effect.
+
+Step 11: Initiating the Oracle installer
+-Locate the runinstaller script from source setup files and execute it, 
+-if permission issue[Such as permission deined errors] are encountered whilst initiating the Oracle installer, ensure the execution permissions exist on the following files in the source;
+*RunInstaller
+*install/.oui
+*install/unzip
+-Set the execute permission for these files as:
+	chmod 777 runinstaller
+	chmod 777 install/.oui
+	chmod 777 install/unzip
+-Invoke setup.exe on windows or runinstall.sh on linux invokes a console window 
+-Select Installation method --> this windows verfies the system requirements and if all is met, initiates and bring up the screen 
+Basic installation : performs full Oracle 11g installations with standard configurations options requing minimal iput
+Advance installation : allows advanced selections such as different passwords for the SYS,SYSTEM,SYSMAN and DBSNMP accounts, DB character set, product languages, automated backups, custom installations and alternative storage options such as Automatic storage management
+-The basics installation options, the following informations is required
+*Oracle Base location
+*Oracle Home location
+*An option to create a starter DB
+*Global DB Name
+*A common password for users such as SYS,SYSTEM,SYSMAN and DBSNMP
+-The Oracle Base/Home location can be changed as desired.
+-After Global DB name click Next to continue.
+-**Next Step only for linux, 
+-Specifyinventory directory and credentials -this script prompts for the inventory directory path. 
+-The installer automatically sets up subdirectories for each product to contain inventory data.
+-set the locations as /u01/app/orainventory [if found different] in the enter the full path of the inventory directory textbox . select the options oinstall from the specify OS group name list . click Next
+--**Only for windows
+-A progress bar is depicts the loading progress of the installation process
+-Product-Specific pre-requisties checks... this installer verifies product-specific pre-requesites to ensure that all the environment requirements are met, After ensuring that all requirement are met, the installer brings up the oracle configurations manager registrations screen 
+-Oracle configurations Manager registrations --> it allows associating configurations,informations with the users metalink account account. Enable the oracle configurations manager, if the configurations needs to be associated with the metalink.This is optional and hence can be skipped.
+-Installation Summary- Click next
+-- Click install, to start the actual transfer of files to their desinations on the computer HDD.
+--COnfigurations assistants, after the copying of files to their destination is complete, the installation process automatically proceeds to configurations of all installed tools. It configures follows tools One is Oracle Net configurations Assistant and Oracle DB assistant
+-Database configurations Assitant - While the Oracle DB configurations Assistant is being configured, a dialog box as .. the dialog box indicates the progress of the actual DB creations. this process is responsible for the actual DB creations
+-DB configurations Asistant Summary- Once the completes, a screen displaying a summary and an options to start the password management tool .
+-Unlok the User scott- Click password management, to unlock the SCOTT user account by removing the tick mark as, Click OK to go back to the screen , Here click ok and Click Next
+-****For Linux -Exection Configurations Scripts - if this installation is being carried out on a linux machine, then an additional screen appears that indicates running orainstRoot.sh and root.sh at the root user..
+-Open a terminal window and type following command at the commadn as shownin diagram
+	su -
+	<enter the root password>
+	/u01/app/orainventory/orainstRoot.sh
+	/u01/app/oracle/product/11.1.0/db_1/root.sh
+	exit
+-Switch back to universal installer
+-ENd of the installation - thats end the successfull installation, A message for same appears as in windows and linux
+-This windows informs the following:
+*The place where the database has been installed
+URL for the following
+*Enterprise management database control
+http://ganesh:1158/em
+Note down this URL to invoke enterprise manager DB control when required.
+-Click Exit, this will display a confirmations dialog box to exit the isntallations tool and click Yes to end the installations.
+
+Oracle Enterprise Management DataBase Control
+=============================================
+-the oracle EM DB controls allows configuring service names, listeners, user and so on.
+-Access it by pointing the web browser to..
+http://<machinename>:1158/em
+-Login using SYSTEM as the user name, provide the password specifided earlier whilst installing oracle and select normal in the connect as dropdown list-box .
+-For now, close the enterprise manager window
+
+Testing the installation 
+=========================
+
+in Windows
+----------
+-Activating/decactiving the Oracle DB service
+-On windows based O/s, when oracle is installed, following services are created
+1)Oracle DB
+2)Listener
+3)DB Console
+-All these there services by default are set to startup automatically[i,e when the computer is switched on].Automatic startup causes computer resources[i,e memory] to be occupied by these services, even though they may not be in use.This adds to the load on the computers CPU and affects performance
+-To avoid such resource blockage, the automatic start up of Oracle services can be set  to manual.
+-Services that are set to manual can be started on demand when required
+
+Switching automatic startup to manual startup in windows
+--------------------------------------------------------
+-To switch the mode of Oracle services from automatic to manual.
+-Select Start-> Administrative tools-> Servies.
+-Scroll through list of available services and locate the above mentioned services that belong to oracle
+-Right click the first service, select Properties to get dialog box 
+-IN the properties dialog box, set the startup type of manual and click Apply. This change the startup property of the select service to manual
+-In the service status section, click STOP. the service shuts down with a progress bar that indicates the progress of shutdown
+-After the service is stopped, close the properties dialog box, the status for that service appears as blank.
+-Follow the same steps for the remaining services
+
+Manually starting the oracle services on demand in windows
+----------------------------------------------------------
+-To access the Oracle DB, it is necessary to have the oracle DB server running. it is only when the following services are running will Oracle resources such as tables and views and so on be accessible:
+a)Listener services
+b)DB services
+-Click Start--> administrative tools-> services
+-Scroll though the list of available services and locate the above mentioned services that are required to run Oracle
+-Right click the first service and click start. this will start the service.This will be indicated by a progress bar .Follow the same for other services
+-After these services are started,they continue to run in memory as long as they are not manually stopped or the computer is switched off.
+
+Starting and stopping the DB on linux
+=====================================
+-the easiest way to start and stop the DB is from command windows
+Starting the DB
+---------------
+-The start the DB instance from the command line, while logged in as oracle, issue the following command
+	dbstart
+-After the DB starts, invoke SQL plus as follows
+	sqlplus
+
+Stopping the DB
+---------------
+-To stop the DB instance from the command line, while logged in as oracle, issue the following command
+	bdshut
+-if whilst starting or shutting down an error appears that indicates
+	ORACLE_HOME_LISTENER NOT SET
+-edit the /u01/app/oracle/product/11.1.0/db_1/bin/dbstart file and modify
+	ORACLE_HOME_LISTENER=$1
+-To
+	ORACLE_HOME_LISTENER=$ORACLE_HOME
+Similary ,edit the /u01/app/oracle/product/11.1.0/db_1/bin/dbshut file and perform the same modification
+-this will resolve the issues
+
+Automatically starting Oracle service on Linux
+==============================================
+-Oracle recommends configuring the OS to automatically start Oracle DB when the system starts up and to automatically shut it down when the system shuts down.
+-AUtomating DB startup and shutdown helps guard against incorrect DB shutdown
+-On Windows, automatic services are created by the installer, due to which the Oracle DB instance and the associated listener service start automatically on sytem startup
+-However, on linux based system such a service is not created by the installer, it need to be created manually
+
+Setting the Restart flag for each instance
+------------------------------------------
+-Oracle could be serving more then one DB.
+-to start every DB instance on the system startup, edit /etc/oratb file to set the restart flag for each instance to Y as show
+	orcl:/u01/app/oracle/product/11.1.0/db_1:Y
+
+Creating the automatica startup script
+--------------------------------------
+login as the root user and create the file named /etc/init.d/dbora with the following contents
+
+ORA_HOME=/u01/app/oracle/product/11.1.0/db_1
+ORA_OWNER=oracle
+
+if[!-f $ORA_HOME/bin/dbstart]
+then
+	echo "Oracle startup: cannot start"
+	exit
+fi
+
+	case "$1"in 'start');; 'stop');;
+esac
+
+setting the startup scripts's permissions
+-----------------------------------------
+Issue the following command to set the file permissions to 750
+	chgrp dba /etc/init.d/dbora
+	chmod 750 /etc/init.d/dbora
+
+Associating the service to run level
+------------------------------------
+-Associate the dbora service with the appropriate run level and set it to auto-start using the following command
+	chkconfig --level 345 dbora on
+-This command ensures that all the relvant DB instances startup and shutdown automatically at system startup and shutdown
+-Now the oracle DB has become a service and therefore can be started and stopped as
+-To start as shown 
+ service dbora start
+-To shutdown
+	service dbora stop
+
+Installation of Oracle 11g on a client machine
+==============================================
+-For installatin purpose client installation is carried out on windows machine
+-Execute the setup.ext file. this invokes a console windows.
+-This windows verifies the sytem requirements
+-On completeion, the welcome screen for Oracle universal installer windows
+-The selection installation type windows appears which prompts the user to select the type of installation needed .the following type of installations
+a)InstantClient(150MB): installs the instant clients software
+b)Administrator(678MB): installs the management tools with communication tools
+c)RunTime(422MB):install communication tools
+d)Custom: Allows manual selection of products and services to be installed
+-Select administrator and click next
+The install location screen appears .this screen prompts for the followings details
+*Oracle base: the oracle base path appears by default. the path can be changed based on the requirement.The path should not have any space between words or characters
+*Name:Enter the name of the oracle home
+*Path:Enter the directory location for the oracle home files
+-After entering all the details of the locations,click Next
+-The installer verifies product-specific pre-requisites to ensure that all the minimum enviroment requirements are met.
+-After the loading of the required tools completes, a summary screen appears.this screen displays a list of product and settings that have been select for installations
+-Click next . this start the actual transfer of files to their destination on the computers HDD
+-The next screen indicates the progress of the installation 
+-Once the installation process is complete,the oracle Net configurations assitant wizard appears.
+-This wizards start with the configurations of Naming method
+-Click next
+-A screen indicating that the Oracle Net configurations is compelted appears as
+-Click Finish
+-The end of installation screen appears
+-Click exit and this displays confirmation dialog box to exit  the installation tools 
+-Click yes to end the installations
+
+Connecting  A client to the Oracle server
+-----------------------------------------
+-The net configurations assitant can be invoked by selecting start-> all programs--> oracle -oraclient11g_home1--> configurations and migrations tools--> net configurations assistant 
+-The window dealing with Naming method configurations appears as shown.The following are the configurations types
+a)Listener configurations
+b)Naming methods configurations
+c)local net service name configurations
+d)Directory usage configurations
+-Select local net service name configurations .Click next
+-The next service name configurations screens appears.this allows the user to work to with net services name resolved using the local naming
+-By Default, the option add is select.Click Next. A screen prompting for the service name for the DB appears, as shown 
+-Enter the appropriate servie[in this case the service name entered is orcl]
+-Click next.A screen prompting to select the protocol to be used for the DB appears as shown
+-Select an appropriate network protocol from the options provided, to allow communication with the DB server over the network
+-Click next.A screen appears which accepts, the informations related to the computer hosting the DB servers.
+-Enter the IP Address or the name of the computer belonging to the computer hosting the DB in the hostname field.Also specify the portnumber at which the B server will respond
+-Click next .A screen appears. this provides an options to test the connections between oracle client and DB resding on the server
+-Select Yes, perform a test. Click Next
+-The next screen displays the result of the test. if the connections is succesfful , the screen as shown.
+-** Usualy the default login used in the attempt to connect to the DB is system.As the passwords were reset/chagned during oracle installation.the connections may not succed as whon in diagram
+--** to overcome this problem, use the user name as scott and password as tiger which is the default user always with the oracle installation.
+-To change the login name , click change login to get the a dialog box as shown.Enter the usrename as scott and its password as tiger . click OK to retest the connections.
+-After passing an appropriate username and password to oracle DB server, click next. A screen popus which accepts a net service name
+-Provide a desired name and click Next.this name will now be used to conenct to the DB server via the SQL plus clietn using the connection string as linux.
+-A screen to configure another net service name appears.
+-Select No. Click Next
+-A screen indicating the the naming methods configurations is compelete appears as shown 
+-Click next.The welcome screen of the Oracle Net configurations assistant appears as shown
+-Click finish to compelete the Oracle net configurations Assistant
+-Now start the SQL plus from the client machine using command windows as
+	sqlplus scott@linux/tiger
+--Here, linux is the net service name that was just created.
+
+
+
+
+

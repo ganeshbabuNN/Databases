@@ -1,0 +1,78 @@
+
+Well Known Authors for Oracle DB
+================================
+
+Lewis R Cunningham
+****
+Email: lewisc@databasewisdom.com
+Home Site:  http://databasewisdom.com
+Oracle Blog: http://it.toolbox.com/blogs/oracle-guide
+Twitter: TheRealLewisC
+LinkedIn: http://www.linkedin.com/in/lewiscunningham
+
+Laurent Schneider
+***
+site:http://laurentschneider.com/
+Blog:laurentschneider.blogspot.com
+
+Oracle 12c Database Resources
+=====================
+https://apexapps.oracle.com/pls/apex/f?p=44785:141:::NO::P141_PAGE_ID,P141_SECTION_ID:6,18
+
+Oracle Learning Libraires
+==========================
+https://apexapps.oracle.com/pls/apex/f?p=44785:141:::NO::P141_PAGE_ID,P141_SECTION_ID:6,18
+
+Oracle University
+=================
+To get your certificate
+https://education.oracle.com/pls/eval-eddap-dcd/ocp_interface.home
+
+Certificaiton path 
+http://education.oracle.com/pls/web_prod-plq-dad/db_pages.getpage?page_id=39
+
+Oracle Overview
+===============
+
+Products Overview
+-----------------
+-Oracle Cloud
+-Oracle Mobile
+-Oracle Application
+-Oracle Database
+-Oracle Java
+-Developer Tools
+-Operating Systems
+-Business Analytics
+-Middleware
+-Enterprise Management
+-Engeering Systems
+-Servers
+-Storage and Tape
+-Networking and data center Fabric Products
+-Content Storage Management
+-Enterprise Communication
+-Virtualizaition
+
+--**OTHERS
+-Services
+
+-Oracle Customer Program
+-Customer and Partner Sucess
+-Product price list
+https://www.oracle.com/products/index.html
+
+Solutions Overview
+------------------
+-Cloud solutions
+-Mobile solutions
+-Technology Solutions
+-Business SOlutions
+-Industry Solutions
+
+--**OTHERS
+-Customer experience Solutions
+-Oracle Customer program
+-Customer and Partner Sucess
+-Partner Solutions
+https://www.oracle.com/solutions/index.html
