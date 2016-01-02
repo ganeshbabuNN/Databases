@@ -1,0 +1,21 @@
+intro
+=====
+-SQL Plus usually pronounced as Sequel Plus is an oracle command line user interface and reporting tool that allows interacting with the oracle DB using the SQL and PL/SQL language.
+-it enables
+a)Entering,editing,storing,retrieving and running SQL commands and PL/SQL code blocks
+b)Formatting,performing calcluation,storing and printing query results in the form of reports
+c)Examining table and object definitions
+d)Developing and running batch scripts
+e)Performing DB administrations
+-DBA's and developes are the most common users of SQL plus and DB management in regularly performed using SQL plus.
+
+How does plus functions
+-----------------------
+-Users key in SQL statements at the SQL prompt in SQL plus tool
+-These statements are dispatched to the Oracle DB server.
+-The Oracle DB server validates and executes to the statemetns it receives
+-The results are returned to SQL Plus and displayed to the end user.
+-Besides sending SQL statements to the server, SQL plus also saves them into a local buffer and allow the users to view and change the statements
+-Diagrammatically, the above can be explained
+--check the Diagram
+
