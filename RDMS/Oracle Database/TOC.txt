@@ -37,6 +37,23 @@ Oracle DB Architecture & UM
 			Revoking the Privileges
 			ROLES
 			Creating DBA Users
+SQLPLUS
+	How does SQLplus functions
+	SQL Commandline
+		CommandlineParameter
+		NoLog Parameter
+	SQLPlus Command
+	SQL Statement In Batch
+	Passing Value in a script
+	Saving the Script
+	Defining Variables
+	Subsitution Variables
+	Changing SQL prompt
+	Formatting Query Format
+	Creating Record Subset
+	Saving changes to the DB Automatically
+	Output to a file,HTML,CSV
+	Setting PageSize,LineSize	
 				
 SQL Basics
 	SQL DataTypes
