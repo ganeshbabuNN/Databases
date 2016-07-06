@@ -1,0 +1,31 @@
+BULK 
+======
+--Bulk operations is somewhat a advanced topic 
+--lets see a select statement using BULK INTO
+-- here below you are declare a local array of employee row type i,e array of records, and the local record of that type and continues.
+--Assume that you have millions of records like that.
+
+BullCollect_Type_For_Loop.sql
+
+--- if you want to limit the row , then use the cursor operations, with those cursor type
+--here you can create the cursor on the row type or a table 
+BullCollect_Type_For_Loop_Limit.sql
+---Assignment, using the above code, find how many blanks are there in an array, how many of them are there in last set
+
+DML on BULK
+===========
+
+FORALL 
+======
+--FOR ALL can be used into all Update like delete..etc
+--this has a fast performance using with BULK Keyword
+
+BullCollect_Type_DML_Insert_FORALL.sql
+
+--Assignment, convert the above FORALL code where you need to limit into 11 , so on the first loop insert 10 and next loop insert 10..like that
+
+
+
+
+
+

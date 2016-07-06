@@ -1,0 +1,1 @@
+delete employee where city = ‘CHENNAI’;

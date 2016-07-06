@@ -1,0 +1,1 @@
+alter table  pls_test  modify (a not null);

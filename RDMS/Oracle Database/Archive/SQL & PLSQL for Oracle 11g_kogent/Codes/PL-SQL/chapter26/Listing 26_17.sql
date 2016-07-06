@@ -1,0 +1,1 @@
+DBMS_LOB.compare ( bfl1, bfl2,100,150,250);

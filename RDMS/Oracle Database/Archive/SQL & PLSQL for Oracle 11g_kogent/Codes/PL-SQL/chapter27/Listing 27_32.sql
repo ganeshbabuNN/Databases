@@ -1,0 +1,1 @@
+select empid, name from empobjtab;

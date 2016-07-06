@@ -1,0 +1,1 @@
+Purge user_recyclebin;

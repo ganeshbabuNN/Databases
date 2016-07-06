@@ -1,0 +1,1 @@
+insert into emp(empno) values(546); 

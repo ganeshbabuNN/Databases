@@ -1,0 +1,1 @@
+audit select on scott.shares  by session;

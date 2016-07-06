@@ -1,0 +1,1 @@
+select sn, c1 multiset except c2 as c1_c2 from csample;

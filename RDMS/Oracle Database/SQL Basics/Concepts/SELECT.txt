@@ -1,0 +1,160 @@
+SELECT
+======
+
+Viewing the data in the tables basically done using SELECT SQL Command.
+
+Syntax
+------
+
+to view all records from the table.
+
+SELECT * FROM <TableName>;
+SELECT <ColumnName> TO <ColumnNameN> FROM <TableName>;
+
+Where
+1)The meta character asterisk[*] indicates all tables rows and columns
+2)ColmnName1 To ColumnNameN Represents table colums Names
+
+Exp
+---
+-THE SQL Begins begins with the SELECT Keyword followed by a list of table columns.
+-This list of columns specifies which columns are to be retrived from the table.
+-THe list of the columns is followed by the SQL Keyword FROM and the table name from which the data is begin retreived.
+-Oracle parses and compiles the SQL query, executes it and retrives data from rows/columns or select rows/columns from the table.
+
+
+*The select SQL Command allows the following
+
+1)Retrieve select columns and all rows
+2)Retrieve select rows and all columns
+3)Retrieve selected columns and selected rows
+
+1)Retrieve select columns and all rows
+--------------------------------------
+-To retrive only select columns, but all rows from a table
+
+Syntax
+------
+
+SELECT <ColumnName1>,<ColumnName2> FROM <TableName>;
+
+
+2)Retrieve select rows and all columns
+--------------------------------------
+-if you want specific rows to be displayed then we need to use the WHERE Clause in a SELECT query to the filter on the row retrived.
+-When a where clause is added to the SQL query, each recrod in the table is compared with the conditions specified in the the Where clause.
+
+Syntax
+------
+
+SELECT * FROM <TableName> WHERE <Conditions>;
+
+where condition is always quantified as ColumnName=Value
+
+
+When specifiying the condtions some of the standard operations can be used:
+
+
+Operator	Desc
+
+=		Equal To
+<>		Not equal To
+!=		Not Equal To
+>		Greater Thane
+
+<		less then
+>=		Greather then or equal to
+<=		Less then or equal to
+BETWEEN		between an inclusive range
+LIKE		Search for a pattern
+IN 		Used if the exact column values to be returned are known.
+
+
+3)Retrieve selected columns and selected rows
+---------------------------------------------
+-to be obtain specific rows and specific columns from a table using SELECT Query
+
+sytnax
+------
+SELECT <ColumnName1>,<ColumnName2> FROM <TableName> Where <Condition>;
+
+Elimination Duplicates Rows
+===========================
+-The DISTINCT caluse if used along with the SELECT keyword retrives only unique data depending on the column list specified after it
+-this clause can only be used with SELECT statements
+
+syntax
+------
+
+SELECT DISTINCT <ColumnName1>,<ColumnName2> FROM <TableName>;
+SELECT DISTINCT * FROM <TableName>;
+
+-the SELECT DISTINCT <ColumnName1>,<ColumnName2> clauses scans through the values of the column(s) specified and displays only unique values from amongest them.
+-the SELECT DISTINCT * SQL syntax scans throught entire rows and eliminates rows that have exactly the same content in each columns
+- For all rows, entires will be duplicated. The DISTINCT * Clause can be used to retrieve only unique employees
+
+Data Sorting
+============
+-Data which are begin retrived from the table can be sorted as desired
+-the rows that are retrived from the table , using SELECT query can be sorted in either ascending or descending order, depending on the condition specified in the SELECT sentence
+
+sytnax
+-----
+SELECT * FROM <TableName>
+ORDE BY <ColumnName1>,<ColumnName2> <[Sort Order]);
+
+-Sort Order may be ASC(Ascending) or DESC (Descending)
+-By default the sorting will be ASC
+-you can sort multiple columns
+
+Retrieving tables available in the schema
+========================================
+-it is used to determine the tables to which a user has access.
+-the tables created under the currently selected tablespace are displayed.
+-TAB is oracles specific view. TAB is short for user_tables;
+
+Describing Table Structures
+===========================
+- to display informations about the column defined in a table use the following syntax
+
+syntax
+------
+DESCRIBE <TableName>;
+or
+Desc <TableName>;
+
+Viewing Table information
+=========================
+-it is desired to view informations about all available tables and the columns
+-Oracle allows doing so using the following views
+1)DBA_TAB_COLUMNS: this view can be used for all available table column in the sytem
+2)ALL_TAB_COLUMNS: this view can be used for all availabe table columns in the system that the user owns or has access to
+3)USER_TAB_COLUMNS: this view can be used for all available table columns that the user owns.
+
+these Views provides table column information as
+1)Name
+2)Data Type
+3)Length
+4)Precision
+5)Scale
+
+Case Sensitivity
+================
+-In Oracle Object name CAN BE case sensitive, however, by default they are not
+-An object can be written using
+1)UPPER CASE
+2)Lower Case
+3)Mixed Case
+-Oracles forces all such names to UPPER CASE
+-to override this default behaviour , place object names within double quotes ["ObjectName"].
+-if the object names are specified within double quotes then the name are stored as it is . this means Oracle preserves the case.
+-Oracle behaves exactly the same for column names of an object such as table, view and so , on
+
+
+
+
+
+
+
+
+

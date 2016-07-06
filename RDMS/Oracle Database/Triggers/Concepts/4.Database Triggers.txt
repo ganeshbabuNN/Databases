@@ -1,0 +1,44 @@
+
+Different types of Triggers
+---------------------------
+1)Database Triggers
+2) DDL Triggers
+
+which are advanced topics,
+Like database triggers include DDL triggers like grant premission and also event triggers event trigger logon and shutdown Triggers.
+
+types of triggers
+-----------------
+1)tables
+2)Views
+3)Schema
+4)Database
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

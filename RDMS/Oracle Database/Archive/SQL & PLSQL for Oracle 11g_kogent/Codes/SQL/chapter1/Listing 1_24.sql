@@ -1,0 +1,1 @@
+select ename from emp_company where cname = ‘ACC’ and salary > 1000;

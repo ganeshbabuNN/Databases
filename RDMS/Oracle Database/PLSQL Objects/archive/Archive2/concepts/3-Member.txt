@@ -1,0 +1,23 @@
+MEMBER Procedures
+=================
+a member functions is allows to operate on the instance of the type, an instance of type that are type contains data. the type is a definiations and instance of type are where we have called three types of that single instance
+
+Object_Type_Member_InstanceType_Impl.sql
+
+-now call the emp_obj where actually its called the instance of the object like how we are calling package with the --procedures and functions.
+-here the print is the procedures of the instance of member procedures 'print'
+Object_Type_Member_InstanceType_Impl.sql
+
+-Even you call the object type with the instance name with 'v_emp_obj.last_name' ...etc
+Object_Type_Member_InstanceType_Impl.sql
+
+MEMBER with Procedure and Function implementations
+--------------------------------------------------
+which like a return the value which is passed.
+
+Object_Type_Member_Procedure_Functions_Impl.sql
+
+-and now call the object with those member functions.
+Object_Type_Member_Procedure_Functions_Impl
+
+**Remember the program unit in the type is directly represent what the type represent, something like this is an employee can you act on employees, think about the type are related to traisent operations where packages is used for persitance operations. where think package is still used as a employee API

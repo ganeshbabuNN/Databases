@@ -1,0 +1,44 @@
+Package Initializations
+=======================
+-- Initializations is offen overlooked features of the packages
+-- Sometime instead of variable made constant which are independent, its better to make the variable to be column from the table where you can put in the executable block in the package body. if there is a values in the table, it will override the values from the tables
+
+--create the table create_log_formats_tab.sql
+
+Package_Initialization_Test.sql
+create or replace 
+package body logger
+as
+  GL_date_and_time varchar2(100) := ' The date and time is ';
+  GL_date_format varchar2(100) := 'FMDD Month, YYYY';
+  GL_time_format varchar2(100) := 'HH24:MI:SS';
+
+PROCEDURE logit(
+  v_message IN VARCHAR2 DEFAULT 'Hello World!',
+  v_output_target IN VARCHAR2 DEFAULT G_LOG_TABLE)
+AS
+  -----
+  -----
+    COMMIT;
+END;
+begin
+ select date_and_time_txt,date_format,time_format
+ into GL_date_and_time,GL_date_format,GL_time_format
+ from log_formats;
+ exception
+  when no_data_found
+  then 
+  null;
+end logger;
+/
+
+--now call the logit procedures, now it is overiding
+begin
+   logger.logit('is it working?',logger.G_LOG_DISPLAY);
+end;
+
+Testing
+------
+- Now remove the record in the log_formats tables and commits
+- again call the AB logger.logit(---), here you may observer its calling the old values.
+--Here concept is packages will loaded once , if you make any changes, unless you re-compiler or disconnect the session, the it will return the previous values which is called.

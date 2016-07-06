@@ -1,0 +1,14 @@
+DECLARE
+
+  CURSOR c1 IS
+    SELECT first_name, last_name, salary
+      FROM employees;
+      
+  v_person c1%ROWTYPE;	
+BEGIN
+
+ v_person.first_name := 'Lewis';
+ v_person.last_name := 'Cunningham';
+ v_person.salary := 2100.00; 
+END;
+/

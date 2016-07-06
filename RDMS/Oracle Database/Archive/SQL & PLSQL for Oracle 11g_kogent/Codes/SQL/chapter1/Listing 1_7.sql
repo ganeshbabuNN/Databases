@@ -1,0 +1,1 @@
+grant select on company to U2;

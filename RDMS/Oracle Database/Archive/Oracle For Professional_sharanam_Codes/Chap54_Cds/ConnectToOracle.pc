@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <sqlda.h>
+#include <sqlcpr.h>
+
+EXEC SQL BEGIN DECLARE SECTION;
+VARCHAR uid[30];
+VARCHAR pwd[30];
+EXEC SQL END DECLARE SECTION;
+
+EXEC SQL INCLUDE SQLCA.H;
+
+void main()
+{
+	strcpy(uid.arr,"scott");
+	uid.len = strlen(uid.arr);
+	strcpy(pwd.arr,"tiger");
+	pwd.len = strlen(pwd.arr);
+
+	EXEC SQL WHENEVER SQLERROR GOTO errexit;
+	EXEC SQL CONNECT :uid IDENTIFIED BY :pwd;
+
+	printf("Connected to the Oracle database using Scott/Tiger\n");
+
+	EXEC SQL COMMIT WORK RELEASE;
+	return;
+
+	errexit:
+		printf("Connection failed");
+		return;
+}

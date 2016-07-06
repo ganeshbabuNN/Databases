@@ -1,0 +1,1 @@
+select var_samp(phy),sum(power((phy-65.8),2))/(count(1)-1) var from marks;

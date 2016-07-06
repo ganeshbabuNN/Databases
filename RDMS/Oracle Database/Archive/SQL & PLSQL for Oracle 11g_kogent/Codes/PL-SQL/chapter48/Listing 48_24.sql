@@ -1,0 +1,1 @@
+select * from sys.dba_role_privs;  

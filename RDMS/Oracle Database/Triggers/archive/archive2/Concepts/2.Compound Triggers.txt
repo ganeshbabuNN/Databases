@@ -1,0 +1,20 @@
+Compound Triggers
+=================
+-it is available in only in Oracle DB 11g only.
+-basically this type of triggers it consists before, after row and statement into a single trigger and it organises into all units into single place
+
+-Trigger_CompundTrigger.sql
+
+It is possible to have triggers on views, if you find it requires some special triggers where for the joins,aggreates...etc.
+consider the example on HR schema.
+
+Creating_a_View.sql
+This allows to get the count of employess by department_id and create a view for this aggreations.
+
+Apply the trigger @View 
+-----------------------
+
+In this view, we find for the record last_name='Grant' has null department_id, let us modify update the dept_id  using update statement
+Creating_a_View.sql
+
+

@@ -1,0 +1,1 @@
+create table sales (time number, region varchar2(15), dept varchar2(15), profit 		number);

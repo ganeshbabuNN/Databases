@@ -1,0 +1,1 @@
+insert into ztemp5 values('anil','anil');

@@ -1,0 +1,1 @@
+select count(ename) from emp_company where cname = ’ACC’; 

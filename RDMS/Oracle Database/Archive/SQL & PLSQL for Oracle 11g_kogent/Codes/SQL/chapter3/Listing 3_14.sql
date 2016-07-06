@@ -1,0 +1,1 @@
+select UID from DUAL;

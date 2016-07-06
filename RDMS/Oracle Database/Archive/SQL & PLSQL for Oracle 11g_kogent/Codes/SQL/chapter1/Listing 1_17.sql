@@ -1,0 +1,1 @@
+select ename, salary from emp_company;

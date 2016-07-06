@@ -1,0 +1,1 @@
+audit insert,update,delete,alter on scott.sample;

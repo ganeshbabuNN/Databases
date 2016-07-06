@@ -1,0 +1,23 @@
+SIMPLE CASE STATEMENT
+======================
+--its nothing but a simple case statement, its like a If else statements
+--converting the if to the cASE statements
+
+logit with simple CASE.sql
+
+--now call the logit procedures, this gives the extact output of the if statement what we seen earlier
+Control_Simple_Case_Statement.sql
+
+SEARCHED CASE Statment
+======================
+
+Control_Search_Case_Statement.sql
+
+MODULARISATION
+==============
+-- by modularising the above code so there is no duplicate code happenening
+--it improves the modularity and readablity
+
+Control_Simple_Case_Statement.sql
+
+

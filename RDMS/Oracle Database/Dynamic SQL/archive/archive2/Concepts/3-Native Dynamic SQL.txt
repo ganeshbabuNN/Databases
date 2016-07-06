@@ -1,0 +1,81 @@
+NDS
+===
+
+--it just simplies the code required to run the DYnamic SQL
+--it was been said it is more faster then the DBMS SQL, but not really true
+--but there are limitations where DBMS SQL is a better choice
+--in most of the NDS , you see EXECUTE IMMDIATE apart from using the DBMS SQL
+--the biggest limitations is NDS is can't handle is dynamic Set of columns where has in DBMS SQL you can bind the variable with that column name, where as in NDS you should know where the column is from?.
+
+--the basic format of the NDS statement is 
+NDS_DDL_Basic.sql
+
+--in this NDS you also do the DDL, DML...etc same like the DBMS SQL and not much difference from DBMS SQL
+
+Basic procedures
+================
+let has take back where we used DBMS SQL Call_cursor_static.sql
+and will see how to use in the NDS SQL, but it may look more complex then a static, but less complex then Static
+- here you assing those column name and start to use the procedures.
+
+NDS_DQL_Procedures.sql
+
+DDL Procedures
+================
+--using clause which basically bind the variables to the dynamic string of the binded variable by execute immediate command.
+
+NDS_DDL_Procedures.sql
+
+Returning some variable 
+=======================
+for example if a scenario like sequences. 
+--you can either use the IN MODE or INTO  which gives the same results.
+
+Using IN MODE
+NDS_Returning_Values_OUTMODE.sql
+
+NOT USING ANY MODE
+NDS_Returning_Values_ANYMODE.sql
+
+calling my stored Procedures
+=============================
+--just use the USING clause passing those values to a binding variable and get your procedures executed.
+
+NDS_CallingProcedure_BindVariables.sql
+
+Converting the DBMS SQL to NDS
+=============================
+let us convert dbms_sql1.sql to the NDS
+ some points 
+--eliminating the cursors using the memory cursor where are of memory for that curosr
+DBMS_SQL_To_NativeDynamicSQL_NDS.sql
+
+BULK COLLECT 
+============
+-- as per previous example bulk_collect_into_with_limit.sql
+--converting to NDS
+
+NDS_Using_Bulk_Collect.sql
+
+Using FORALLL
+==============
+Similar like  bulk_operations_with_forall.sql for basic DBMS SQL
+
+--showing the same in different way
+
+--create two tables 
+CREATE TABLE emp_names (
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20) );
+
+--then execute bulk_operations_with_forall.sql
+
+--let us convert into the NDS Version and see
+NDS_Using_FORALL.sql
+
+
+MEASURING performance
+======================
+This is just a script to understand the performance using the Dynamic SQL where binding variable are used w.r.t to normal SQL.
+Measuring_Performance_With_DynamicSQL_NormalSQL.sql
+

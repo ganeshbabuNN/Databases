@@ -1,0 +1,1 @@
+insert into V1 values (‘Ashok’,’’,1200.00);

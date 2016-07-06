@@ -1,0 +1,1 @@
+select level, ename from manager connect by ename = mname start with ename = 	‘VIJAY’;

@@ -1,0 +1,35 @@
+Package cursors
+================
+
+-we can even package a cursors and reused by any users.
+-example using a simple cursors
+
+declare
+  cursor c1 is
+  select first_name,last_name,email,phone_number,hire_date
+  from employees
+  where employee_id =101;
+ v_local_record c1%ROWTYPE;
+begin
+  select first_name,last_name,email,phone_number,hire_date
+  into v_local_record
+  from employees
+  where employee_id =101;
+  
+  dbms_output.put_line(v_local_record.first_name || '  ' || v_local_record.last_name);
+end;
+/
+
+--- you can make this cursors packages, you can make this select statements avaiable globally, so anyone can reference the select statements where can be reused globally .
+
+Package_Cursors_pkg.sql
+
+
+--if you want to hide the cursor statement into a package body, let us rework on it, where it works exactly the same. Basically you are hiding the implementations of the cursors. its a good pratice code hiding is a good pratice which is given b the packages.
+
+Package_Cursors_pkg_Hiding_Implem.sql
+
+
+
+
+

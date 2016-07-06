@@ -1,0 +1,121 @@
+Function
+========
+-Functions specification begins with CREATE and ends with the functions name or arguments list
+-the value to be returned by the function is indicated using RETURN keyword.
+-the body starts after the keyword IS or AS and ends with keyword END.
+
+Syntax
+------
+CREATE or REPLACE FUNCTION[<Schema>.]<FunctionName>(<Argument>{IN,OUT,IN OUT} <DataType>..,) 
+RETURN <DataType> { IS, AS}
+<variable declartions>;
+<constant Declartions>;
+BEGIN
+	<Body code blcok>;
+EXCEPTION
+	<Exception code block>;
+END;
+
+where
+REPLACE
+-it recreates the procedures[if it is already exists].
+-its changes definiations of an existing funciton without dropping,recreating and re-granting the access
+
+Schema
+-it is the schema that holds the procedures being created.
+-if ommitted , it takes the default schema
+
+FUNCTION
+-name of the Function being created.
+
+Argument
+-Name of the arguments to the Function 
+-To make a Function dynamic it can be passed arguments/parameters before execution.
+-it changes the way it works depending upon the parameters passed prior to its executions
+
+An Argument can be
+*IN 
+-An IN Parameter is a parameter whose value is passed into a Function .the value of an IN Parameter is a constant. it cannot be changed or reassigned within the module.
+*OUT
+- An OUT parameter is a parameter whose value is passed out of the stored Function , back to the calling PL/SQL block.
+-An OUT Parameter is a variable and not a constant . A default value cannot be assigned to an OUT Parameter
+*IN OUT
+-An IN /OUT parameter is a parameter that functions as IN or an OUT Parameter or both.
+-THe value of these parameter can be passed into and out of the Function 
+-it is not a constant
+
+The default mode for a parameter is IN
+-Arguments can be assigned a default value.
+-To assign a default value the assignment operation[:=] or the DEFAULT keyword can be used.
+-An arguments with a default value need not be included in the prcoedure call
+
+<Argument1> IN Varchar2:='Ganesh';
+<Argument2> IN Varchar2 DEFAULT 'ganesh';
+-Parenthises can be ommitted if no arguments are present
+-Argument are declared with data types but without data type length or precison. but not declared with the length component.
+ex Varachar2 , but no Varchar2(30);
+
+DATATYPE
+-it is the data type of the argument. Any date type that is supported by PL/SQL can be specified here.
+
+RETURN Data Type
+-it is the data type of that function's return value.
+-since every function must return a value, this clause is required, any data type that is supported by PL/SQL can be specified here.
+
+BODY CODE BLOCK
+-it is Function definition consisting of PL/SQL statements
+
+EXCEPTION CODE BLOCK
+-in this seciton that holds defined excpetions
+-The user need to have the CREATE FUNCTION system privilage to create a procedure in the schema.
+
+--As I was saying , a procedure is intended to show some actions, where as the functions is intended to return some value.
+-- The primary focus on the functions is to return atleast single value and the focus is to perform some single actions
+
+Debugging the Functions
+=======================
+- To view the compilation errors issues the following command;
+
+SHOW ERROS Function <FunctionName>
+
+Getting Information about Functions
+===================================
+-Infromation about the functions can be fetched from the USER_PROCEDURES view.
+
+Solution
+-------
+select object_name,aggregate,parallel from user_procedures where object_type='FUNCTION';
+
+Destroying Functions
+====================
+-A functions cna be destroyed using the DROP Command
+
+Syntax
+	DROP function <FunctionName>;
+
+
+FUNCTIONS
+=========
+--we shall convert procedures into this has a functions
+Function_Converting_From_Procedure.sql
+
+---we can use this in the SQL statements also..
+Function_Using_Select_statement.sql
+
+
+NAME notations
+==============
+---using the name notations
+Function_Calling_Using_Name_Notations.sql
+
+NESTED FUNCTION
+===============
+---USING AND CALLING FUNCTION IN THE AB itself
+Function_Nested_functions.sql
+
+
+
+
+
+
+

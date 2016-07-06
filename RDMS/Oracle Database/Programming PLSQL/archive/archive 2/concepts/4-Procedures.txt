@@ -1,0 +1,22 @@
+Procedures
+==========
+--Changing the AB to a procedures
+--- Now this procedures are stored in the DB in the Data Dictionaries
+--changing the logit with parameter.sql to a logit procedure with parameters
+
+Procedure_Basic.sql
+
+
+Turning a Variable into a Parameter
+===================================
+--parameter do end with semicolon
+--Define the mode of the parameter, constant cannot be.
+--parameter do not have any assignment statemetn
+--parameter may contain a default value
+
+Procedure_With_Parameter_Default_Value.sql
+
+Nested Procedures calls
+=========================
+nested logit calls.sql
+

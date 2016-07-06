@@ -1,0 +1,236 @@
+-------------------------------------------------------------------------------------------------------
+-- Function To Test Leap Years
+-------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE FUNCTION isLeapYear(leapYear NUMBER) 
+		RETURN boolean AS
+	BEGIN
+		IF MOD(leapYear, 400) = 0 OR (MOD(leapYear, 4) = 0 AND MOD(leapYear, 100) != 0) THEN
+			return TRUE;
+		ELSE 
+			return FALSE;
+		END IF;
+	END;
+	/
+-------------------------------------------------------------------------------------------------------
+-- Test:
+-------------------------------------------------------------------------------------------------------
+SET SERVEROUTPUT ON
+BEGIN
+	IF isLeapYear(2008) THEN
+		DBMS_OUTPUT.PUT_LINE('It is a leap year');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('It is not a leap year');
+	END IF;
+END;
+/
+
+-------------------------------------------------------------------------------------------------------
+-- Print The ASCII Table
+-------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON SIZE 10240
+
+	DECLARE
+		i Number;
+		j Number;
+		k Number;
+	BEGIN
+		FOR i IN 2..15 LOOP
+			FOR j IN 1..16 LOOP
+				k:=i*16+j;
+				DBMS_OUTPUT.PUT((TO_CHAR(k, '000')) || ':' || CHR(k) || '  ');
+				IF k MOD 8 = 0 THEN
+					DBMS_OUTPUT.PUT_LINE('');
+				END IF;
+			END LOOP;
+		END LOOP;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------
+-- Compute the factorial of a number.
+-------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE FUNCTION factorial (num POSITIVE) RETURN INTEGER IS
+	BEGIN
+	/* Terminating condition */
+		IF num = 1 THEN
+			RETURN 1;
+		ELSE
+	/* Recursive Call */
+			RETURN num * factorial(num - 1);
+		END IF;
+	END factorial;
+	/
+
+-------------------------------------------------------------------------------------------------------
+-- Compute the Nth fibonacci number.
+-------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE FUNCTION fibonacci(num POSITIVE) RETURN INTEGER IS
+	BEGIN
+	/* Terminating condition */
+		IF (num = 1) OR (num = 2) THEN
+			RETURN 1;
+		ELSE
+	/* Recursive Call */
+			RETURN fibonacci(num - 1) + fibonacci(num - 2);
+		END IF;
+	END fibonacci;
+	/
+
+-------------------------------------------------------------------------------------------------------
+-- Access the web pages of the website www.sharanamshah.com.
+-------------------------------------------------------------------------------------------------------
+	SET PAGES 50000
+
+	SELECT UTL_HTTP.REQUEST('http://www.sharanamshah.com/') FROM DUAL;
+
+-------------------------------------------------------------------------------------------------------
+-- Select Records From A Cursor Into PL/SQL Table
+-------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+		TYPE typDepartment IS TABLE OF Departments%ROWTYPE INDEX BY BINARY_INTEGER;
+		arrayDepartment typDepartment;
+		TYPE cursorDepartment IS REF CURSOR RETURN Departments%ROWTYPE;
+		c1 cursorDepartment;
+		num Number := 1;
+	BEGIN
+		OPEN c1 FOR SELECT * FROM Departments;
+		LOOP
+			EXIT WHEN c1%NOTFOUND;
+			FETCH c1 INTO arrayDepartment(num);
+			num := num + 1;
+		END LOOP;
+		CLOSE c1;
+		FOR num IN 1..arrayDepartment.LAST LOOP
+			DBMS_OUTPUT.PUT_LINE('Department Number: ' || arrayDepartment(num).DeptNo);
+			DBMS_OUTPUT.PUT_LINE('Department Name: ' || arrayDepartment(num).DepartmentName);
+			DBMS_OUTPUT.PUT_LINE('Capacity: ' || arrayDepartment(num).Capacity);
+			DBMS_OUTPUT.PUT_LINE('---------------------------');
+		END LOOP;
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------- 
+-- Count the number of rows in all the tables available in a schema using PL/SQL.
+-------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON SIZE 1000000
+	DECLARE
+		tableName USER_TABLES.TABLE_NAME%TYPE;
+		tableCommand Varchar2(200);
+		tableColumnID Integer;
+		tableTotalRecords Number(10);
+		stat Integer;
+		rowCount Integer;
+	/* Displaying only those tables with more rows */
+		tableLimit Integer := 0;
+		CURSOR cursorTable IS SELECT TABLE_NAME FROM USER_TABLES ORDER BY TABLE_NAME;
+	BEGIN
+		tableLimit := 0;
+		OPEN cursorTable;
+			LOOP
+				FETCH cursorTable INTO tableName;
+				EXIT WHEN cursorTable%NOTFOUND;
+				tableCommand := 'SELECT COUNT(0) FROM ' || tableName;
+				tableColumnID := DBMS_SQL.OPEN_CURSOR;
+				DBMS_SQL.PARSE(tableColumnID, tableCommand, DBMS_SQL.NATIVE);
+				DBMS_SQL.DEFINE_COLUMN(tableColumnID, 1, tableTotalRecords);
+				stat := DBMS_SQL.EXECUTE(tableColumnID);
+				rowCount := DBMS_SQL.FETCH_ROWS(tableColumnID);
+				DBMS_SQL.COLUMN_VALUE(tableColumnID, 1, tableTotalRecords);
+				IF tableTotalRecords > tableLimit THEN
+					DBMS_OUTPUT.PUT_LINE(RPAD(tableName, 55, ' ') || TO_CHAR(tableTotalRecords, '99999999') || ' record(s)');
+				END IF;
+				DBMS_SQL.CLOSE_CURSOR(tableColumnID);
+			END LOOP;
+		CLOSE cursorTable;
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------- 
+-- Create a function to convert a number to words for printing purpose.
+-------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE FUNCTION NumberConversion(num Number) RETURN Varchar2 IS
+		str1 Varchar2(1000);
+		str2 Varchar2(20);
+		num1 Number;
+		num2 Number := 1;
+		num3 Number;
+		LSign Number;
+		num4 Number;
+	BEGIN
+		num1:= INSTR(num, '.');
+		LSign := SIGN(num);
+		num4 := ABS(num);	
+		IF num1 = 0 THEN 
+			SELECT TO_CHAR(TO_DATE(num4, 'J'), 'JSP') INTO str1 FROM DUAL;
+		ELSE
+			SELECT TO_CHAR(TO_DATE(SUBSTR(num4, 1, 
+				NVL(INSTR(num4, '.') -1, LENGTH(num4))), 'J'), 'JSP') INTO str1 
+					FROM DUAL;
+			SELECT LENGTH(SUBSTR(num4, INSTR(num4, '.') + 1)) INTO num3 FROM DUAL;
+			str1 := str1 || ' POINT ';
+			WHILE num2 < num3 + 1 LOOP
+				SELECT TO_CHAR(TO_DATE(SUBSTR(num4, 
+					(INSTR(num4, '.') + num2), 1), 'J'), 'JSP') INTO str2 FROM DUAL;
+				str1 := str1 || str2 || ' ';
+				num2 := num2 + 1;
+			END LOOP;
+		END IF;
+		IF LSign = -1 THEN
+			RETURN 'NEGATIVE ' || str1;
+		ELSE
+			RETURN str1;
+		END IF;
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------- 
+-- Create a procedure to convert numbers to characters for printing cheque amount in Indian style.
+-- For example, Rs 1 to Rs 989999999
+-------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON;
+	CREATE OR REPLACE PROCEDURE Cheq(num Number) AS
+		num1 Number := 0;
+		Output Varchar2(2000) := '';
+		str1 Varchar2(2000) := '';
+		str2 Varchar2(2000) := '';
+		str3 Varchar2(2000) := '';
+	BEGIN
+		num1 := LENGTH(num);
+		IF num < 0 OR num > 999999999 THEN
+			DBMS_OUTPUT.PUT_LINE('Invalid Amount');
+		ELSE
+			IF (num = 0) THEN
+				str1 := 'ZERO ';
+			ELSIF (num  <= 99999) THEN
+				str1 := TO_CHAR(TO_DATE(num, 'J'), 'JSP') || ' ';
+			ELSE
+				IF (TO_NUMBER(SUBSTR(num, num1 - 5 + 1)) = 0) THEN
+					str1 := '';
+				ELSE
+					str1 := TO_CHAR(TO_DATE(TO_NUMBER(SUBSTR(num, num1 - 5 + 1)), 'J'), 'JSP') || ' ';
+				END IF;
+
+				IF (num1 = 6) THEN
+					str2 := TO_CHAR(TO_DATE(TO_NUMBER(SUBSTR(num, 1, num1 - 5)), 'J'), 'JSP') || ' LAKH ';
+				ELSE
+					IF (TO_NUMBER(SUBSTR(num, num1 - 5 -1, 2)) = 0) THEN
+						str2 := '';
+					ELSE
+						str2 := TO_CHAR(TO_DATE(TO_NUMBER(SUBSTR(num, num1 - 5 - 1, 2)), 'J'), 'JSP') || ' LAKH ';
+					END IF;
+
+					IF (num1 >= 8) THEN
+						str3 := TO_CHAR(TO_DATE(TO_NUMBER(SUBSTR(num, 1, num1 -7)), 'J'), 'JSP') || ' CRORE ';
+					END IF;
+				END IF;
+			END IF;
+
+			IF (num = 0 OR num = 1) THEN
+				DBMS_OUTPUT.PUT_LINE(num || ' => ' || num1 || 'RUPEE ONLY');
+			ELSE
+				DBMS_OUTPUT.PUT_LINE(num || ' => ' || str3 || str2 || str1 || 'RUPEES ONLY');
+			END IF;
+		END IF;
+	END Cheq;
+	/

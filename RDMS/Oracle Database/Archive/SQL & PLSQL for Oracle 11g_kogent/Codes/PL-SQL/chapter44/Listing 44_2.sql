@@ -1,0 +1,1 @@
+select testseq.nextval from dual;

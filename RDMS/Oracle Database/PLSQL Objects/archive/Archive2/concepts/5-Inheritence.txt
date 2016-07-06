@@ -1,0 +1,15 @@
+Inheritance
+===========
+--Inheritance is concept of the Object oriented language
+
+Object_Type_Inheritance_Of_Parent_ObjectType.sql
+
+--inheritance is something copying the behaviour or attributes from the parent class or the super class and the polyporhism is something copying the behivour adding the new attributes
+
+TYPE Evolutions
+---------------
+this will allows the alter changes in the of the dependency changes.
+alter type emp_obj drop member procedure print invalidate;
+
+
+

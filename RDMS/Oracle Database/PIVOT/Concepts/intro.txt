@@ -1,0 +1,61 @@
+PIVOT and UNPIVOT
+=================
+
+--Present information in a spreadsheet-type crosstab report from any relational table using simple SQL, and store any data from a crosstab table to a relational table.
+--Pivot adds a very important and practical functionality to the SQL language. Instead of writing convoluted non-intuitive code with a lot of decode functions, you can use the pivot function to create a crosstab report on any relational table. 
+--Similarly, you can convert any crosstab report to be stored as a regular relational table using the unpivot operation. Pivot can produce the output in regular text or XML. In the latter case, you don't need to specify the domain of values the pivot operation needs to search
+
+PIVOT
+=====
+--Prior to Oracle Database 11g, you would do that via some sort of a decode function for each value and write each distinct value as a separate column. The technique is quite nonintuitive however. 
+--you now have a great new feature called PIVOT for presenting any query in the crosstab format using a new operator, appropriately named pivot. Here is how you write the query.
+
+pivot clause syntax
+-------------------
+table_reference PIVOT [ XML ]
+  ( aggregate_function ( expr ) [[AS] alias ]
+      [, aggregate_function ( expr ) [[AS] alias ] ]...
+    pivot_for_clause
+    pivot_in_clause
+  )
+
+Pivot Clause with FOR syntax
+----------------------------
+FOR { column
+    | ( column [, column]... )
+    } 
+
+pivot IN clause syntax
+----------------------
+IN ( { { { expr
+         | ( expr [, expr]... )
+         } [ [ AS] alias]
+       }...
+     | subquery
+     | ANY [, ANY]...
+     }
+   )
+
+--The FOR clause can have aliases for the values there, which will become the column headers.
+
+UNPIVOT
+=======
+--For matter there is anti-matter; for pivot there should be "unpivot.
+
+unpivot clause syntax
+---------------------
+table_reference UNPIVOT [ {INCLUDE | EXCLUDE} NULLS ]
+( { column | ( column [, column]... ) }
+  pivot_for_clause
+  unpivot_in_clause
+)
+
+unpivot in cluase syntax
+-----------------------
+IN
+( { column | ( column [, column]... ) }
+      [  AS { constant | ( constant [, constant]... ) } ]
+        [, { column | ( column [, column]... ) }
+          [  AS { constant | ( constant [, constant]... ) } ]
+        ]...
+)

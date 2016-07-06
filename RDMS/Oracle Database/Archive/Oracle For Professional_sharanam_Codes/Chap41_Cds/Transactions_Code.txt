@@ -1,0 +1,85 @@
+-------------------------------------------------------------------------------------------------------------
+-- Write a program using PL/SQL that:
+-- 1. Accepts the account number and the amount to be withdrawn
+-- 2. Logs the transaction 
+-- 3. Records the transaction 
+-- 4. Updates the current balance
+-- 5. Rolls back the transaction if the current balance after such a withdrawal transaction falls below Rs. 500, otherwise commits the transaction
+-- 6. Update the Status column of the TransactionsLog table as Success if the transaction was committed or Failure if the transaction was rolled back
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+		varTransactionNo Number(20);
+		varTransactionLogNo Number(20);
+		varAccountNo Number(20);
+		varTransactionAmount Number(8,2);
+		varCurrentBalance Number(8,2);
+
+	BEGIN
+		varAccountNo := &AccountNo;
+		varTransactionAmount := &Amount;
+
+	/* Generating a transaction number. */
+		SELECT MAX(TransactionNo) + 1 INTO varTransactionNo FROM Transactions;
+		IF varTransactionNo IS NULL THEN
+			varTransactionNo := 1;
+		END IF;
+
+	/* Generating a transaction log number. */
+		SELECT MAX(TransactionNo) + 1 INTO varTransactionLogNo FROM TransactionsLog;
+		IF varTransactionLogNo IS NULL THEN
+			varTransactionLogNo := 1;
+		END IF;
+
+	/* Logging the transaction. */
+		INSERT INTO TransactionsLog(TransactionNo, AccountNo, TransactionDate, Particulars, TransactionType, Amount) VALUES(varTransactionLogNo, varAccountNo, SYSDATE, 'Self Withdraw', 'Dr', varTransactionAmount);
+
+	/* Defining a savepoint for rollbacks. */
+		SAVEPOINT WithdrawalTrans;
+
+	/* Recording the transaction. */
+		INSERT INTO Transactions(TransactionNo, AccountNo, TransactionDate, Particulars, TransactionType, Amount) VALUES(varTransactionNo, varAccountNo, SYSDATE, 'Self Withdraw', 'Dr', varTransactionAmount);
+
+	/* Updating the current balance. */
+		UPDATE Accounts 
+			SET CurrentBalance = CurrentBalance - varTransactionAmount 
+				WHERE AccountNo = varAccountNo;
+
+	/* Retrieving the current balance after update. */
+		SELECT CurrentBalance INTO varCurrentBalance FROM Accounts WHERE AccountNo = varAccountNo;
+
+	/* Checking if current balance falls under 500. */
+		IF varCurrentBalance < 500 THEN 
+		/* Undo the withdrawal transaction completely. */
+			ROLLBACK To SAVEPOINT WithdrawalTrans;
+		/* Updating the TransactionsLog table. */
+			UPDATE TransactionsLog SET Status = 'Failure'
+				WHERE TransactionNo = varTransactionLogNo;
+		ELSE
+		/* Making the changes permanent. */
+			COMMIT;
+		/* Updating the TransactionsLog table. */
+			UPDATE TransactionsLog SET Status = 'Success'
+				WHERE TransactionNo = varTransactionLogNo;
+		END IF;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- It is required to increment the salaries of the employees belonging to department HR. Ensure that whilst performing this update, other users should not be able to update such rows.
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+		varSalary Number(12,2);
+		CURSOR curEmpSal IS 
+			SELECT Salary FROM Employees WHERE DeptNo = 
+				(SELECT DeptNo FROM Departments WHERE DepartmentName = 'HR') 
+					FOR UPDATE OF Salary;
+	BEGIN
+		OPEN curEmpSal;
+		LOOP
+			FETCH curEmpSal INTO varSalary;
+			EXIT WHEN curEmpSal%NOTFOUND;
+			UPDATE Employees SET Salary = varSalary * 1.10 WHERE CURRENT OF curEmpSal;
+		END LOOP;
+		CLOSE curEmpSal;
+	END;
+	/

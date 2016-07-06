@@ -1,0 +1,129 @@
+Intro
+=====
+-These external table features allows using flat files which
+*reside outside the database
+*can be accessed just like relational tables within the db.
+-it basically external tables are defined as a tables, that do not reside in the database and can be in any format for which an access driver is provided
+-An external table can be thought of as a view that allows running any SQL Query against external data, without requiring that the external data first be loaded into the database.
+
+
+Steps for Creating Table involves
+1)Creting of Flat Files
+2)Creationg of Directory object
+3)Creations of an external table[Meta Data] within this directory
+
+
+1)Creting of Flat Files
+------------------------
+-create a flat file with some format txt
+
+
+2)Creationg of Directory object
+-------------------------------
+--the following syntax is used to create the ExternalTables directory object
+
+syntax
+------
+CREATE OR REPLACE DIRECTORY ExtTables AS <DirectoryPath>;
+
+Note:
+- this is command can only be executed as SYS user or by a user wh has been granted the CREATE ANY DIRECTORY OBJECT
+syntax
+-------
+grant CREATE ANY DIRECTORY to <userName>;
+
+
+
+3)Creations of an external table[Meta Data] within this directory
+-----------------------------------------------------------------
+
+create table employeemaster(
+<columnName1> <dataType1>,
+<columnName2> <dataType2>,
+<columnName3> <dataType3>,
+--
+--
+--
+ORGANIZATION EXTERNAL (
+  TYPE ORACLE_LOADER
+  DEFAULT DIRECTORY ExtTables
+  ACCESS PARAMETERS(RECORDS DELIMITED BY NEWLINE
+    FIELDS TERMINATED BY ',' MISSING FIELD VALUES ARE NULL)
+  LOCATION ('<externalTablefilename'))
+REJECT LIMIT UNLIMITED;
+
+
+-meta data creations
+*the ORACLE_LOADER is an Access driver for the loading data from the external files into the tables
+*the ACCESS PARAMETERS control the extraction of data from the flat files using record and file formatting information
+*the RECORDS DELIMITED BY NEWLINE indicates each and every record in the file will appear on a new line
+*the FIELDS TERMINATED BY ',' indicates every column will be separated by a comma.
+*Missing FIELD VALUES NULL Indicates columns having no value will be holding NULL.
+*Externaltables is a directory where the external flat files resides
+*the Directory is a non-schema object introduced by oracle that defines the path to an operating system directory
+*the parameter specified are the same parameters that are used by the SQL*Loader utitlity
+
+*Querying external tables;
+-When we query the external table (ex:ganesh.txt)  the data retrieved from the external data files
+-when the user selects data from the external data, the dataflow goes from the external data source to the Oracle SQL egnine, where data is processed
+-The ORACLE_LOADER driver can be used to access any data stored in any format that can be loaded by SQL*LOADER.
+-All DML Operations cannot be performed on external tables, but they can used for query , join and sort operations.
+-View and synonyms can be created against external tables. they are useful in teh ETL process of data warehouses , since the data does not need to be staged and can be queried in parallel
+
+limitations of external tables
+=============================
+-it does not describe any data that is stored in the database
+-does not describe how data is stored in the external source. this is the function of the access parameters
+-it is read-only source. insert operations cannot be performed into an external table nor can be the records be updated in a external table
+-these table should not be used for frquently qu
+eried tables.
+
+Using Multiple FLat Files
+==========================
+- data can be spread across multiple text files as
+
+for example
+------------
+ganesh.txt
+ganesh1.txt
+
+create table employeemaster(
+<columnName1> <dataType1>,
+<columnName2> <dataType2>,
+<columnName3> <dataType3>,
+--
+--
+--
+ORGANIZATION EXTERNAL (
+  TYPE ORACLE_LOADER
+  DEFAULT DIRECTORY ExtTables
+  ACCESS PARAMETERS(RECORDS DELIMITED BY NEWLINE
+    FIELDS TERMINATED BY ',' MISSING FIELD VALUES ARE NULL)
+  LOCATION ('<externalTablefilename1>,<externalTablefilename2>'))
+REJECT LIMIT UNLIMITED;
+
+Creating Views on External tables
+=================================
+
+
+Populating tables based on data held by external tables
+=======================================================
+-Data from external files can be populated to some ther tables, using an INSERT INTO.. SELECT FROM Statement instead of using SQL*Loader. this method provides very fast data loads
+
+
+Dropping the External Tables
+===========================
+-for extenral table, the DROP Table statement removes only the table metadata inthe database
+-it does not effect on actual data, which resides outside of the database.
+
+DROP TABLE <tablename>;
+
+
+
+
+
+
+
+
+
+

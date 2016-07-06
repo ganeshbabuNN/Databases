@@ -1,0 +1,3 @@
+insert into log_table
+  (date_and_time, message)
+  VALUES (sysdate, 'Hello World!');

@@ -1,0 +1,33 @@
+First Hello World program
+========================
+HelloWorld.sql
+
+
+Using Variables
+================
+AB_First_Program_Hello_World.sql
+
+Assigning the variable
+======================
+here just we are assigning the variable and start to use it
+AB_Variables_Assignment_Initialize.sql
+
+Using the variable
+==================
+AB_Using_Variables.sql
+
+Using Constants
+================
+-constant are the variable which does not change its value for life of the program
+- the constant variable must be initialized
+AB_Using_Constants.sql
+
+Adding Funtinality of the Date
+==============================
+--FM is a format modifiers
+-- for upper case of a month, using MONTH as UPPER Case or lower case for the format mask that you are using
+AB_Using_Date_FieldMask.sql
+
+
+
+

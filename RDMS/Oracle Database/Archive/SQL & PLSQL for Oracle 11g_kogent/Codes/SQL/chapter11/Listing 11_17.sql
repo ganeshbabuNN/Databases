@@ -1,0 +1,1 @@
+select * from sales_data where custid = 37280 and rownum<11;

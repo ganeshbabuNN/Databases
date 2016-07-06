@@ -1,0 +1,50 @@
+Transactions
+==============
+
+-It is a advanced Topic
+
+--Now Create a Log table
+create log_table.sql
+CREATE TABLE LOG_TABLE
+  (
+    DATE_AND_TIME DATE,
+    MESSAGE VARCHAR2(100 BYTE)
+ ) ;
+ 
+--just to check the insert statement is working are not
+insert into log_table.sql
+insert into log_table values(sysdate,'Hello');
+
+--changing the logit with parameter.sql to the parameter
+---now run the nested procedure calls and check the table.
+--next is to try to rollback the code, you may see the recent values is not avaiable in the log table
+
+Procedures_Transaction_Rollback_WithoutCommit.sql
+
+
+ISSUE COMMIT
+============
+-- to issue commit
+Procedures_Transaction_Rollback_WithCommit.sql
+
+AUTONOMOUS TRANSACTION
+=======================
+--oracle introduces the features called the autonomous transactions
+--we can instruct the compiler be a statement called the pragma
+--A pragram is just message to the compiler,where that specfic procedures starts a new independent transactions
+--when this procedures is called started new transactions off by itself where it can commit,rollback expect that procedures
+--when you do the automonoous transaction, you have to commit or rollback
+
+Procedure_Autonous_Transaction_Pragma.sql
+
+--- now call the logit procedures with ROLLBACK
+-check the table and click on rollback , check if the data is rolling back.
+
+Procedure_Transaction_Pragma_Autonoustransactions.sql
+
+--summary its something like you need to actions and you don't want to impact transaction going into the applications
+
+
+
+
+

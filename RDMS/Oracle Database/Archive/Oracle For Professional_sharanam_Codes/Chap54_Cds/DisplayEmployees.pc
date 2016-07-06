@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <sqlda.h>
+#include <sqlcpr.h>
+
+EXEC SQL BEGIN DECLARE SECTION; 
+	VARCHAR uid[80];
+	VARCHAR pwd[20];
+	char varEmpName[30];
+	int  varSalary;
+EXEC SQL END DECLARE SECTION; 
+
+void main()
+{
+	strcpy(uid.arr, "Vaishali@Linux");
+	uid.len = strlen(uid.arr);
+	strcpy(pwd.arr, "vaishali");
+	pwd.len = strlen(pwd.arr);
+
+	EXEC SQL WHENEVER SQLERROR GOTO errexit;
+	EXEC SQL CONNECT :uid IDENTIFIED BY :pwd;
+
+	EXEC SQL DECLARE emp_cursor CURSOR FOR
+        	SELECT FirstName || ' ' || LastName, Salary FROM Employees;
+
+	EXEC SQL OPEN emp_cursor;
+
+	EXEC SQL WHENEVER NOT FOUND DO break;
+	for (;;)
+	{
+		EXEC SQL FETCH emp_cursor INTO :varEmpName, :varSalary;
+		printf("\t%s\t%i\n", varEmpName, varSalary);
+	}
+
+	EXEC SQL CLOSE emp_cursor;
+	EXEC SQL COMMIT WORK RELEASE; 
+
+	return; 
+	
+	errexit:
+		printf("Error: %70s", sqlca.sqlerrm.sqlerrmc);
+
+
+}

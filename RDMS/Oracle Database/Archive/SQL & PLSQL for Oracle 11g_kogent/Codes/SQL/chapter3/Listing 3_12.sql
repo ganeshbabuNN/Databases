@@ -1,0 +1,1 @@
+select scn_to_timestamp(ora_rowscn), sname from zpcm;

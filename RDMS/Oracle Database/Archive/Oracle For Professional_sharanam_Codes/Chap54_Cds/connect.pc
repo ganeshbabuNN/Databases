@@ -1,0 +1,28 @@
+#include <stdio.h>
+/* SQL Communications Area */
+#include <sqlca.h>
+
+EXEC SQL BEGIN DECLARE SECTION; 
+/* Varchar limits */
+#define UNAME_LEN 20
+#define PWD_LEN 40
+
+/* SQL vars for */
+VARCHAR username[UNAME_LEN];
+/* Username and password */
+VARCHAR password[PWD_LEN];
+EXEC SQL END DECLARE SECTION; 
+
+int main()
+{
+	strncpy((char *) username.arr, "scott", UNAME_LEN);
+	username.len = strlen((char *) username.arr);
+
+	strncpy((char *) password.arr, "tiger", PWD_LEN);
+	password.len = strlen((char *) password.arr);
+
+	EXEC SQL CONNECT :username IDENTIFIED BY :password;
+
+	printf("Connected to the database as user: %s\n", username.arr);
+	return(0);
+}

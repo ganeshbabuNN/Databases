@@ -1,0 +1,68 @@
+Excpetions
+==========
+
+-Try to understand the difference between Exception and Exceptions Handling
+-Basically in PLSQL , the exception which happens Post Compilations, the error might be excepted, 
+for example, you might be selecting data from the table, where there is no row. Hence Oracle raise no data found which is a exceptions,
+Here is how to handle the errors, here you and the program do the mechanism.
+-- Understand with the below block as the section in the PLSQL block
+-- in general, Declaration and the Exception section are optional, you no need to declare any variables and handle any exceptions, but in general it is a good pratice to handle exceptions.
+
+Block Structure
+---------------
+DECLARE
+
+BEGIN
+
+EXCEPTION
+
+END
+
+Excpection RAISING
+==================
+
+-- This exception will not be caught
+coz it is a variable declartions and the errors is appearing in the declarations block, for Exception hanlders , the exception to be raised in the executable block i,e the begin block.
+
+Exception_Not_Raise_Declare_Block.sql
+
+
+-- This exception will be caught
+Exception_Will_Raise_Begin_Block.sql
+
+---it might not be good pratice where the return null for the exceptions is a good pratice.
+---understand , whenever there is a exception , it goes to the nearest way of exceptions. 
+
+COMPILER and RUNTIME Exceptions
+===============================
+--Here there is error where character is assign to the number variables, but the code has compiled successfully, but this is near to the declarations section not in the executable section where exception can be handled.
+ 	
+Exception_Procedures_Not_Raise_Declare_Block.sql
+
+--Let us change the code and check if how the exception can be handled.
+--- now let us assign the variable in the executable block.
+
+Exception_Procedures_Raise_Begin_Block.sql
+
+---if i remove the exception block and call the proce
+Exception_Procedures_Remove Exception_Block.sql
+
+NAMED Exceptions
+=================
+--But Still this Exception can be handled in the AB. this sort of value error basically nothing but the Name exceptions
+
+Exception_Procedures_Using_Named_exception.sql
+
+---Assume if I put some other named exceptions
+
+Exception_Procedures_Using_Named_exception.sql
+
+
+
+
+
+
+
+
+
+

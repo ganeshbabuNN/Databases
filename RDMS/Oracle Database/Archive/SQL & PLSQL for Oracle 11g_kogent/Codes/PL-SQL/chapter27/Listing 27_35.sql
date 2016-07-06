@@ -1,0 +1,1 @@
+CREATE TABLE emp_ref (orgno number, emp REF empobj);

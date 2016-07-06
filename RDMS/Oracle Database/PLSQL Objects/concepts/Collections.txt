@@ -1,0 +1,108 @@
+Intro
+=====
+-Oracle database provides Nested Tables and vArrays as two new database types known as Collections.
+-Collections allows strong multiple sets of elements
+
+Nested Tables
+=============
+-it allows creating special object type called nested table.
+-it means creating tables within tables
+-A Nested table is a table is embedeed within another table.
+-DML Commands such as INSERT,UPDATE and DELETE can be fired on individual elements in the nested table.
+-this kind of table is useful in situation when the number of details/dependent info in unknown
+-it is desired to keep track and store the citizen details such as names, personal and multiple employee details
+
+it is required following structures
+Citizen
+	typCitizen
+	typCitizenPersonalDetails
+	typListOfCitizenDetails
+
+-The Struture indicates, that a citizen tables is composed of
+--Object type named citizen that stores that following details of typCitizen
+1)first
+2)last
+3)middle
+4)prefix
+5)suffix
+--Object type name citizenPersonDetails that stores the following details of typCitizenPersonalDetails
+1)SSN
+2)Geneder
+3)DateOfBirth
+4)Ethnicity
+5)MaritialStatus
+6)Hair
+7)Eyes
+8)Height
+--Object type name TypeCitizenEmpDetails of typListOfCitizenDetails as TypCitizenEmpDetails[Nested]
+1)JobTitle
+2)StartDate
+3)Terminated
+4)EndDate
+5)Salary
+
+Creating table based on object types and Table types
+----------------------------------------------------
+CREATE TABLE Citizen(
+		CitizenNo Number(10) NOT NULL,
+		NameDetails typCitizen,
+		PersonDetails typCitizenPersonalDetails,
+		EmploymentDetails ListOfCitizenEmpDetails DEFAULT ListOfCitizenEmpDetails(),
+		PRIMARY KEY (CitizenNo))
+	NESTED TABLE EmploymentDetails STORE AS CitizenEmploymentDetails;
+	/
+
+Adding Records
+--------------
+
+
+Using TABLE() with nested table
+-------------------------------
+-Oracle allows treating a collection such as vArray or Nested Tables as a series of rwos using the TABLE() funcitons
+
+Updating Records
+----------------
+
+
+Deleting Records
+----------------
+
+Variable Arrays
+===============
+-Once provides a varying array which is similar to an array in Java, C++ and C#. this variable array allows storing repeating attributes of a record in a single row.
+
+Example, a publisher will have multiple address details
+
+-A varying array can be created based on either an abstract data type or one of oracle standard data types
+-To Create the varying array, use the AS VARRAY() clause of the CREATE TYPE Command.
+
+Creating Varraying array
+------------------------
+create type typAddress
+AS Varray(2) of varchar2(1000)
+/
+
+
+--table created
+create Table publisherAddress(
+publisherName Varchar2(50),
+Address typAddress);
+
+Adding Records
+--------------
+-Adding few records in the table.
+-if only one address need to be stored, use NULL for the second array elements.
+
+Updating Records
+----------------
+-the elements in a vArray can be modified only as a whole, which means that even if it is required to modify only one element, all the elements must be supplied to the vArray.
+
+Retrieving Records
+------------------
+
+using table() with varray
+-A SELECT on the table with a nested table or a vArray returns the contents of a collection as a single row.
+-Often times, it is required to display the data stored in a collection as a series of rows
+-Oracle allows treating a collection such as vArray or Nested Tables as a series of rows using the TABLE() functions
+-Oracle automatically adds the column name as COLUMN_VALUE to the rows returned by the query
+-COLUMN_VALUE is a pseudo column alias and it is automatically added when a collection contains data of one of the built-in data types

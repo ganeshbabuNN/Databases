@@ -1,0 +1,56 @@
+LOOP Constructs
+================
+--Here 'd' for represent the day of that date
+--create a new procedures
+
+Control_Simple_Loop_Constructs.sql
+
+EXIT-LOOP 
+=========
+--its a unconditional exit
+-- if the statements hits on exit it never go back, it just stops
+
+Control_Loop_Exit_Unconditionallys.sql
+
+CONTINUE-LOOP
+=============
+--instead of exiting it continues which go back from the begining and it never go to the next statements, here below which do not loop incremenents
+-- this works only in Oracle 11g and this is a new features
+
+Control_Loop_Continue_Statement.sql
+
+EXISTS -LOOPS
+===========
+---now the below scenarios , try to excluding the holidays
+
+Control_Loop_EXISTS.sql
+
+WHILE-LOOP
+===========
+--while this conditions is true exists
+--its bit oposite to before LOOP, here keep executing unless the conditions is true.
+
+Control_WHILE_LOOP_Statement.sql
+
+FOR LOOP
+========
+--here below example, i will be initialized by the FOR loop to the first value and loop till 5 and print in the console.
+
+Control_FOR_Statement_Simple.sql
+
+
+FOR -SKIP LOOPING
+==================
+--- modulus is good at some extend for the skiping the statements
+
+Control_FOR_Skip_Statement.sql
+
+FOR -REVERSE LOOPING
+====================
+
+Control_FOR_REVERSE_LOOP_Statement.sql
+
+
+
+
+

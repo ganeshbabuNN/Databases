@@ -1,0 +1,1 @@
+insert into ztemp6 values (INTERVAL '2' year,INTERVAL '30' DAY );

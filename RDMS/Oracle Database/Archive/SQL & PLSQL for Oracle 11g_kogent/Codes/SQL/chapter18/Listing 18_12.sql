@@ -1,0 +1,1 @@
+select corr(phy,che) p_c, corr(phy,maths) p_m from marks;

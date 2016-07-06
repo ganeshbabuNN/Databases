@@ -1,0 +1,38 @@
+BUILT-IN FUNCTIONS
+==================
+
+--let us take an example where SQL functions do not worked in PLSQL
+
+select decode('D','A', 'B','C') 
+from dual;
+
+--take an example in PLSQL code
+Function_Built_In_Decode_NotWorked_inPLSQL.sql
+
+--we can write in different value,to make it works
+Function_Built_In_Function_Decode_Variables.sql
+
+--we can still use in the CASE search
+Function_Built_In_Function_Diff_Way2.sql
+
+SUBSTR
+======
+ it give try to search for the position where it starts and return the with the number of characters specified
+substr.sql
+
+Function_Built_In_SUBSTR.sql
+
+INSTR
+======
+its return the poistion number when it is searched.
+
+Function_Built_In_INSTR.sql
+
+
+Builtins_as_expressions
+=========================
+--Developing your Own Built-In Expression
+
+
+
+

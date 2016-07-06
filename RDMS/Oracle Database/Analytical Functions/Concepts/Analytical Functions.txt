@@ -1,0 +1,81 @@
+Syntax
+------
+<AnalyticFunctionName>(<Argument1>,<Argument2>...)
+OVER(<Query Partition Clause>
+	<Order By Clause>
+	<windowing Clause>)
+
+
+*Arguments 
+-Analytic functions accepts 0 to 3 arguments
+*Query Partition Clause 
+-the PARTITION BY clause logically breaks a single result set into N Groups, according to the criteria set by the partitions expressions
+-The words partition and group by are used synonymously here.
+-The Aanalytic functions are applied to each grop independently.
+*Order by Clause
+-it specified how the data is sorted within each group[partition]. this will definitely affect the outcome of any analytical functions
+*Windowing Clause
+-it allows defining a sliding or anchored window of data, on which the analytic function will operate, within a group.
+-This clause can be used to have the analytic function compute its value based on any arbitrary sliding or anchored window wihtin a group.
+
+
+Row_number
+-----------
+-Row_number() provides runing serial number to a partition of records,
+-it is very useful in reporting, especially in place where different paritions have their own serial number.
+
+DENSE_RANK
+----------
+-this functions computes the rank of row in an ordered group of rows. the ranks are consective integer begining with 1.
+-this funcitons does not skip numbers and assigns the same number to those rows with the same value.
+
+RANK()
+------
+-this functions computes the rank of row in an ordered group of rows. the ranks are consective integer begining with 1.
+-this funcitons does skip numbers and assigns the next number to those rows with the same value.
+
+WINDOWING Clause 
+---------------------------
+-it allows clause exactly this. It allows defining a sliding or anchored window of data, on which the analytic function operates, within a group
+-the default window is an anchored window that simply begins at the very first row of a group and continues to the current row.
+
+-Windows can be used for
+1)RANGES of data values
+(RANGE is similar to ROWS but the intervals are not a number of rows . they are either numberic or date values.
+2)ROWS offset from the current row
+(*the partition clause is not the only method of limiting the scope of an analytical function, when using a ROWS BETWEEN Clause, rows are ordered and a window is defined.
+*UNBOUNDED PRECEDING (the first row), the higest poossible is UNBOUNDED FOLLOWING(the last row)
+*Rows preceding and following the current row are reterived with n PRECEDING and n FOLLOWING where n is the relative position to the current row.
+*When not specifing BETWEEN , the windows implicity ends at the current row)
+
+-ROWS CURRENT ROW Points to exactly one row. RANGE CURRENT points to all rows where the sort key is equal to the current row
+-When using ORDER BY with no windowing clause, the implicit window is RANGE BETWEEN UNBOUNDED PRCEDING AND CURRENT ROW for analytic functions theat support a windowing Clause.
+-An ORDER BY Clause in an analytic functions adds a default window clause of RANGE UNBOUNDED PRECEDING Which means all the previous rows available in a partiton are considered.
+
+
+LEAD and LAG Functions
+---------------------
+-LEAD - it has the ability to compute an expression on the next rows which are going to come after current row and return the value to the current row
+-LAG - it has the ability to compute an expression on the previous rows which have past the current row and return the value to the current rows
+
+
+First_value and Last_value
+--------------------------
+-FIRST_VALUE analytic function picks the first record from the partitions after doing the ORDER BY. THE SQL Expression is computed on the column on this first record and results are returned.
+-LAST_VALUE functions is used to similar context except that is acts on the last record of the the partitions.
+-the records are grouped on the basis of order and sorted on the basic of product price.
+
+
+First and Last
+--------------
+-the FIRST Function is used when a group of records are ranked and several records are found to be in the first rank. In such situation an aggregate function can be applied on the records with first rank
+-the LAST Function is used when a group of records are ranked and several records are found to be the last rank.In such situations an aggregate function can be applied on the records with last rank
+-The ranking done in FIRST and LAST is always DENSE_RANK
+-both these functions do not support
+--ORDER BY in the OVER()
+--<window> clause
+
+
+
+
+

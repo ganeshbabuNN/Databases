@@ -1,0 +1,1 @@
+show parameter audit_trail;

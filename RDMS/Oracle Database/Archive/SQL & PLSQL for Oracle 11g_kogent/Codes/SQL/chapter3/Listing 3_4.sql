@@ -1,0 +1,1 @@
+select extract(year from sysdate) from dual;

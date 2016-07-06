@@ -1,0 +1,682 @@
+Conceptual Overview 
+====================
+
+
+Difference between SQL and PLSQL
+--------------------------------
+- this both is used in the databases or withing databases morever access the data in the databases.
+- SQL is a set based langauges,
+
+example 
+select * from emp_table.
+-you say this return all the rows in the emp_table, where you say , this is what i want.
+update emp_table
+set name='Ganesh'
+where last= 'babu';
+- just saying i want to the update the name ganesh from the emp_table, just like identify the set of rows where last ='Babu'and then update ganesh to it. just by row by row. this usually like a set based programming
+
+In PLSQL
+--------
+- you want to say how to do, how you will apply like row by row, assing some value.
+
+Loop
+exit when v_num <1;
+call proc();
+
+if v_var='ABC' then
+ call another_proc()
+end if;
+
+end;
+
+--you but some looping some condition with some loops like..
+--its almost same like some languages like
+Pascal
+
+program helloworld;
+begin
+ write('hello world');
+end;
+
+
+ADA.
+with ada.Text_IO;
+use ada.TEXT_IO;
+procedure Hello is
+begin
+ put_line("hello world");
+end hello;
+
+java
+
+class helloworldapp{
+   public static void main(string[] args) {
+	System.out.printlin("Hello world");
+}	
+}
+
+IN PLSQL
+- its a block structures language.
+- it is based on ADA but ADA is similar to PASCAL.
+
+begin
+   dbms_output.put_line("Hello world");
+end;
+
+some of the features where SQL do not provide
+---------------------------------------------
+it is procedural language where SQL cannot do
+-you can call out the external webservice and pull back the data.
+-you can write the text files
+-you can send email
+-the big difference between SQL and PLSQL , PLSQL is designed from the ground to interact with SQL Databases
+-you can handle exceptions in PLSQL not in SQL.
+
+
+ORacle Website look
+===================
+
+www.oracle.com/
+
+Installing the Oracle Database
+=============================
+
+--you can use Oracle XE Database which is free.
+
+
+
+PL/SQL Structure
+================
+
+-PLSQL is the Block struture oriented language
+-the basic unit in PL/SQL is a block. ALL PL/SQL program are made up of blocks, which can be nested within each other. 
+-Typlically, each block performs a logical actions in the program.
+-A block has the following structure
+a)The Declarations section [Optional]
+b)The Execution section [Mandatory]
+c)The Exception[or Error] Handling action [optional].
+-You can have nested block struture language
+
+structure
+---------
+
+Declare
+  /*Declarations section: Variables, Types and local subprograms */
+begin
+  /*Executable section: Procedural and SQL Statements are place here. */
+  /*this is the only section of the block that is required*/
+exception
+  /*Exception handling section: Error Handling statemetns are placed here.*/
+end;
+
+a)The Declarations section [Optional]
+--------------------------------------
+-Every PL/SQL begins with the Declaration section. it starts with the reserved keyword DECLARE
+-this section is optional and hold placeholder declarations [which are used to manipulate data in the execution section] for:
+a)Varaibles
+b)Constants
+c)Recrods
+d)Cursors
+-Only after they are declared, can they be used in SQL statements for data manipulation
+
+b)The Execution section [Mandatory]
+-----------------------------------
+-The execution section of PL/SQL block starts with the reserved keyword BEGIN and end with END.
+-this is mandatory section and hold the program logic.
+
+Begin Section
+-------------
+-This holds a set of SQL and PL/SQL statements. Each such statements describes the process that will be carried out on executions
+-Data Definition statements such as CREATE, DROP or ALTER are not allowed here.
+-All Data manipulation commands and programming constructs used for assignment branches, loops, procedure calls and triggers ,conditional statements are specified here.
+
+End Section
+-----------
+-this marks the end of a PL/SQL Block
+
+c)The Exception[or Error] Handling action [optional
+---------------------------------------------------
+-it always start with reserved keyword EXCEPTION
+-this section is optional 
+-Any error that occur in the program are handled in this section, to allow the PL/SQL code block to terminate gracefully
+-Errors usually arise within the exectuion section of a PL/SQL block, control passes to the exception section. PL/SQL scans through the exception handler to dtermine if the excepction is handled.
+-if the PL/SQL block contains exceptions that cannot be handled, the block terminates abruptly with errors
+-Every statement in the above three section must end with a semicolon.
+-The code spec written in PL/SQL is not case Sensitive.
+
+-it basic struture is following by sections and below is the PLSQL unit.
+-contain all the different block.
+
+Procedures
+==========
+-Procedures is something just do it, of whatever i say or take an actions like inserting,delete..etc record.
+-Begin section is always requried for any procedures, trigger,functions etc 
+-Procedures are workcourse of the coding world
+-it does not return any values.
+-it cannot be called by SQL.
+-it does contain any expression and assign using a variable, its a standalone
+
+Simpliest procedures
+
+create or replace procedure does_something
+as
+begin
+  null;
+end;
+
+Functions
+=========
+-Functions is always return a value it may be number or a string or something that will return.
+-its always smaller and contains pieces of the code.
+-Functions can be called from SQL where as the Procedures cannot
+-Functions can be expression but procedures not
+
+simpliest function
+
+create or replace function get_something
+return number
+as
+begin
+ return 1;
+end;
+
+--displaying the output for the screen using AB
+begin
+  dbms_output.put_line(get_something);
+end;
+
+
+Packages
+========
+-its just like a container,
+-its holder for procedures and functions that we are using. as we created procedures and functions standalone where you can put into one container called packages or library or API or container
+- it contain a spec and body
+- when you call any procedures and function from the package, 
+	[Package_name].[procedures/function name].
+
+syntax
+--specification
+create or replace package my_package
+as
+ function get_something
+ return number;
+
+ procedure do_something;
+end;
+/
+
+--implementation of the spec is a body
+create or replace package body my_package
+as
+function get_something
+return number
+as
+begin
+ return 1;
+end;
+procedure do_something
+as
+begin
+ insert into log_table(date_time,msg) values(sysdate,'this is a message');
+end;
+end;
+/
+
+---call that procedures and functions
+begin
+  my_package.do_something;
+  dbms_output.put_line(my_package.get_something);
+end;
+/
+
+TRIGGER
+=======
+-A trigger is a event driven kind of thing,
+-when you create a trigger sort of procedure assign to an object or event or really to a event or an object.
+-basically like insert into a table for auditing, logging and executes whatever code you have
+
+PL SQL Placeholder
+==================
+-information can be transmitted between a PL/SQL code block and the database using placeholder/variables. Placeholder can be any of variables, constants and records.
+-it is defined to store data temporarily, which can in turn to be used data during the execution of a PL/SQL code block.
+-A placeholder can be defined with a name and a data type.
+
+A variable can be declared
+	<VariableName> [CONSTANT] DATATYPE [NOT NULL]
+	[:=| DEFAULT InitialValue]
+
+Where
+-VaribleName is the name of the variable.
+-CONSTANT flags that placeholder as a constant. Declaring a constant is similar to declaring a vaiable except that 
+keyword. CONSTANT is added to the variable name and a value is assigned immediatley. therefore, no further assignement to the constant are possible, while the constant is within the scope of the PL/SQL block.
+-DATA TYPE is a valid PL/SQL data type.
+-NOT NULL is an optional specification on the variable. NOT NULL Causes creations of a variable or a constant that cannot be assigned  a null value. if an attempt is made to assign the value NULL to a variable or a constant that has been assignt a NOT NULL constraint, oracles raises the exception automatically and an internal error is returned.
+-DEFAULT Initialvalue is an optional specification that allows intialization a variable.
+
+*Each Variables declaration is a separate statement and must be terminated by a semicolon[;].
+
+PLSQL Data Type
+===============
+- it is a simplest type avaiable in other language like
+-some of them are
+1)Number(n,m)
+2)Char(n)
+3)Varchar2(n)
+4)Date
+5)Long
+6)Long Raw
+7)Raw
+8)Blob
+9)Clob
+10)Nclob
+11)Bfile
+
+-There are some complex data type which can be done through scalar types for normal operations.
+
+for example take as user form
+-----------------------------
+
+Name : _____________
+Age : ______________
+Date of Birth : ______________
+
+
+1)STRING
+VARCHAR2
+-its alphanumeric or string data type.
+-its variable character string which uses actual content of value apart of the fixed value.
+ex
+-ganesh
+-babu
+-ganesh !
+-ganesh233
+CHAR
+-fixed size 
+
+
+2)DATE
+-01-JAN-2011
+-03/03/1987 12:22:33 AM.
+-01-01-2010 00:00:00
+TIMESTAMP
+-03/03/1987 12:21:33:0033232 AM
+-Timezones
+
+3)NUMBER
+- 1
+-1020338.555
+PLS_INTEGER and BINARY_INTEGER for oracle and performance oriented
+-1,-50m, 0 morever used for counters,loops
+BINARY_FLOAT and BINARY_DOUBLE
+-Efficient Floating Point Number
+
+4)BOOLEAN
+-TRUE/FALSE
+- 1=10 ( boolean expression ) returns false 
+-Understand there is nothing specifically to create the boolean data type in a table of that column , like creating TRUE or FALSE. it is used for the evaluations purpose only
+
+Declaring variables
+====================
+
+declaring a variable
+--------------------
+
+declare
+  employeeid number(10);
+begin
+null;
+end;
+
+declaring a constant
+--------------------
+
+declare
+  employeeid CONSTANT number(10):=23;
+begin
+null;
+end;
+
+*Warning, no further assignment are allowed to the constants after it is assigned a value when declaring it
+it leads to error
+declare
+  employeeid CONSTANT number(10):=23;
+begin
+  employeeid :=23232;
+end;
+
+error: expression 'EMPLOYEEID' cannot be used as an assignment target
+*A constants has to be assigned a value whilist begins declared. if a value is not assigned to a constant while declaring it  and is begins assigned in the execution section, an error appears
+
+declare
+  employeeid CONSTANT number(10);
+begin
+  employeeid :=23232;
+end;
+
+Declaring a variable with an initial value
+------------------------------------------
+declare
+  employeeid number(10):=101;
+begin
+  null;
+end;
+
+
+Declaring a variable as NOT NULL
+--------------------------------
+declare
+  employeeid number(10) not null :=101;
+begin
+  null;
+end;
+*As soon as variable or constant has been declared as NOT NULL, it must be assigned a value. Hence every variable or constant declared as NOT NULL needs to be followed by a PL/SQL Expression that loads a value into the variable or constantsA
+
+
+Assigning Values to Variables
+-----------------------------
+-A Variable can be assigned a value by
+--Using the assignment operator := [i,e a colon followed by an equal to sign]
+sytnax
+	<Variablename> := <value>;
+-- Directly assigning values to variables from the database table column using a SELECT ... INTO Statement
+syntax
+	SELECT <ColumnName> INTO <VariableName> FROM <TableNAME> WHERE <Condition>];
+
+
+example
+	DECLARE 
+  	varEmployeeID varchar2(20);
+    varEmail  varchar2(20);
+	BEGIN
+	/* Using assignment operator. */
+		varEmployeeID := 101;
+	/* Using direct assignment from table column. */
+		SELECT email INTO varEmail FROM employees WHERE employee_id = varEmployeeID; 
+	/* Printing a message. */
+		DBMS_OUTPUT.PUT_LINE('Address: ' || varEmail);
+	END; 
+	/
+
+-DBMS_OUTPUT is a package that includes a number of procedures and functions that accumulate informations in a buffer so that it can be retrieved later. these function can used to display messages
+-PUT_LINE puts a piece of information in the package buffer followed by an end-of-line marker. it can also to display a message. PUT_LINE expects a single parameter of character data type. if used to display message, it is the message string
+-to display messages, the SERVEROUTPUT should be set o on . SERVER OUTPUT is a SQL Plus environment parameter that displays the informations passed as a parameter to the PUT_LINE Functions
+
+syntax
+	SET SERVEROUTPUT [ON|OFF]
+
+
+SCOPE Of the variables
+======================
+-PL/SQL Allows the nesting of code blocks within code blocks. this means an execution section of a code block can contain inner code block.
+-since there exists block nesting, a variable which is accessible to an outer lbock is also accessible to all nested inner code blocks.
+-however, the variables declared in the inner code block are not accessible to outer code blocks
+-A Variable can therefore be classified blocks
+1)Local variables : A variables that is declared in a inner block and cannot be referenced by outer code block.
+2)global variables : A variables that is declared in a outer code block and can be referenced by the inner code blocks.
+
+COMPLEX DATA STRUCTURES
+=======================
+
+RECORD DATA TYPE
+----------------
+-PL SQL also provides a special data type called records. A Record data type is a composite data type which is formed as combination of different scalar data types such as char,varchar2,number and so on.
+-A record data type is something very similar to a row of data in the table.
+
+Declaring a Record
+sytnax
+	TYPE <Recordname> is RECORD
+	(<ColumnName1><DataType>,<ColumnNameN><DataType>);
+where
+-RecordName: Indicates the name of the composite type begins defined
+-ColumnName: are the columns within the record beging defined
+-DataType: Indicates the data type for the column being defined.
+
+Example
+declare
+TYPE typEmployees is RECORD
+(
+  employeeid NUMBER(10),
+  employeeName varchar2(30),
+  emailAddress varchar2(20)
+$);
+begin
+null;
+end;
+
+
+%TYPE
+----
+
+-Other than the above method of declaring a record data type, Oralce allows declaring a record using %TYPE.
+-%TYPE is useful , if a variable of a record is based on a column from an already existing database table.
+
+syntax
+	<ColumnName><TableName>.ColumnName>%TYPE;
+
+-%TYPE attribute allows declaring variables based on definitaiont of the column in a table. hence if a column's attributes change, the variable attributes will change as well.this provides data independence, reduces maintence costs and allows program to adapt to change made to the table.
+-%TYPE can also be used with normal variables or constants declared in PLSQL declare sections.
+
+declare
+type typeemployees is record
+(
+employeeid employees.employee_id%TYPE,
+employeename employees.first_name%TYPE,
+emailAddress  employees.email%TYPE
+);
+begin
+null;
+end;
+
+%ROWTYPE
+--------
+-if all the fields of the record are based on all columns of a table, a record can be dclared using the following syntax
+
+sytnax
+	<RecordName><tableName>%ROWTYPE;
+
+ex
+declare
+typemployees employees%ROWTYPE;
+begin
+null;
+end;
+
+
+Assigning the value to the record
+---------------------------------
+-A value that is assigned to a record is a value that is assigned to a field in that record.
+
+syntax
+	<RecordName>.<columnName> := <value>;
+
+	select <columeName1,<Column2> INTO
+	<RecordName>.<columnName>,<RecordName>.<columnName>
+	from <TableName> [WHERE <condition>];
+
+-if %ROWTYPE is used to declare a record then value can be directly assigned to the entire record instead of one column at a time.
+
+Sytnax
+	Select * INTO <RecordName> FROM <TableName>[WHERE <condition>];
+
+
+ASSOCIATIVE ARRAY
+-----------------
+-A array is a way to store multiple variables in a collections,so its a set of data or collection of elements
+-PLSQL is also allows to create the array of records
+
+
+ARRAY OF RECORD /NESTED TABLE / VARRAY/OBJECT
+---------------------------------------------
+- its basically a array of record
+-very much nested table and varray is an oracle object, well collection of objects is like a nested table.
+-objects is itself like a record.
+-when you declare as a object, i declare at the database level. this will exist in the database dictionary like procedures,functions...like that. since oracle is a object relational database.
+-IN a simplest form is object is like a record .
+-the main difference between record and the object ,object is like a database object you can create a table using the object where the record in a table level avaiable tempervaliy.
+-we can use the collection of objects.
+
+
+Varibles/constants/parameters
+=============================
+
+Variables
+---------
+-A variables ,constants and parameters is locations and memory where stores a values where the program can use.
+-an example, a counter keep tracke of location where it is used.
+-there are two types of variable
+1) local variable
+2) global variable
+
+Constants
+---------
+-A constant is a special class of variables which says you never change the values, you initilize once and set for the life of that program unit.
+-set once and cannot changed.
+
+Parameter
+---------
+-Like a variable, A parameter is a place to store the in memory something you are going to use.
+-now a way is different it interacts with two procedures or two blocks , so either calling procedure calling a procedures or anyonmous block calling a functions or whatever .- 
+-A calling procedure is one calling the second procedures and passes the parameter so parameter uses it
+-it has three MODE.
+--By default the parameter is a IN Mode type, its like a constant , a variable comes in like just reference it, but you cannot change what i passed in
+--another is IN OUT , when it is coming in , reference it whereever you want , and change it and return the change value out of the procedure
+--OUT MODE ,you set the value out and get an error. this is a special case, where you guarentiee the out is coming NULL and but you can set the value when you return it out.
+
+
+CONTROL Statements
+==================
+PL SQL provides the following control structures
+*Conditional statements
+	IF-THEN-ELSEIF-ELSE-END IF
+	CASE Expression
+*Iterative Statemetns
+	SIMPLE LOOP
+	FOR LOOP
+	WHILE LOOP
+	GOTO STATMENT
+*Sequential Statements
+
+Conditional Statements
+
+IF Statement
+------------
+- this constructs is primarily used in code blocks to specify conditions under which a specific block of code should be executed.
+syntax
+IF <condition> THEN
+   <Action>
+ELSEIF <Condition> THEN
+   <ACTION>
+ELSE
+   <ACTION>
+END IF;
+
+CASE
+----
+-a simple case, search for the specific value and return the message you want , its like a nested else if
+-where as a search case, it search for the whole value of that searched case, then return output as you desire.
+
+SIMPLE LOOP
+-----------
+- A simple loop repeats a set of statemetns in PLSQL code block at least once before the loop terminates
+- An EXIT conditions must be specified in the loop, otherwise the loop enters into infinite iterations
+-When the EXIT conditions is satisifed the process exits from the loop
+
+sytnax
+	LOOP
+	  <Sequence of statement>
+	END LOOP;
+
+- it loops if you don't have a conditions it loops for ever
+-put a EXIT , that will be unconditional exit
+
+FOR LOOP
+--------
+-It is used to execute a set of statements for a predetermined number of times, iterations occurs between the given and end integer values.
+-the counter is always incremented by 1
+-The Loops exits when counter reaches the value of the end integer.
+-the variable in the for loop need to be declared . also the increment value cannot be specified. 
+-the following variable is always increment by 1.
+
+-baiscally intializes the counter ,increment the counter and exit until not the conditon true.
+
+sytnax
+	FOR <Variable> IN [REVERSE] <StartValue>..<EndValue>
+	LOOP
+		<Action>
+	END LOOP;
+
+Main Notes;
+*the counter variable is implicitly declared in the declations sections, so it is not neccessary to declare it explicity
+*the counter variable is incremented by 1 and does not need to be increment explicity
+*EXIT WHEN Statement and EXIT statement can be used in WHILE Loops
+
+WHILE LOOP
+---------
+-A While loop repeats a set of statment in the PL SQL code block as a conditions is true
+-the Conditions is evaluated when iterations begins. the iterations condinues until the conditions becomes false.
+
+sytnax
+	WHILE <Condition>
+	LOOP
+	      <Action>
+	END LOOP;
+
+*A While Loop can be constructed the loop body
+*Increment the variable in the loop.
+*EXIT WHEN Statement and EXIT statement can be used in the while loops.
+*IN A SIMPLE WAY :-in while loop you tell what you want to loop and also include the exit criteria even before you start the loop.
+
+GOTO Statement
+--------------
+-Sometime it is required to shift the control of the program from a set of statements to some other set of statements
+-the GOTO statements hepls by shifting the controll from one block of code spec to some other block of code spec within a PL/SQL Block
+-it is an unconditional branch that jumps executions to the label identified in the statement
+-the entry point into such a block of code is marked using the label
+	<<any name to the code block that follows>>
+-this GOTO Statements can then make use of this user-defined name to jump into that blocks of code for executions.
+-when GOTO statement is encountered, program executions jumps to the code directly after the label, so there must be at least one line of code after the label.
+
+sytnax
+	GOTO <Code Block Name>;
+
+ERROR and EXCEPTION
+====================
+-when program are running we may experience expected and unexcpected errors , if the expection is expected we try to handle it and continue to process and if the expection is unexpected and we have to decide do we want to continue for processing ,try to hanlde the specific excpetion ,and end processing or call some special procedures 
+-in PLSQL , we handle expection using exception handler
+-Remeber exception block is the main component in the programming unit,its a optional but it is a major component 
+-there are lot of builtin exception ,codes avaiable where you exception can be handled.
+-- you can find all the built-in exception in this packages.
+
+--list of all exception in Database
+select text
+from dba_source
+where name='STANDARD';
+
+- you can raise the exception and handle it immdiately or later
+- you can create your own custom exception using RAISE_APPLICATION_ERROR and handle those exception using "other" keyword.
+
+
+COMMENTS
+========
+--commenting a code
+-there are two ways to do the comments
+
+single line comment
+--------------------
+-this can be put anywhere in the program unit or block. starting with double hypen
+   --calling something
+
+multiline comment
+-----------------
+--this just like documenttion multi line way
+--this is very easy for document like a paragraph. it starts with single forward slash with Astriek. it is basically for the larget comment box.
+-- dont'try to nest the comment 
+  /*
+     Author : ganesh
+     status : draft
+     options: nothing	
+	
+   */
+   
+
+

@@ -1,0 +1,1 @@
+insert into emp_company values(&ename,&cname,&sal,&jdate);

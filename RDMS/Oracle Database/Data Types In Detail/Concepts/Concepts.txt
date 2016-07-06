@@ -1,0 +1,166 @@
+Data Types
+==========
+
+String Data type 
+----------------
+-holds alpha numeric data like number ,letters,special .
+-When you work Strings in PLSQL we use VARCHAR2 and Char, here VARCHAR2 is a variable linked String and CHAR is a fixed linked String, when you declare the VARCHAR2 with the value of that size, it takes size of the value which it took, where as the CHAR takes up the maximum size.
+   VARCHAR2(10)
+   CHAR(10)
+
+-String is delimited with single quotes 'ganesh', not the double quote where it is used to create the Case Sensitive object name or variable name and no other de-limiter symbol can be used.Change in the delimited are usefull but those are advanced topic
+	'ganesh'
+-When I put like the below, that will be literal not a string.But when you put single quote , that will be a PLSQL String.
+	ganesh 
+--When you asign the variable to a string , the assignment operation should be := inPLSQl and always end the statement with semicolon
+    first_name := 'Ganesh';
+
+
+Number Data Type
+----------------
+
+--When you use the number data type, you may have to include the scale and precision.
+--the Maxium number of the number of the variable, and the scale is the number on the right to the amount of the decimal.
+--if you don't want to include the scale and precision , you can put floatting point number
+
+
+PLS_INTEGER
+-----------
+
+
+IMPLICIT CONVERSION in DATA TYPE
+-------------------------------
+   v_string_var VARCHAR2(10) :='15'
+
+
+Date and Time Data type
+----------------------
+--in Oracle Data and Time are The basic data type of Date and the Time stamp
+--Conversion from string to date using to_date with format mask
+
+	To_date ( String,'DD/MM/YYYY HH:MM:SS.FF AM);
+
+Format Mask
+to_char(v_date, 'FMDD Month, YYYY')
+- Month --> for month
+- Year -- > Year
+
+
+Boolean Data Type
+-----------------
+-- Boolean data type will be a TRUE or FALSE
+
+CLOB
+----
+--it is character based large objects
+-- it can be a big string may be terra bytes in size depending upon your OS memory.
+
+BLOB
+-----
+--it is a binary based large objects
+-- its basicall stores images, documents and executables like that..
+
+BFILE
+-----
+-it stores a file in the operating system , but stores pointer in the database
+-it is Database objects, which will be available in the database level, it is always permanent
+-Whereas the CLOB and BLOB are tempervory used in the PLSQL objects.
+-There is package called DBMS_LOBS, which contains various procedures and functions using manipulating large file .
+-we cannot able using 1 TB or 100 GB, 1 GB at any time for any large object manipulations, we need to think and work chunk at a time, where DBMS_LOBS package gives you the ablility to parse and work on files . check at the time.
+
+COMPLEX DATA TYPE
+=================
+
+--for simple Complex data type, which contains the scalar data type like varchar2,char,boolean,number..etc.
+--On more Advance Type, you can use the Record to create on the non-Scalar Data type such as nested record(record with the record),collections and objects
+
+
+Record type
+-----------
+- A record type is a simple structure that combines multiple data type into a single package 
+- it is also called as composite type
+- it is used to store the relative bit informations
+-it is much like record in a table and record type is like a table definations.
+
+
+Type r_person is RECORD (
+ fname VARCHAR2(10),lname VARCHAR2(10),age NUMBER);
+
+the above Record is a type , here the r_person is a record type  and in this type it has three scalar fields,
+-A Scala Type is nothing but the type which holds an atomic value and it can be broken into anything small types like CHAR, VARCHAR2,NUMBER... etc
+
+ROWTYPE
+-------
+- You can create the record directly from the table, using the ROWTYPE attribute from the table where the record definations is already avaiable in the table .
+
+	v_person employees%ROWTYPE;
+	
+- if you want to use the some of the fields from the table instead of using ROWTYPE rather then entire record, you can use cursors. its basically putting a select in the PLSQL Block and assing to the ROWTYPE
+	
+	cursor c1 is select first_name,last_name ,salary from employees;	
+	v_person c1%ROWTYPE;
+
+TYPE
+-----
+-if you want to create a record from other record, then you use TYPE.
+	
+for example
+- Asssume you have record of v_person from the employees , V_relative is other record of the V_person with the Type.
+-assignment of the both the variable are the same, 
+	v_person employees%ROWTYPE;
+	v_relative v_person%TYPE;
+
+
+ARRAY
+*****
+
+Associative Array
+==================
+- Array is one way to store multiple variables in a collections.
+-In PLSQL , Array of object as a collections or lot of time called as PLSQL Table.
+-In Table, A Record is a specific Row in the table, A Collection is a rows in a multiple Rows in the table.
+-An orginal PLSQL table offers has a Associative Table or INDEX BY Table.
+-An Associative Array is a signable index that can be numeric,Binary integer or varchar2.
+
+  type t_array is table of varchar2(30)
+  index by binary_integer/varchar2;
+  
+--it is also called as the index by table, it is only avaiable in PLSQL, you cannot create the table using associative array and row in a table having associative array
+
+NESTED TABLE
+============
+-A nested table is must associated with associate array but it does not determined by INDEX, Understand index is incremented by integer value, so in oracle for nested table is handling index for you by using the extend
+- FOr nested table, you have to call the constructor to create the index which is done by Oracle.
+- you can delete index also, this is a unique features of the nested table apart from that first,last, next are same as associative array.
+		v_array.DELETE(2);
+
+
+VARRAY
+======
+-it is the most commonly used Array type, 
+-it is already in the fixed size where as the associative array ,nested table are grows dynamically. its similar to those another array associative and nested array.
+
+	type t_array is varray(10) of varchar2(10);
+-- its the varray table of size 10 of type t_array of varchar2 data type table.
+-it does not mean it fixed with the memory, its mean the element cannot be greater then this size, it does not use any index by BINARY_INTEGER or varchar2.
+- it is similar like nested table.
+- the important think in the VARRAY it does not grow , its always fixed as you defined.
+- you cannot delete any specific element in the array, but you can DELETE all the elements in array like a null.
+			v_array.DELETE
+-you can use the new attribute called LIMIT.it basically tell how much is the LIMIT of the array of the size.
+			v_array.LIMIT
+
+
+ARRAY OF RECORDS
+================
+-we have covered records by themself, array by themself.
+-this is really use the BULK COLLECT operations of records. Bulk collect uses internally extend and call the constructor which is done by the oracle engine.
+--you can use either the associate array or using nested table also.
+
+
+
+
+
+
+
+ 

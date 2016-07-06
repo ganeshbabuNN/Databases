@@ -1,0 +1,1 @@
+alter table zpcm drop unused columns;

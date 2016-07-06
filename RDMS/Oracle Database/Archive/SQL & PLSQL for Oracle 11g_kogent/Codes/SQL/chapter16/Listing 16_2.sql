@@ -1,0 +1,1 @@
+create table emp_cmp_mgr(ename varchar2(30),cname varchar2(30),mname varchar2(30));

@@ -1,0 +1,109 @@
+Procedures
+================
+-Procedures specification begins with CREATE and ends with the procedures name or argument list.
+-they do not take parameters are written without a parenthesis .
+-the body of the procedure starts after the keyword IS or AS and ends with Keyword END.
+
+Syntax
+------
+CREATE or REPLACE PROCEDURE [<Schema>.]<ProcedureName>(<Argument>{IN,OUT,IN OUT} <DataType>..,) { IS, AS}
+<variable declartions>;
+<constant Declartions>;
+
+BEGIN
+	<Body code blcok>;
+EXCEPTION
+	<Exception code block>;
+END;
+
+where
+REPLACE
+-it recreates the procedures[if it is already exists].
+
+Schema
+-it is the schema that holds the procedures being created.
+-if ommitted , it takes the default schema
+
+PROCEDURE
+-name of the procedures being created.
+
+Argument
+-Name of the arguments to the procedures.
+-To make a procedures dynamic it can be passed arguments/parameters before execution.
+-it changes the way it works depending upon the parameters passed prior to its executions
+
+An Argument can be
+*IN 
+-An IN Parameter is a parameter whose value is passed into a procedure. the value of an IN Parameter is a constant. it cannot be changed or reassigned within the module.
+*OUT
+- An OUT parameter is aparameter is a parameter whose value is passed out of the stored procedures back to the calling PL/SQL block
+-An OUT Parameter is a variable and not a constant . A default value cannot be assigned to an OUT Parameter
+*IN OUT
+-An IN /OUT parameter is a parameter that functions as IN or an OUT Parameter or both.
+-THe value of these parameter can be passed into and out of the procedures
+-it is not a constant
+
+The default mode for a parameter is IN
+-Arguments can be assigned a default value.
+-To assign a default value the assignment operation[:=] or the DEFAULT keyword can be used.
+-An arguments with a default value need not be included in the prcoedure call
+
+<Argument1> IN Varchar2:='Ganesh';
+<Argument2> IN Varchar2 DEFAULT 'ganesh';
+-Parenthises can be ommitted if no arguments are present
+-Argument are declared with data types but without data type length or precison. but not declared with the length component.
+ex Varachar2 , but no Varchar2(30);
+
+DATATYPE
+-it is the data type of the argument. Any date type that is supported by PL/SQL can be specified here.
+
+BODY CODE BLOCK
+-it is procedure definition consisting of PL/SQL statements
+
+EXCEPTION CODE BLOCK
+-in this seciton that holds defined excpetions
+
+**The users to have CREATE PROCEDURE System privilegs to create a procedures in the schema.
+
+Debugging the procedures
+=======================
+- To view the compilation errors issues the following command;
+
+SHOW ERROS procedure <procedureName>
+
+Getting Information about procedure 
+===================================
+-Infromation about the functions can be fetched from the USER_PROCEDURES view.
+
+Solution
+-------
+select object_name,aggregate,parallel from user_procedures where object_type='PROCEDURE';
+
+Destroying procedure 
+====================
+-A functions cna be destroyed using the DROP Command
+
+Syntax
+	DROP procedure <procedureName>;
+
+Testing the Procedures
+======================
+- You can test the procedures in two ways
+1) Using SQL
+2) PL/SQL program
+
+-if a procedures is called from a PLSQL block,they Keyword EXECUTE is ommitted.
+
+Turning a Variable into a Parameter
+===================================
+--parameter do end with semicolon
+--Define the mode of the parameter, constant cannot be.
+--parameter do not have any assignment statemetn
+--parameter may contain a default value
+
+Procedure_With_Parameter_Default_Value.sql
+
+Nested Procedures calls
+=========================
+nested logit calls.sql
+

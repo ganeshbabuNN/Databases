@@ -1,0 +1,137 @@
+Operator
+========
+-Some of the operations performed on the values are called operations
+-An Operations is performed by using at least one symbol and one value. The Symbol usedin an operation is called an Operator.
+A Value involved in an Operations is called an operand or an argument.
+-Operators are used in expression or conditional statments
+
+Some of the operator
+1)Arithematic Operators
+2)Logical operator
+3)Comparison operators
+4)Date Operator
+4)LIKE Operator
+5)in NAN and is infinite Operators
+6)Operator Precedance
+
+DUAL Work Table
+===============
+-there are times when some calculation need to performed on values which are not avaiable in a database table.
+-In such arithematic calculations, tables are not referenced, only numberic values are used.
+
+
+1)Arithematic Operators
+-----------------------
+-It is used to perform arithmetical calculations on a pair of values and or constants. 
+-it can be applied whilst viewing records from a table or performing data manipulation operations such as insert,update and delete
+
+Operator	Description
+--------	-----------
++-		Positive or Negative expression
++		Addition
+-		Subtraction
+*		Multiplication
+**		Exponentiation
+/		Division
+()		Enclosed Operations
+
+2)Logical operator
+------------------
+-logical operator is used to test whether the result of a conditions is TRUE or FALSE. the result is always boolean value  i,e TRUE or FALSE
+
+1)AND Operator
+-this is used to fetch selected rows that satisfy all the given conditions
+-this operators requires that each conditions must be met for record to be included in the result set.
+
+2)OR Operator
+-OR Operator is used to fetch selected rows that satisf at least one of the given conditions
+
+3)NOT Operator
+-Every condition that is evaluated by a set of logical operators can be negated to change the condition's perspective
+-it determine the rows that do not satisfy a given conditions
+
+4)Nested logical Operator
+- THE NOT ,AND and OR Operator can be combined in a single SQL statment. 
+-when using this operator , its imp to use round brackets to indicate the evaluations order.
+-the Order in which are the conditions are pharsed is very important, if the order changes its likey to have a different results
+-Since Both the operators are used together, it processes all rows in a table and displays the result only when
+1)All of the conditions specified using the NOT operator are not met
+2)All of the conditions specified using the AND operator are met
+3)Any of the conditions specified using the OR operator are met
+
+3)Comparison operators
+----------------------
+-Equality - =
+-Inequality- !=,^=,<>
+-Greater Than or Equal To & Less Than or Equal To- >=, <=
+-Equal to Any member of - IN(compares the single value) , =ANY(compares all values)
+-Not Equal to Any Member of - NOT IN , !=ANY
+-Equal to any value in a list or returned by a query - ANY, SOME ( this operatore be preceded by =,!=,>,<,<=,>= operator)
+-Equal To every value in a list or returned by a Query- ALL
+-Exists - Exists
+-Test NULL Values  -  IS[NOT]NULL
+-BETWEEN Operator
+--to determine whether a value of an expression falls within a specified range of values, the BETWEEN operator is used.
+--This allows selecting rows that contain values within a specified lower and upper limit. the range specified after the word BETWEEN is inclusive
+--the NOT operator can also be used with BETWEEN
+
+4)Date Operator
+---------------
+Operator - + , -
+
+4)LIKE Operator
+---------------
+- the LIKE operator allows comparing one string value with another string value, which is not identical.
+-this is achieved by using WILDCARD characters
+-- % Allows to match any string of any length [including zero length]
+-- _ Allows to match a single character
+
+Escape Character
+- we can use the special characters such as % and _ which are used as wild characters with the LIKE operator
+- Escaping these characters enables finding all those words that have % or _ within
+
+
+5)in NAN and is infinite Operators
+----------------------------------
+- db 10 g provides two new operators to support the introduction of BINARY_FLOAT and BINARY_DOUBLE types
+- it can hold values such as NaN and infinity , the following are made available to deal with them
+-- IS NAN /IS NOT NAN : Matches NaN value
+-- IS INFINITE / IS NOT INFINITE : Matches INFINTE value.
+
+
+6)Operator Precedance
+---------------------
+-is the order in which oracle evaluates different operator is the same expression
+-when evaluating an expression containing multiple operator.
+-it evaluates operator with higher precedence before evaluate those with lower precedence.
+-it evaluates operator with equal precedence from left to right within an expression
+-Operator precedence plays a signifiant role of determinig the sequence in which, the opertions are performed in complex
+expression, with multiple operators.
+
+Order	Operator	Description
+1	+  -		Positive or Negative Expression
+2	* /		Mutliplication , Division
+3	+ - ||		Addition, subtraction, concatenation
+4	= != < > 	Comparion
+	<= >= IS NULL
+	LIKE BETWEEN
+5	** NOT		Exponentiation, logical negation
+6	AND		Logical AND
+7	OR		Logical OR
+
+
+Expression Operator
+==================
+
+1)UNION
+2)INTERSECT
+3)MINUS
+	
+
+
+
+
+
+
+
+

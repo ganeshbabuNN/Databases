@@ -1,0 +1,1 @@
+select ename from emp_company where ename in (select 	ename from employee 		where city = ’MUMBAI’) and cname in (select cname from company where city 		= ’DELHI’);

@@ -1,0 +1,15 @@
+Forward Declarations
+====================
+-it is a important concept and important at some situations
+-Forward declartions is a specification of procedures or a functions that is defined in the package body
+-it is called before the body for that procedures/functions that is defined.
+-Basically it looks just like a specs which are done in the body it just tells the compiler that there is valid calls within the body which is defined at some points
+
+-- the below example is the getter and seeting method which is initialized during the call with the helper functions
+
+Package_Forward_Declarations.sql;
+
+
+
+
+

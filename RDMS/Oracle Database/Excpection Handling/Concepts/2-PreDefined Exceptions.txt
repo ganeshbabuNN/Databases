@@ -1,0 +1,23 @@
+BUILT-IN EXCEPTIONS
+====================
+-Most of the built-in exception are shipped from the Oracle
+-we see most of them are the named exception like value_error,no_data_found..etc
+-Name exception are something which can Read Properly. Most of the exception have the error code.
+
+Built_In_Exception_Value_Error.sql
+
+-You can handled the Exception using Exception Code.
+Built_In_Exception_Handling_Error_Code.sql  
+ 
+Getting the List of Built-In Exceptions
+=======================================
+-sqlerrm which gives the list of exception 
+
+Built_In_Exception_Getting_List_Built_In_Exception.sql
+
+
+Getting the list of Named Exceptions
+====================================
+list_standard_excp.sql
+
+

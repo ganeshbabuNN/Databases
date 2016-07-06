@@ -1,0 +1,1 @@
+select cname, ename, jdate, salary from emp_company;

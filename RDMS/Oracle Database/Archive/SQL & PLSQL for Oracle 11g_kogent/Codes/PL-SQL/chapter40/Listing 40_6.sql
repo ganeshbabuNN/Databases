@@ -1,0 +1,1 @@
+alter system set UNDO_Tablespace = '';

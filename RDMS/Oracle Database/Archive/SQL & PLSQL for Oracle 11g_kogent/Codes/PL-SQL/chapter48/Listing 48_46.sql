@@ -1,0 +1,1 @@
+select username,obj_name,action_name,to_char(timestamp,'dd-mon-yyyy hh:mi:ss')ts 	from dba_audit_trail;

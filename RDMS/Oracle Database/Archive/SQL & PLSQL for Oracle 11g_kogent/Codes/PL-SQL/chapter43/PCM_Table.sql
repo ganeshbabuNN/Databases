@@ -1,0 +1,1 @@
+create table pcm (name varchar2(30), p number, c number, m timestamp) flashback archive arch_pcm;

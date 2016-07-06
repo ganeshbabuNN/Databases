@@ -1,0 +1,1 @@
+revoke create view from anil;

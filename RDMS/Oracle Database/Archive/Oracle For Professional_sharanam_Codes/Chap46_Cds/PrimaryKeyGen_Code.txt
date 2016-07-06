@@ -1,0 +1,67 @@
+---------------------------------------------------------------------------------------------------------
+-- Create a sequence named sqStudents that generates a running number starting from 1 and increments 1 number at a time.
+---------------------------------------------------------------------------------------------------------
+	CREATE SEQUENCE sqStudents INCREMENT BY 1 START WITH 1;
+
+------------------------------------------------------------------------------------------------------------
+-- Create a trigger named GenerateStudentNo that uses the sequence named sqStudents to generate a student identity number as S<RunningNo>.
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER GenerateStudentNo
+		BEFORE INSERT ON Students
+			FOR EACH ROW
+		DECLARE
+			varStudentNo Varchar2(10);
+		BEGIN
+			SELECT 'S' || TO_CHAR(sqStudents.NEXTVAL) INTO varStudentNo FROM DUAL;
+			:NEW.StudentNo := varStudentNo;
+		END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Create a trigger named GenerateStudentNo. This trigger will determine the max value in the column StudentNo, add one to it and assign it to the StudentNo column when a record is being inserted.
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER GenerateStudentNo
+		BEFORE INSERT ON Students
+			FOR EACH ROW
+	DECLARE
+		maxStudentNo Varchar2(10);
+		newStudentNo Varchar2(10);	
+	BEGIN
+		SELECT NVL(MAX(TO_NUMBER(SUBSTR(StudentNo, 2))), 0) INTO maxStudentNo FROM Students;
+		newStudentNo := TO_CHAR((TO_NUMBER(maxStudentNo) + 1));
+		:NEW.StudentNo := 'S' || newStudentNo;
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Create a trigger named GenerateStudentNo. This trigger will fire every time a record in inserted in the Students table. Before a record is inserted in the Students table, this trigger:
+-- 1. Extracts the next value from the lookup table for the Students table
+-- 2. Assigns the value extracted to the StudentNo column
+-- 3. Generates a new primary key for the next insert if any and update the lookup table with the new value for the Students table
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER GenerateStudentNo
+		BEFORE INSERT ON Students
+			FOR EACH ROW
+		DECLARE
+			lookupStudentNo Varchar2(10);
+			newStudentNo Varchar2(10);
+		BEGIN
+			BEGIN
+				SELECT NextValue INTO lookupStudentNo FROM PKeys 
+					WHERE TableName = 'Students';
+				EXCEPTION
+					WHEN NO_DATA_FOUND THEN lookupStudentNo := 'S1';
+			END;
+
+			:NEW.StudentNo := lookupStudentNo;
+			newStudentNo := TO_NUMBER(SUBSTR(lookupStudentNo, 2)) + 1;
+			lookupStudentNo := 'S' || newStudentNo;
+
+			IF lookupStudentNo = 'S2' THEN
+				INSERT INTO PKeys VALUES ('Students', lookupStudentNo);
+			ELSE
+				UPDATE PKeys SET NextValue = lookupStudentNo 
+					WHERE TableName = 'Students';
+			END IF;
+		END;
+	/

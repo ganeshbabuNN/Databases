@@ -1,0 +1,16 @@
+DECLARE
+  TYPE t_array IS TABLE OF VARCHAR2(30)
+    INDEX BY BINARY_INTEGER;
+	
+  v_array t_array;	
+BEGIN
+  v_array(1) := 'Hello World!';
+  v_array(2) := 'Hello Again!';
+  
+  FOR i IN v_array.FIRST..v_array.lAST 
+  LOOP
+    dbms_output.put_line( v_array(i) );
+  END LOOP;
+END;
+/
+

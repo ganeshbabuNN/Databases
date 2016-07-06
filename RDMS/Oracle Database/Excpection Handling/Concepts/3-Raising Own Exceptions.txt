@@ -1,0 +1,54 @@
+RAISING EXCEPTION
+=================
+
+-Using the Raise and Raising applicaiton keyword for creating your own exceptions
+-Here the below procedure, if exceptions is something other,With that excpetion code, then handle it or re raise the 
+-Exceptions And assign the value to the to that variables.
+
+Exception_Own_Raise_Keyword.sql
+
+-If I change the sql code to some other thing and call the procedure, then check the output.
+-And you can find it was unable to handle that exception has the sql code was different.
+
+Exception_Own_Raise_Keyword_Diff_Error_Code.sql
+
+-Raise the value_error then Handling the code and check
+-Change the sql code with that value_error code and check
+
+Exception_Own_Raise_Keyword_Value_Error_In_Raise.sql
+
+-Change the code
+Exception_Own_Raise_Keyword_Value_Error_Asssigned.sql
+
+-You can even handled the sql code in the raise keyword itself instead of handling using the sql code.
+Exception_Own_Raise_Keyword_Adding_Error_Code_InRaise_Keyword
+
+-This can be handled by passing value using the raise application error.
+
+Raise Application Error
+=======================
+
+-It is not a good pratice to hide the exception and return null. It is always a good pratice to handle exception of the exact or using the Logit for debugging purposes.
+
+Exception_Own_Raising_Application_Error_Wrong.sql
+
+-Use the application error and handle the exceptions which is caused and handled.
+Exception_Own_Raising_Application_Error_Correct.sql
+
+-Wrong way of hanlding the transaction enable block.
+Exception_Transaction_Pragma_Wrong.sql
+
+-Right way of hanlding the transaction enable block.
+Exception_Transaction_Pragma_Correct.sql
+
+-you can control through the name exception for the respective error handling.
+Exception_Transaction_Pragma_Control_Name_Exceptions.sql
+
+-Put Those errors in the other tables and those tables are monitoring for error purpose only.
+Exception_Own_Raising_Application_Error_Tables.sql
+
+-You can package all the exception code in form of the api
+my_exceptions_package.sql
+
+-You can reference this package in your procedures or the AB with your ongoing exception codes in the procedures.
+Exception_Exception_Calling_Using_Package.sql

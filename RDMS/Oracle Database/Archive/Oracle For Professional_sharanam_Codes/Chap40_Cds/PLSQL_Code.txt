@@ -1,0 +1,239 @@
+-----------------------------------
+-- Assigning values to variables
+-----------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE 
+		varCustomerName Varchar2(40);
+		varAddress Varchar2(100); 
+	BEGIN
+	/* Using assignment operator. */
+		varCustomerName := 'Sharanam Chaitanya Shah';
+	/* Using direct assignment from table column. */
+		SELECT Address INTO varAddress FROM Customers WHERE CustomerName = varCustomerName; 
+	/* Printing a message. */
+		DBMS_OUTPUT.PUT_LINE('Address: ' || varAddress);
+	END; 
+	/
+
+--------------------------------------
+-- Local and Global Scope of variable
+--------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Global variables declared. */
+		varGlobalVariable1 Number; 
+		varGlobalVariable2 Number; 
+
+	/* *************** Outer code block starts. *************** */
+	BEGIN 
+	/* Global variables assigned. */
+		varGlobalVariable1 := 1000; 
+		varGlobalVariable2 := 2000; 
+	/* *************** Inner code block starts. *************** */
+		DECLARE 
+		/* Local variable declared. */
+			varLocalVariable Number; 
+		BEGIN
+		/* Local variable assigned using values from Global variables. */
+			varLocalVariable := varGlobalVariable1 * varGlobalVariable2; 
+		/* Printing a message. */
+			DBMS_OUTPUT.PUT_LINE('Value in the local variable: ' || TO_CHAR(varLocalVariable));
+		END; 
+	/* *************** Inner code block ends. *************** */
+	END; 
+	/* *************** Outer code block ends. *************** */
+	/
+
+-----------------------------------
+-- Assigning values to record
+-- Example 1
+-----------------------------------
+	DECLARE 
+	/* Defining a Record Type. */
+		TYPE typCustomers IS RECORD 
+			(CustomerNo Customers.CustomerNo%TYPE, 
+			CustomerName Customers.CustomerName%TYPE, 
+			CustomerDOB Customers.DateOfBirth%TYPE); 
+	/* Declaring a variable of type typCustomers. */
+		varCustomers typCustomers;
+	BEGIN
+		varCustomers.CustomerNo := 1;
+		varCustomers.CustomerName := 'Sharanam Chaitanya Shah';
+		varCustomers.CustomerDOB := '03-Jan-1981';
+	END;
+	/
+
+-----------------------------------
+-- Assigning values to record
+-- Example 2
+-----------------------------------
+	DECLARE 
+		typCustomers Customers%ROWTYPE;
+	BEGIN
+		SELECT * INTO typCustomers FROM Customers WHERE CustomerName = 'Sharanam Chaitanya Shah'; 
+	END;
+	/
+
+--------------------------------------------------------------------------------------------
+-- Write a program using PL/SQL that:
+-- 1. Accepts the EmployeeNo 
+-- 2. Validates if the EmployeeNo is valid 
+-- 3. If valid, accepts the Attendance as P for Present, A for Absent and S for Sick Leave
+-- 4. Marks the attendance by inserting a record in the EmployeeMuster table
+-- 5. If Present, then also inserts a timestamp in the InTime column
+--------------------------------------------------------------------------------------------
+	DECLARE
+	/* Declaration of memory variables and constants to be used in the Execution section.*/
+		varEmpValid  Char(1) := 'N';
+		varEmpAtd Char(1);
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+	BEGIN
+	/* Accepting the EmployeeNo */
+		varEmployeeNo := &EmployeeNo;
+	/* Validating the existence of such an employee.*/
+		SELECT 'Y' INTO varEmpValid FROM Employees WHERE EmployeeNo = varEmployeeNo;
+		IF varEmpValid = 'Y' THEN
+		/* Accepting the Employee Attendance */
+			varEmpAtd := '&Attendance';
+		END IF;
+	/* Inserting a record in the EmployeeMuster table if the employee number is valid.*/
+		IF varEmpAtd IS NOT NULL THEN
+			IF varEmpAtd = 'P' THEN
+				INSERT INTO EmployeeMuster (EmployeeNo, MusterDate,Attendance, Intime) VALUES(varEmployeeNo, SYSDATE, 'Present', CURRENT_TIMESTAMP);
+			ELSIF varEmpAtd = 'S' THEN
+				INSERT INTO EmployeeMuster (EmployeeNo, MusterDate, Attendance) VALUES(varEmployeeNo, SYSDATE, 'Sick Leave');
+			ELSE
+				INSERT INTO EmployeeMuster (EmployeeNo, MusterDate, Attendance) VALUES(varEmployeeNo, SYSDATE, 'Absent');
+			END IF;
+		END IF;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- A single column table called RandomNumbers exists. This table holds a set of random numbers which are used by the application.
+-- Create a program using PL/SQL that:
+-- 1. Accepts a number which indicates the number of random number to be generated
+-- 2. Generates that many random numbers 
+-- 3. Stores them in the RandomNumbers table
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Declaration of memory variables and constants to be used in the Execution section.*/
+		varHowManyTimes Number;
+		varCtr Number := 0;
+	BEGIN
+	/* Accepting how many numbers to be generated. */
+		varHowManyTimes  := &HowManyNos;
+	/* Simple loop. */
+		LOOP
+		/* Incrementing the counter. */
+			varCtr := varCtr + 1;
+		/* Generating and inserting random numbers into the table. */
+			INSERT INTO RandomNumbers (RandNo) VALUES (DBMS_RANDOM.RANDOM());
+			EXIT WHEN varCtr >= varHowManyTimes;
+		END LOOP;
+	/* Printing a message. */
+		DBMS_OUTPUT.PUT_LINE(TO_CHAR(varCtr) || ' random numbers generated successfully.');
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- Create a program using PL/SQL that:
+-- 1. Accepts a number which indicates the number of random number to be generated
+-- 2. Generates that many random numbers 
+-- 3. Stores them in the RandomNumbers table
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Declaration of memory variables and constants to be used in the Execution section.*/
+		varHowManyTimes Number;
+		varCtr Number := 0;
+	BEGIN
+	/* Accepting how many numbers to be generated. */
+		varHowManyTimes  := &HowManyNos;
+	/* While loop. */
+		WHILE varCtr < varHowManyTimes
+		LOOP
+		/* Generating and inserting random numbers into the table. */
+			INSERT INTO RandomNumbers (RandNo) VALUES (DBMS_RANDOM.RANDOM());
+		/* Incrementing the counter. */
+			varCtr := varCtr + 1;
+		END LOOP;
+	/* Printing a message. */
+		DBMS_OUTPUT.PUT_LINE(TO_CHAR(varCtr) || ' random numbers generated successfully.');
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- Create a program using PL/SQL that:
+-- 1. Accepts a number which indicates the number of random number to be generated
+-- 2. Generates that many random numbers 
+-- 3. Stores them in the RandomNumbers table
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Declaration of memory variables and constants to be used in the Execution section.*/
+		varHowManyTimes Number;
+		varCtr Number := 0;
+	BEGIN
+	/* Accepting how many numbers to be generated. */
+		varHowManyTimes  := &HowManyNos;
+	/* For loop. */
+		FOR varCtrTemp IN 1..varHowManyTimes
+		LOOP
+		/* Generating and inserting random numbers into the table. */
+			INSERT INTO RandomNumbers (RandNo) VALUES (DBMS_RANDOM.RANDOM());
+			varCtr := varCtrTemp;
+		END LOOP;
+	/* Printing a message. */
+		DBMS_OUTPUT.PUT_LINE(TO_CHAR(varCtr) || ' random numbers generated successfully.');
+	END;
+	/
+
+--------------------------------------------------------------------------------------------
+-- Write a program using PL/SQL that:
+-- 1. Accepts the EmployeeNo 
+-- 2. Validates if the EmployeeNo is valid 
+-- 3. If valid, accepts the Attendance as P for Present, A for Absent and S for Sick Leave
+-- 4. Marks the attendance by inserting a record in the EmployeeMuster table
+-- 5. If Present, then also inserts a timestamp in the InTime column
+--------------------------------------------------------------------------------------------
+DECLARE
+/* Declaration of memory variables and constants to be used in the Execution section.*/
+	varEmpValid Char(1) := 'N';
+	varEmpAtd Char(1);
+	varEmployeeNo Employees.EmployeeNo%TYPE;
+BEGIN
+/* Accepting the EmployeeNo */
+	varEmployeeNo := &EmployeeNo;
+/* Validating the existence of such an employee.*/
+	SELECT 'Y' INTO varEmpValid FROM Employees WHERE EmployeeNo = varEmployeeNo;
+
+	IF varEmpValid = 'Y' THEN
+	/* Accepting the Employee Attendance */
+		varEmpAtd := '&Attendance';
+	END IF;
+
+/* Inserting a record in the EmployeeMuster table if the employee number is valid.*/
+	IF varEmpAtd IS NOT NULL THEN
+		IF varEmpAtd = 'P' THEN
+			GOTO InsertPresent;
+		ELSIF varEmpAtd = 'S' THEN
+			GOTO InsertSickLeave;
+		ELSE
+			GOTO InsertAbsent;
+		END IF;
+	END IF;
+
+/* GOTO code blocks. */
+<<InsertPresent>>
+	INSERT INTO EmployeeMuster (EmployeeNo, MusterDate, Attendance, Intime) 
+		VALUES(varEmployeeNo, SYSDATE, 	'Present', CURRENT_TIMESTAMP);
+<<InsertSickLeave>>
+	INSERT INTO EmployeeMuster (EmployeeNo, MusterDate, Attendance) 
+		VALUES(varEmployeeNo, SYSDATE, 'Sick Leave');
+<<InsertAbsent>>
+	INSERT INTO EmployeeMuster (EmployeeNo, MusterDate, Attendance) 
+		VALUES(varEmployeeNo, SYSDATE, 'Absent');
+END;
+/

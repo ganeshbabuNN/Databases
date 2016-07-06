@@ -1,0 +1,1 @@
+select text from  user_views where view_name='emp_sal';

@@ -1,0 +1,1 @@
+select ename, s from emp_shift;

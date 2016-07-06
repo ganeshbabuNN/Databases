@@ -1,0 +1,1 @@
+grant execute on emp_proc to scott;

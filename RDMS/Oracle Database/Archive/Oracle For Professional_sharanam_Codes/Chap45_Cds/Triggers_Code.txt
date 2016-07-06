@@ -1,0 +1,259 @@
+---------------------------------------------------------------------------------------------------------
+-- Write a trigger that fires every time the salary of an employee in the Employees table is updated.
+---------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER DisplayChangesInSalary
+		BEFORE UPDATE ON Employees
+		FOR EACH ROW WHEN (NEW.EmployeeNo > 0)
+
+		DECLARE
+			varDifference Number;
+		BEGIN
+			varDifference := :NEW.Salary  - :OLD.salary;
+
+			DBMS_OUTPUT.PUT_LINE('Employee No: ' || :NEW.EmployeeNo);
+			DBMS_OUTPUT.PUT_LINE('Old salary: ' || :OLD.Salary);
+			DBMS_OUTPUT.PUT_LINE('New Salary: ' || :NEW.Salary);
+			DBMS_OUTPUT.PUT_LINE('Difference: ' || varDifference);
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Write a trigger that fires every time the salary of an employee in the Employees table is updated either due to an insert, update or delete. This trigger should print the total salary of the available employees after the modification.
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER DisplayTotalSalary
+		AFTER INSERT OR UPDATE OR DELETE ON Employees
+		FOR EACH ROW WHEN (NEW.EmployeeNo > 0)
+		DECLARE
+			varTotalSal Number;
+		BEGIN
+			SELECT SUM(Salary) INTO varTotalSal FROM Employees;
+			DBMS_OUTPUT.PUT('Total Salary: ' || varTotalSal);
+		END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Write a trigger that fires every time the attendance is registered/updated in the EmployeeMuster table. 
+-- This trigger should ensure that the MusterDate column should not hold a Sunday. If it is then, the transaction should not go through.
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER PreventSundays
+		BEFORE INSERT OR UPDATE ON EmployeeMuster
+		FOR EACH ROW WHEN (NEW.EmployeeNo > 0)
+
+		BEGIN
+			IF TO_CHAR(:NEW.MusterDate, 'DY') = 'SUN' THEN
+				RAISE_APPLICATION_ERROR(-20000,'The MusterDate cannot hold Sunday.');
+			END IF;
+		END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- The bank desires to maintain an audit trail of the accounts being registered in the Accounts table.
+-- Write a trigger that keeps a track of the records that are being deleted or updated.
+-- The trigger should populate the table AccountsAuditTrail on every update and delete fired on the Accounts table.
+-- The AccountsAuditTrial table holds all the columns that Accounts table holds along with three additional columns to indicate:
+-- 1. The user who performed such operation
+-- 2. The date on which the operation was performed 
+-- 3. The kind of operation [Update or Delete] being performed
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER AccountsAudit
+		AFTER UPDATE OR DELETE ON Accounts
+		FOR EACH ROW
+		DECLARE
+			varKindOfOperation Varchar2(8);
+			varOperationDate Date;
+			varUser Varchar2(8);
+
+		BEGIN
+			varOperationDate := SYSDATE;
+			varUser := USER;
+
+			IF UPDATING THEN 
+				varKindOfOperation := 'Update';
+			ELSIF DELETING THEN
+				varKindOfOperation := 'Delete';
+			END IF;
+
+		INSERT INTO AccountsAuditTrail 
+			VALUES (:OLD.AccountNo, :OLD.AccountHolderName, :OLD.AccountOpeningDate, :OLD.AccountType, :OLD.CurrentBalance, varUser, varOperationDate, varKindOfOperation);
+		END;
+	/
+
+----------------------------------------------------------------------------------------------------------
+-- The bank wants to ensure that a transaction that is recorded in the transactions table is completely valid. A transaction is valid if:
+-- 1. The account number for which the transaction is being performed is a valid account number
+-- 2. The Transaction Amount is not zero and is positive number
+-- 3. The amount being withdrawn does not exceed the current balance for that account number
+-- Write a trigger on the Transactions table that helps achieve this.
+----------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER ValidateTransaction
+		BEFORE INSERT ON Transactions FOR EACH ROW 
+		DECLARE
+			varAccountNo Varchar2(10) := 0;
+			varCurrentBalance Number(10);
+
+		BEGIN
+		/* Checking if the account number is a valid account number. */
+			SELECT COUNT(AccountNo) INTO varAccountNo FROM Accounts 
+				WHERE AccountNo = :NEW.AccountNo;
+
+			IF varAccountNo = 0 THEN			
+				RAISE_APPLICATION_ERROR(-20000,'The Account number is invalid.');
+			END IF;
+		/* Checking if the transaction amount is a positive number. */
+			IF :NEW.Amount <= 0 THEN			
+				RAISE_APPLICATION_ERROR(-20001,'The Transaction amount cannot be negative or zero.');
+			END IF;
+
+		/* Checking if the transaction amount exceeds the current balance in case of withdrawals. */
+			SELECT CurrentBalance INTO varCurrentBalance FROM Accounts 
+				WHERE AccountNo = :NEW.AccountNo;
+	 
+
+			IF varCurrentBalance < :NEW.Amount AND :NEW.TransactionType = 'Dr' THEN
+				RAISE_APPLICATION_ERROR(-20002,'The amount of withdrawal cannot exceed the balance held in the account.');
+			END IF;
+		END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The DBA desires to keep track of the user and the date on which objects are created or dropped in the database.
+-- Write a DDL trigger that inserts a record in the DDLAuditTrail table. This table holds:
+-- 1. EventName
+-- 2. ObjectOwner
+-- 3. ObjectName
+-- 4. ObjectType
+-- 5. Operator
+-- 6. OperationDate
+-------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER DDLAudit
+		BEFORE CREATE OR DROP ON SCHEMA
+		BEGIN
+			INSERT INTO DDLAuditTrail (SELECT Ora_Sysevent, Ora_Dict_Obj_Owner, Ora_Dict_Obj_Name, Ora_Dict_Obj_Type, USER, SYSDATE FROM DUAL);
+		END DDLAudit;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The DBA desires to daily track the user and the date when the database was shutdown.
+-- Write a database trigger that inserts a record in the DBAuditTrail table. This table holds:
+-- 1. Oerator
+-- 2. ShutdownDate
+-------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER DBAudit
+		BEFORE SHUTDOWN ON DATABASE
+		BEGIN
+			INSERT INTO DBAuditTrail (SELECT USER, SYSDATE FROM DUAL);
+		END DBAudit;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- A view named EmpDept is made up of the following columns:
+-- 1. EmployeeNo
+-- 2. FirstName
+-- 3. LastName
+-- 4. Salary
+-- 5. DeptNo
+-- 6. DeptName
+-- Since this is a complex view i.e. it holds columns from two tables using a JOIN, data manipulation is not possible.
+-- Write a trigger that will help achieve this.
+-------------------------------------------------------------------------------------------------------------
+	CREATE VIEW vwEmpDept AS 
+		SELECT EmployeeNo, FirstName, LastName, Salary, Departments.DeptNo, 
+			DepartmentName FROM Employees, Departments
+				WHERE Employees.DeptNo = Departments.DeptNo;
+
+	CREATE OR REPLACE TRIGGER UpdateEmpForView
+		INSTEAD OF INSERT ON vwEmpDept FOR EACH ROW
+
+		DECLARE
+			varEmployees Number;
+			varDepartments Number;
+
+		BEGIN 
+			SELECT COUNT(*) INTO varEmployees FROM Employees 
+				WHERE Employees.EmployeeNo = :NEW.EmployeeNo;
+		/* Checking if employee does not exists */
+			IF varEmployees = 0 THEN
+				INSERT INTO Employees (EmployeeNo, FirstName, LastName, Salary) 
+					VALUES(:NEW.EmployeeNo, :NEW.FirstName, :NEW.LastName, :NEW.Salary);
+			ELSE
+				UPDATE Employees SET Employees.FirstName = :NEW.FirstName, 
+					Employees.LastName = :NEW.LastName,
+					Employees.Salary = :NEW.Salary,
+					Employees.DeptNo = :NEW.DeptNo
+						WHERE Employees.EmployeeNo = :NEW.EmployeeNo;
+			END IF;
+			SELECT COUNT(*) INTO varDepartments FROM Departments
+				WHERE Departments.DeptNo = :NEW.DeptNo;
+		/* Checking if department does not exists */
+			IF varDepartments = 0 THEN
+				INSERT INTO Departments (DeptNo, DepartmentName) 
+					VALUES(:NEW.DeptNo, :NEW.DepartmentName);
+			ELSE
+				UPDATE Departments SET Departments.DepartmentName = :NEW.DepartmentName
+					WHERE Departments.DeptNo = :NEW.DeptNo;
+			END IF; 
+		END;
+	/
+
+--------------------------------------------------------------------------------------------
+-- Similarly to allow deletes via view vwEmpDept, use the following trigger
+--------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER DeleteEmpForView
+		INSTEAD OF DELETE ON vwEmpDept
+		FOR EACH ROW
+		DECLARE
+			varEmployees Number;
+
+		BEGIN
+			DELETE FROM Employees WHERE EmployeeNo = :OLD.EmployeeNo;
+			SELECT COUNT(*) INTO varEmployees FROM Employees 
+				WHERE Employees.DeptNo = :OLD.DeptNo;
+		/* Checking if no employee exists in a particular department */
+			IF varEmployees = 0 THEN
+				DELETE FROM Departments WHERE DeptNo = :OLD.DeptNo;
+			END IF;
+		END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The bank desires to maintain an audit trail of the accounts being registered in the Accounts table. 
+-- Write a trigger that keeps a track of the records that are being deleted or updated. 
+-- The trigger should populate the table AccountsAuditTrail on every update and delete fired on the Accounts table.
+-- The same trigger should also be capable of generating a new customer number and add the account holder as the new customer in the Customers table.
+-- The AccountsAuditTrial table holds all the columns that Accounts table holds along with three additional columns to indicate:
+-- 1. The user who performed such operation
+-- 2. The date on which the operation was performed
+-- 3. The kind of operation [Update or Delete] being performed
+-------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE TRIGGER AccountsAudit
+		FOR INSERT OR UPDATE OR DELETE ON Accounts
+		COMPOUND TRIGGER
+			varKindOfOperation Varchar2(8);
+			varOperationDate Date;
+			varUser Varchar2(8);
+			maxCustomerNo Number(10);
+
+		AFTER EACH ROW IS
+		BEGIN
+			varOperationDate := SYSDATE;
+			varUser := USER;
+
+			IF UPDATING THEN 
+				varKindOfOperation := 'Update';
+			ELSIF DELETING THEN
+				varKindOfOperation := 'Delete';
+			END IF;
+			INSERT INTO AccountsAuditTrail 
+				VALUES (:OLD.AccountNo, :OLD.AccountHolderName, :OLD.AccountOpeningDate, :OLD.AccountType, :OLD.CurrentBalance, varUser, varOperationDate, varKindOfOperation);
+		END AFTER EACH ROW;
+
+		BEFORE EACH ROW IS
+		BEGIN
+			IF INSERTING THEN 
+				SELECT NVL(MAX(CustomerNo), 0) + 1 INTO maxCustomerNo FROM Customers;
+				INSERT INTO Customers (CustomerNo, CustomerName) 
+					VALUES(maxCustomerNo, :NEW.AccountHolderName);
+			END IF;
+		END BEFORE EACH ROW;
+	END;
+	/

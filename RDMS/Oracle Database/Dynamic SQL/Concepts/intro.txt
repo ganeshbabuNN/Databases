@@ -1,0 +1,177 @@
+Intro
+=====
+-A program that generates reports will have to deal with a lot of different tables and columns for a lot of different reports
+-For the report generation program to be generic, the SQL statements are not known before the program is compiled.These statments will only be known at runtime. this means each time the program is executed, a diff SQL statements will be fired depending on the runtime criteria.
+-SQL statements that change from executions to executions are called dynamic SQL statements. Dynamic SQL statements dynamically adjusts itself to changing conditions.
+-Dynamic SQL is an enchanced form of SQL that enables building SQL statements dynamically at runtime. This is useful when writing code spec that can adjust to varying databases, conditions or servers.
+-Dynamic SQL allows creating more general purpose, flexiable programs where the query text of an SQL statements is unknown at the time of compilations.
+
+When to Consider Using Dynamic SQL
+==================================
+-it has considered
+1)Text of SQL statements
+2)The number of columns
+3)The data types of columns
+4)References to DB objects such as columns, indexes, sequences, tables , usernames and views
+
+for example
+a)Create a procedures that operates on a tables whose name is not known until runtime.
+b)Add a WHERE clause based on what fields are populated on the dynamic form.
+c)Create tables with varying names.
+d)Run a complex query with a user-selectable sort order.
+
+Dynamic SQL statemetns using DMBS_SQL
+=====================================
+-it provides a very powerful package called DBMS_SQL, that allows constructing and executing Dynamic SQL statements.this package allows PL/SQL to execute SQL DDL and DML statements dynamically at run time within a PL/SQL block
+-*To use the DBMS_SQL package, the user requires apporiate DB privileges
+
+Process Flow
+*----------*
+a)Open a Cursor and Maintaining A pointer to it
+b)Parse SQL statements for Syntax and Object Privileges
+c)Bind columns to the Cursor Columns
+d)Define variables to fetch data from the cursor variables
+e)Execute Query to fetch data from tables into cursor columns
+f)Fetch cursor columns values for a specific rows into memory Variables
+g)Retrieve values for SQL executions
+h)Perform Required Processing
+i)Close the Cursor.
+
+
+a)Open a Cursor and Maintaining A pointer to it
+-----------------------------------------------
+-To construct and execute a dynamic SQl statement using the DBMS_SQL package the very first step is open a cursor
+-*This cursor is completely diff from the normal native PL/SQL cursor
+-When a cursor is opened,Oracle reserves space for storing data retrieved from the table into memory.
+-After the cursor is opened, Oracle returns an INTEGER handle, which can be used in all furture calls to DBMS_SQL programs for this Dynamic SQL statemetns.
+-this digital pointer called the Cursor Handle Points to the memory locations that oracles reserves
+Syntax
+	FUNCTION DBMS_SQL.OPEN_CURSOR RETURN <Integer>;
+
+b)Parse SQL statements for Syntax and Object Privileges
+-------------------------------------------------------
+-The dynamic SQL statement is broken down into words that can be categorized as
+1)Commands SUCH as SELECT, INSERT, UPDATE and DELETE.
+2)Clauses such as WHERE, ORDER BY , GROUP BY , HAVING and so on
+3)Oracle objects such as user name,table names, column names and so on.
+-Oracle parses the SQL statements as follows
+a)Oralce command/clauses and so on used in the SQL statements are compared with the ones avaiable with Oracle and checked for syntax
+b)this is done to ensure that the commands/clasues used in the SQL sentences are not any appropriate, but are also placed at correct positions
+c)Once the SQL verbs and their positions is found correct and then checks whether the oracle objects are avaiable in teh DB and the users who has fired the SQL sentence has valid to use them.
+d)Oracle associates the dynamic SQL statements with the cursor handle created earlier
+
+Syntax
+	PROCESURE DBMS_SQL.PARSE(<PointerToCursor> IN Integer,<SQLStatement> IN VARCHAR2,<LanguageFlag> IN Integer);
+where
+*PointerToCursor- the pointer to the cursor or memory are for this SQL statments
+*SQLStatements- this SQL statements to be parsed and associated with the cursor. This statements should not be terminated with a semicolon unless it is a PL/SQL block.
+*LanguageFlog- A flag to indicate the langangue such as:
+**DBMS_SQL.V6: use the version 6 behaviour when processing the statements
+**DBMS_SQL.V7: Use the version 7 behaviour
+**DBMS_SQL.NATIVE : use the norma behaviour for the DB to which the program is connected.
+
+c)Bind columns to the Cursor Columns
+------------------------------------
+-The SQL statements being dynamic, all the informations about the SQL statements is not known at compile time. this therefore requries processing values into the SQL statemetns at runtime
+-Binding allows placing placeholders in the SQL string and then explicity bind or associate a value with that placeholder before executing the SQL statements
+
+sytnax
+	PROCESURE <BindVariable>(<CursorHandle> IN Integer,<VariableName> IN VARCHAR2,<Value> IN Integer);
+	PROCESURE <BindVariable>(<CursorHandle> IN Integer,<VariableName> IN VARCHAR2,<Value> IN DATE);
+	PROCESURE <BindVariable>(<CursorHandle> IN Integer,<VariableName> IN VARCHAR2,<Value> IN Varchar2);
+Where
+*CursorHandle -is the handle or pointer to the cursor orginally returned by a call to the OPEN_CURSOR
+*VariableName-is the name of host variable included in the SQL statemetns passed to PARSE
+*Value - is the value to be bound to that variables
+
+d)Define variables to fetch data from the cursor variables
+----------------------------------------------------------
+-For a SELECT SQL statements, Oracle retrieves data from table on the hard disk and stores it in the opened cursor on the server.
+-it retrieves one row at a time from the cursor. A set of variables must be defined and mapped to the cursor columns before data is fetched from the cursor
+-Defining variables set up a correspondence between the expression in the list of the SQL statements and Local PL/SQL variables receiving the values when a row is fetched.
+-The Column must be defined using the DEFINE_COLUMN procedures. the Defined column is then passed to the COLUMN_VALUE procedures along with the cursor handle and the cursor column position
+-When a DBMS_SQL.PARSE procedures is used to process a SELECT statements to pass values from the DB columns to the local variables, the columns or expressions in the SELECT list must be associated with the local variables. then DEFINE_COLUMN procedures is used for the purpose
+-the DEFINE_COLUMN procedures is called after the call to PARSE is made. After the execution of the SELECT sentence the COLUMN_VALUE procedures is used to grab a column values from the SELECT list and pass it to appropriate local variables.
+
+Sytnax[Overloaded].
+	PROCEDURES <DefineColumn(<CursorHandle> IN Integer,<Position> IN Integer,<Column> IN DATE);
+	PROCEDURES <DefineColumn(<CursorHandle> IN Integer,<Position> IN Integer,<Column> IN NUMBER);
+	PROCEDURES <DefineColumn(<CursorHandle> IN Integer,<Position> IN VARCHAR2,<Column> IN INTEGER,<columnSize> IN		INTEGER);
+Where
+*CursorHandle-Is the hanlde or pointer to the cursor orginally returned by a call to OPEN_CURSOR
+*Position- Is the relative position of the column in the SELECT list
+*Column- Is a local variable or expression whose data type determine the data types of the columns being defined
+*ColumnSize- Is the size of the specified column
+
+e)Execute Query to fetch data from tables into cursor columns
+--------------------------------------------------------------
+-Once the required columns are defined, the SQL query must be executed to retrieve data from the underlying tables
+Syntax
+	FUNCTION EXECUTE(<CursorHanlde> IN INTEGER>) RETURN INTEGER;
+where
+*CursorHandle- is the pointer to the cursor
+-this functions returns the number of rows processed by the SQL statements if that statemetns is an UPDATE, INSERT or DELETE. For all other SQL [queries and DDL] and PL/SQL statemetns, the value returned by EXECUTE is undefined and should be ignored.
+
+f)Fetch cursor columns values for a specific rows into memory Variables
+-----------------------------------------------------------------------
+-Once the query is executed and data is available in the cursor, the cursor column values must be assigned to memory variables
+
+Syntax
+	FUNCTION FETCH_ROWS(<CursorHandle> IN <INTEGER>) RETURN <NUMBER>;
+where
+*CursorHanlde-is the pointer to the cursor
+-FETCH_ROWS returns 0 when there are no more rows to fetch. the FETCH_ROWS function can therefore be used like the %FOUND[or %NOTFOUND] attribute is used in normal cursors.
+
+g)Retrieve values for SQL executions
+------------------------------------
+-This is equivalent to the INTO clause of an implicit SELECT statemetns in PL/SQL . this is done using the COLUMN_VALUE procedures
+
+Sytnax[Overloaded].
+PROCEDURE <ColumnValue>(<CursorHandle> IN INTEGER,<Position> IN INTEGER,<Value> OUT DATE[,<ColumnError> OUT NUMBER][,<ActualLength> OUT Integer]);
+
+PROCEDURE <ColumnValue>(<CursorHandle> IN INTEGER,<Position> IN INTEGER,<Value> OUT NUMBER[,<ColumnError> OUT NUMBER][,<ActualLength> OUT Integer]);
+
+PROCEDURE <ColumnValue>(<CursorHandle> IN INTEGER,<Position> IN INTEGER,<Value> OUT VARCHAR2[,<ColumnError> OUT NUMBER][,<ActualLength> OUT Integer]);
+
+PROCEDURE <ColumnValue>(<CursorHandle> IN INTEGER,<Position> IN INTEGER,<Value> OUT RAW[,<ColumnError> OUT NUMBER][,<ActualLength> OUT Integer]);
+
+PROCEDURE <ColumnValue>(<CursorHandle> IN INTEGER,<Position> IN INTEGER,<Value> IN INTEGER,<value> ROWID [,<ColumnError> OUT NUMBER][,<ActualLength> OUT Integer]);
+
+where
+*CursorHanlde- is the hanlde or pointer to the cursor orginally returned by a call to the OPEN_CURSOR 
+*Position-is the relative position of the column in the SELECT list
+*Value-is the local variables that will receive the outgoing value.
+*ColumnError-Returns an error code for the specified value[the value might to be too larget for the variable, for instance]
+*Actuallength- returns the actual length of the returend value before any truncation takes place. this could be due to difference in the size between the retrieved value in the cursor and the variables
+-A ColumnValue procedures is called after a row has been fetched to transfer the value from the SELECT list of the cursor into a local variable.
+
+h)Perform Required Processing
+-----------------------------
+-Once cursor column values are assigned to memory variables, they can be used for further data processing
+
+i)Close the Cursor.
+------------------
+-Once the required processing on data retrieved from the table is completed, the cursor memory area must be free. this achieved by closing the cursor
+
+Syntax
+	PROCEDURE <CloseCursor>(<CursorHanlde> IN OUT INTEGER);
+
+-the closecursor procedures closed the specified cursor. all memory associated with the cursor is released. also the cursor handle is set to null
+
+DBMS_SQL Cursor to REF Cursor and Vice-Versa
+============================================
+-the DBMS_SQL package in oracle DB 11g provides two new functions TO_REFCURSOR, which converts the DBMS_SQL dynamic cursor to a REF Cursor and to _CURSOR_NUMBER which converts a REFCURSOR to DBMS_SQL cursor
+-the cursor[i,e DBMS_SQL and REFCURSOR] are friends and can talk to each other.
+
+TO_REFCURSOR
+============
+-it converts a SQL cursor number to a weakly-typed variables of the PL/SQL data type REF CURSOR, which can be used in native dynamic SQL statemetns
+-Before Passing a SQL cursor number to the DBMS_SQL_TO_REFCURSOR function, ensure that cursor, PARSED and EXECUTED.
+-After a SQL cursor number is converted to a REF_CURSOR variable, DBMS_SQL operations can access it only as a REF CURSOR variable, not as the SQL cursor number.
+
+TO_CURSOR_NUMBER
+================
+-it converts a REF CURSOR variable[either strongly or weakly typed] to a SQL cursor number, which can be passed to DBMS_SQL subprograms
+-Before passing a REF CURSOR variable to the DBMS_SQL_TOCURSOR_NUMBER function it must be OPENed
+-after a REF CURSOR variable is converted to a SQL cursor number, native dynamic SQL operations cannot access it.
+

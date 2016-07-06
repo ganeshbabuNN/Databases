@@ -1,0 +1,1 @@
+select cname from company where city =‘MUMBAI’;

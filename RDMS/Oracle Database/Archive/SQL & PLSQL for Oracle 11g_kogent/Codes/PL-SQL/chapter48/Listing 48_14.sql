@@ -1,0 +1,1 @@
+create role "student" identified by "s";

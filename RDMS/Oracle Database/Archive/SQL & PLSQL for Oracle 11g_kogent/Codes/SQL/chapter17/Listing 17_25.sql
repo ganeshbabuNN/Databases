@@ -1,0 +1,2 @@
+SELECT REGEXP_SUBSTR('ABBCCDGfdaac  L,CCAA,BBAG GG','C([[:upper:]]+)',1,1,'c')
+"REGEXP_subSTR" FROM DUAL;

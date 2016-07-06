@@ -1,0 +1,39 @@
+---------------------------------------------------------------------------------------------------------
+-- Write a PL/SQL program that inserts 100 records in the StudentAttendance table.
+---------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE i Number;
+	BEGIN
+		i := 1;
+		WHILE i <= 100 LOOP
+			INSERT INTO StudentAttendance(StudentNo, Attendance) VALUES (i, 'P');
+			DBMS_OUTPUT.PUT_LINE('StudentNo:' || i);
+			i := i+1;
+		END LOOP;
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Create an error logging table to hold the DML errors.
+-- Oracle provides a built-in PL/SQL package named DBMS_ERRLOG, specifically for this purpose.
+------------------------------------------------------------------------------------------------------------
+	BEGIN
+	DBMS_ERRLOG.CREATE_ERROR_LOG('StudentAttendance', 'ErrLogStudentAttendance');
+	END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Once the DML error logging table has been created for a particular table, DML errors can be logged by adding an error logging clause to the DML statement. 
+------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE i Number;
+	BEGIN
+		i := 1;
+		WHILE i <= 100 LOOP
+			INSERT INTO StudentAttendance(StudentNo, Attendance) VALUES (i, 'P')
+			LOG ERRORS INTO ErrLogStudentAttendance REJECT LIMIT 1;
+			DBMS_OUTPUT.PUT_LINE('StudentNo:' || i);
+			i := i+1;
+		END LOOP;
+	END;
+	/

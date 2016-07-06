@@ -1,0 +1,386 @@
+intro
+=====
+-A Function in a one-word command that returns a single value.
+-the return value of a function is sually determined by input parameters. 
+-there are some functions which does not return any parameter , CURRENT_TIME.
+-Oracle Provides a rich set of character/string functions that
+1)returns information about the string
+2)allows modifying the content of strings
+-it operate on character values.
+-they accept one ore more character valus as parameter and return either a character or a numeric value.
+
+For String functions
+-if the input argument is CHAR or VARCHAR2- then value returned is VARCHAR2
+-if the input argument is NCHAR or NVACHAR2 - then value returned is NVARCHAR2
+-for functions that return CHAR Or VARCHAR2, if the length of the return value exceeds the limit-then oracle truncates it and returns the result witout an error message
+-for Functions that return CLOB values, if the legnth of the reuturn values exceeds the limit-then oracle raises an error and returns no data
+
+Concatentating String
+=====================
+
+CONCAT()
+---------
+-it allows combining two string
+-it accepts two parameter and returns a concatenation of the values held by both the parameter.
+-it can accept the following data types
+*CHAR
+*VARCHAR2
+*NCHAR
+*CLOB
+*NCLOB
+-the data type depends on the dat type of the arguments. if two string of different data typea re concatenated. this functions the data type that results a lossless conversion.
+-the equivalent to the concatenation operation [ || ] . the || operator allows concatenating two ore more strings together.
+
+syntax
+<string> || <String> || <StringN>
+where
+String1 is the first string
+String2 is the second string
+String N is the nth string to concate
+
+Operating on String case
+========================
+Lower case()
+------------
+- LOWER() functions accepts a string and returns the same in lowercase.
+- if there character in the string that are not letters, they are unaffected by this functions
+
+sytnax
+LOWER(<Char>);
+
+Title case()
+------------
+-the INITCAP() funcitons accepts a string and returns the first letter of each word in upper case and the remaining letter of that word to lower case.
+
+syntax
+INITCAP(<char>)
+
+Upper case()
+------------
+-the UPPER() functions accepts a string and returns the same in upper case. 
+-if there are charcter in the string that are not letter, they are unaffected by this functions
+
+sytnax
+UPPER(<char>)
+
+Extracting String portions
+==========================
+
+SUBSTR
+------
+-the SUBSTR() function extraction a portions of the string
+where
+
+syntax
+	SUBSTR(<String>,<StartPosition>,[<length>])
+
+-String is the source string
+-StartPosition is the position for extraction
+	-if startPosition is 0, then SUBSTR() takes 1 as the default StartPosition value which is first position in the string
+	-if startPosition is a positive number, then SUBSTR() starts from the begining of the string
+	-if StartPosition is a negative number, then SUBSTR() starts from the end of the string and conts backwards
+-Length is the number of the characters to extract. if legnt is ommitted, then SUBSTR() returns all character to the end of the character. if the length is less then 1, then SUBSTR() returns a null value.
+
+
+Strings and ASCII Values
+========================
+
+ASCII
+-----
+- ASCII() functions return the NUMBER code in the database character set that represents the specified character
+- If more than one character is entered as the function parameter, the funciton returns the value of the first character and ignores the rest
+
+syntax
+	ASCII (<SingCharacter>);
+where
+	Singlecharacter is the specified character to retrieve the NUMBER code for
+
+
+CHR
+---
+-the CHR() functions returns the character associated with the specified collating code.
+-this functionis the inverse of ASCII
+
+syntax
+	CHR(<codeLocation>)
+
+-this codelocation is the number specifying the location in the collating sequence
+-the CHAR functions is escpaically valuable when a reference is to be made to a nonprintable character in the code.
+For Example
+-the location in the standard ASCII collating sequence for the newline character is ten. The CHAR function therefore gives a way to search for linefeed control character in a string and perform operations on a string based on the presence of that control character.
+A linefeed can also be inserted into a character string using CHR Functions
+
+
+ASCIISTR
+--------
+-the ASCIISTR() function convert a given string of any character set to an ASCII string using the database character set
+
+sytnax
+	ASCIISTR(<String>)
+-where stirng is stirng in any character set that needs to be converted to an ASCII string in the database character set
+
+CONVERT
+------
+-the convert() function enables conversion of character data between character sets.
+-this function convert binary representation of a character string fro one character set to another
+
+sytnax
+ CONVERT(<char>,<DestinationCharacterSet>,<SourceCharacterSet>)
+
+when
+-SourceCharacterSet is the soure character set
+  if this is not specified, then it defaults to the database character set
+-DestinationCharacterSet is the destination character set
+
+
+Strings and Unicoded values
+==========================
+
+COMPOSE
+------
+-this COMPOSE() function returns a Unicdoe string. it accepts CHAR,VARCHAR2,NCHAR,NVARCHAR2,CLOB or NCLOB Values
+
+sytnax
+	COMPOSE (<string>)
+
+some of the unistring values can be combined with other characters in the compose functions
+
+Unistring Value	Resulting Character
+UNISTR('\300')	grave accent[]
+UNISTR('\0301') acute accent
+UNISTR('\0302') circumflex[^]
+UNISTR('\0303') tilde[~]
+UNISTR('\0308') umlaut[]
+
+DECOMPOSE
+---------
+-this funciton accepts a string and returns a Unicode String.
+
+Syntax
+DECOMPOSE(<String>);
+
+
+Searching for a set of characters
+=================================
+
+INSTR
+-----
+-this function retruns the location of a substring in a string
+-it is usually used to perform simple or search within a string. 
+-it simply indicates where in the string, it found what the user is searching for.
+
+syntax
+ INSTR(<String1>,<String2>,[<StartPosition>],[<NthAppearence>])
+
+where
+-String1 is the string to search
+-String2 is the substring to search from in String1
+-Startposition is the position in string1 where the search beings
+ - if omitted, it defaults to 1
+ -the first position in the string is 1
+ -if the startPosition is negative, then the function counts back StartPosition number of character from the end of string1 and then search twoards the begining of the string1
+-NtheAppearance is the nth appearence of string2. if committed, it defaults to 1
+
+Replacing the String
+====================
+
+TRANSLATE
+---------
+-the Translate() funciton replace a sequence of character in a string with another set of characters.
+
+sytnax
+TRANSLATE(<String>,<StringtoReplace>,<ReplacementString>)
+
+where
+-String is the string where the replacement will take place
+-StringToReplace is the string that will search for in <String>
+-all characters in the StringToReplace will be replaced with the corresponding character in the ReplacementString
+
+-Character are replaced one at a time. this means the first character in the STringToReplace is replaced with the first character in the ReplacementString.
+-The Second character in the StringToReplace is replaced with the second character in the ReplacementString and so on.
+
+REPLACE
+---------
+-the replace() funciton replace a sequence of character in a string with another set of characters.
+
+sytnax
+replace(<String>,<StringtoReplace>,<ReplacementString>)
+
+where
+-String is the string where the replacement will take place
+-StringToReplace is the string that will search for in <String>
+-All occurrences of StringToReplace will be replaced with ReplacementString in String. If the ReplacementString is ommitted, the replace function simply removes all occurrences of StringToReplace and returns the resulting string.
+
+-Syntaically, the Transalte and replace are very similar but produce different results
+-translate replaced by position. this means that first charcter of the STringToReplace is replaced by the first character of the ReplacementString. The second character with the second and if there are characters in the list to match that do not have positional equivalents in the replcements list they are dropped.
+-replace repleces the string to match with the replacement string. the replacement of a string character is the same as that of translate.
+
+Determing String length
+
+=======================
+
+LENGTH()
+--------
+-The length() functions returns the length of a given string including letters, spaces and anything else that is a part of the string.
+
+Syntax
+LENGTH(<Word>)
+if word is null , then the function returns null.
+-Length() cannot be applied 
+on a column that uses LONG datatype
+
+
+Triming Strings
+==============
+
+LTRIM
+-----
+-this function removes all the specified set of characters from the left of a given string.
+
+sytnax
+LTRIM(<String>[,<set>])
+
+RTRIM
+-----
+-this funcitons removes all the specified set of characters from the right side of a given string
+
+sytnax
+RTRIM(<String>[,<set>]);
+
+TRIM
+----
+-this trim() function removes all the specified set of characters from both the side[left as well as right] of a given string
+
+sytnax
+ TRIM[Leading | Trailing | both [<Trimcharacter> FROM]] <String1>);
+where
+-leading , indicates removing leading set of characters
+-Trailing: indicates removing trailing set of characters
+-both: Indicates removing leading as well as trailing set of characters. If none of the above parameter are specified, the trim() function removes leading as well as trailing trimcharacter
+-TrimCharacter is a set of characters that will be removed from string1. if this parameter is ommitted, all leading and trailing spaces are removed from String1
+-String is the string to trim
+
+String Padding
+==============
+
+LPAD
+----
+-This LPAD() functions pads the left side of a string with a specified set of character . 
+-it returns string, left-padded to length n with the sequence of characters specified in StringToBePadded
+
+
+syntax
+LPAD(<String>,<N>[,<StringToBePadded>]);
+-if StringToBePadded is omitted then blanks are used by default
+-if n is smallar than the orginal string, the LPAD() functions truncates the string to the size of n.
+
+RPAD
+----
+-This RPAD() functions pads the right side of a string with a specified set of character . 
+-it returns string, right-padded to length n with the sequence of characters specified in StringToBePadded
+
+
+syntax
+RPAD(<String>,<N>[,<StringToBePadded>]);
+-if StringToBePadded is omitted then blanks are used by default
+-if n is smallar than the orginal string, the LPAD() functions truncates the string to the size of n.
+
+Number of Bytes in a String
+============================
+
+VSIZE
+-this vsize() functinos returns the number of bytes in the internal representation of a string
+
+syntax
+ VSIZE(<String>)
+
+Number to String
+================
+
+to_number
+---------
+-the to_number() function converts a given string and returns it as a NUMBER data type
+
+syntax
+------
+TO_NUMBER(<String>,[<formatMast>]);
+where
+-String is the string that will be converted to a number
+-FormatMask is the function that will be used to convert string to a number. it is optional
+
+Replacing NULL Values
+=====================
+
+NVL
+---
+-Not all the columns in a table will hold values . Sometimes a column may not hold a value at all
+-in such a case, the column holds NULL
+-when records from such tables are displayed, NULL values are displayed as blanks. to make this more readable, oracle provides NVL Functions
+-this functions allows replacing null values with some other meaningfull values while displaying such records
+
+syntax
+NVL(<ColumnName>,<Value>);
+-the first parameter is the column name tha is to be check for NULL values
+-the second parameter is the actual value that will be used instead of showing blank in the output
+-if the first parameter i,e <columnName> holds a NULL value, the funcitons returns the value specified in the second parameter. Otherwise , the value held by the column is returned.
+
+NVL2
+----
+-oracle also provide a function that will allow converting a NULL as well as a NOT NULL value into a desired value.
+
+syntax
+NVL2(<ColumnName>,<Value1>,<Value2>)
+-the first parameter is the column name that is to be checked for NULL values
+-the second parameter is the value that will be used instead of showing the column value.
+-the third parameter is the value that will be used instead of showing blank in the output.
+-if the first parameter i,e <ColumnName>,the function returns the value1 specified in the secondparameter. Otherwise, the value2 specified in the third is returned.
+
+Phonetic String represenation
+=============================
+
+SOUNDEX
+-------
+- SOUNDEX() function returns a string that is phonetic represenation of a given string.
+-This functions is a case-insenstive. 
+-This phonetic represenations system uses a simple phonetic algorithmns to reduce each name to a four character alphanumeric code.The first letter of the code corresponds to the first letter of a word. the remainder of the code consists of three digits dereived from the syllables of the world
+
+Algorithms insite
+-the first letter of the string is retained and all other occurrences of the letters a,e,h,i,o,u,w,y are removed
+-only the first 5 consonants are used to determine the NUMBERIC portion of the return value except if the first letter of string is a vowel.
+-if two or more letter with the same number are found adjacent to the orginal name or adjacent except for any intervening h and w, then all such characters are ommitted except for the first.
+
+for example
+- Michael  or Michel
+- Seeta or Sita
+- Getta or Gita
+- Pooja or puja
+- Deepa or Dipa
+
+
+Examing the Column content
+==========================
+DUMP()
+-this function returns a varchar2 values that includes the data type code, the length in bytes and the internal representaion of the expression
+
+sytnax
+DUMP (<Expression>,[<ReturnFormat],[<StartPosition>],[<lenght>]);
+where
+-expression is the expression to examine
+-ReturnFormat is optional. it determines the format of the retun value. this parameter can be any of the following values:
+
+Value	Exaplanation
+8	Octal notation
+10	Decimal notation
+16	Hexadecimal notation
+17	Singale characters
+1008	Ocatal notation with the character set name
+1010	Decimal notations with the character set name
+1016	Hexadecimal notations with the character set name
+1017	Single characters with the character set name
+
+-StartPosition and length are optional parameters. they determine which portion of the internal representation to display
+
+
+
+
+

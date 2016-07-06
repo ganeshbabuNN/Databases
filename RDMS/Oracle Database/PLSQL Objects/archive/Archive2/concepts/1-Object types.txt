@@ -1,0 +1,161 @@
+-In early chapter we discussed about the complex types like record and arrays
+- and also packages, 
+--now we shall discuss about the object and object types, where we can think like a complex and packages types
+
+like example
+emp_obj1.sql :
+the below last_name,first_name...etc are like refered as a type of Object . sometime we can call it has a object delcarations
+
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE
+)  
+/
+
+The same we can also find the record type, the below last_name, first_name..etc type decared as a record.
+
+call_emp_obj1.sql
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE
+  );
+  Begin
+	null;
+  end;
+
+
+
+---I can even add a array of the above type.. here the below example, 't_emps' is a array of tables
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE
+  );
+type t_emps is TABLE OF r_emps;
+  Begin
+	null;
+  end;
+
+---now by above object "emp_obj1.sql" can able to create a table of the object type.
+
+emp_obj_tab.sql
+CREATE TABLE emp_obj_tab (
+  emp_rec emp_obj )
+/
+
+---now the pure difference between the object and type is where type is a PL SQL construct and object is a database object.
+--now compile emp_obj1.sql and compile table t_emp_obj .sql that will be available in the database--- check
+
+t_emp_obj.sql 
+
+create or replace
+TYPE t_emp_obj 
+AS TABLE OF emp_obj;
+
+---Now you can't create a table from a record and where you can create record from the rowtype not from the table from the record. whereas in object type, you can create table from the objects, this will encapsulate the logic what you are looking for.
+
+--let us what is really a difference between the record and object types..
+let us take the example for type and complike.
+call_emp_obj1.sql:
+add the salary attribute 
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE,
+    salary number(8,2) --- added new
+  );
+   type t_emps is table of r_emps;
+  begin 
+     null;
+  end;
+
+--then put same attribute in the object emp_obj1.sql  and compile. you shall get the error coz of its depencies.. if you really want to compile successfully, drop the table "emp_obj_tab" and table type t_emp_obj awhich you have created for the objects, then compile i shown work.
+
+CREATE OR REPLACE TYPE emp_obj
+AS OBJECT 
+(
+  last_name VARCHAR2(25),
+  first_name VARCHAR2(20),
+  email VARCHAR2(25),
+  phone_number VARCHAR2(20),
+  hire_date DATE,
+  salary number(8,2)
+)  
+/
+
+Assigning the value
+-------------------
+now let us assign the value for the record type i,e initializations..
+	
+  DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE,
+    salary number(8,2) 
+  );
+
+  v_emps r_emps;
+
+  BEGIN
+	v_emps.last_name :='ganesh';
+	v_emps.first_name :='babu';
+  end;
+
+
+--where as in Object, you have to initialize the object using CONSTRUCTORs
+emp_obj1.sql
+
+DECLARE
+  TYPE r_emps IS RECORD
+  (
+    last_name VARCHAR2(25),
+    first_name VARCHAR2(20),
+    email VARCHAR2(25),
+    phone_number VARCHAR2(20),
+    hire_date DATE,
+    salary NUMBER(8,2)
+  ) ;
+  
+  v_emps r_emps;
+  
+  v_emp_obj emp_obj;
+BEGIN
+  v_emps.last_name := 'ganesh';
+  v_emps.first_name := 'babi';
+  
+---- here is the instance of the emp_obj object with the name parameter initialized.
+  v_emp_obj := emp_obj(     
+    last_name => 'ganesh',
+    first_name => 'babu',
+    email => 'ganesh@g.com',
+    phone_number => '233-33-322',
+    hire_date => sysdate,
+    salary => 5000);
+  
+END; 
+/

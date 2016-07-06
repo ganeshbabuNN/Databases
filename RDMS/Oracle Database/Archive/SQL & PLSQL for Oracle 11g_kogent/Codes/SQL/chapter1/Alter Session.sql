@@ -1,0 +1,1 @@
+alter session set time_zone='Asia/KOLKATA';

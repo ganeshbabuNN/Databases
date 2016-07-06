@@ -1,0 +1,1 @@
+select substr (to_char(jdate),4,3) from emp_company;

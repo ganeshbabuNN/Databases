@@ -1,0 +1,1 @@
+select (sum(phy*che)-sum(phy)*sum(che)/5)/(5-1), covar_samp(phy,che) from 		marks;

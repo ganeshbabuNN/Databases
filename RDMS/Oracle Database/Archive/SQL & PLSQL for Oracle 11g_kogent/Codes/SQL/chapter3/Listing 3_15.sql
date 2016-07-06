@@ -1,0 +1,1 @@
+select user, ename from emp_company;

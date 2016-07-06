@@ -1,0 +1,81 @@
+Package cursors
+================
+
+-we can even package a cursors and reused by any users.
+--example using a simple cursors
+
+declare
+  cursor c1 is
+  select first_name,last_name,email,phone_number,hire_date
+  from employees
+  where employee_id =101;
+ v_local_record c1%ROWTYPE;
+begin
+  select first_name,last_name,email,phone_number,hire_date
+  into v_local_record
+  from employees
+  where employee_id =101;
+  
+  dbms_output.put_line(v_local_record.first_name || '  ' || v_local_record.last_name);
+end;
+
+--- you can make this cursors packages, you can make this select statements avaiable globally, so anyone can reference the select statements where can be reused globally .
+
+my_cursor_pkg1.sql
+CREATE OR REPLACE PACKAGE my_cursor
+AS
+
+  CURSOR c1 IS
+    SELECT first_name, last_name, email, phone_number, hire_date
+      FROM employees
+      WHERE employee_id = 101;
+      
+  v_local_record C1%ROWTYPE;
+  
+END;
+/
+
+--call the cursors using AB
+DECLARE
+  v_anon_c1 my_cursor.c1%ROWTYPE;
+BEGIN
+  OPEN my_cursor.c1;
+  
+  FETCH my_cursor.c1
+    INTO v_anon_c1;
+ dbms_output.put_line(v_anon_c1.first_name);
+  CLOSE my_cursor.c1;
+END;
+/
+
+--if you want to hide the cursor statement into a package body, let us rework on it, where it works exactly the same. Basically you are hiding the implementations of the cursors. its a good pratice code hiding is a good pratice which is given b the packages.
+
+my_cursor_pkg2.sql
+create or replace PACKAGE my_cursor
+AS
+
+  CURSOR c1 RETURN employees%ROWTYPE;
+  
+END;
+/
+
+CREATE OR REPLACE PACKAGE BODY MY_CURSOR AS
+  CURSOR c1 RETURN employees%ROWTYPE IS 
+    SELECT * FROM employees;
+END MY_CURSOR;
+
+I use it the same way I did the global cursor.
+
+DECLARE
+  v_anon_c1 my_cursor.c1%ROWTYPE;
+BEGIN
+  OPEN my_cursor.c1;
+  
+  FETCH my_cursor.c1
+    INTO v_anon_c1;
+
+  CLOSE my_cursor.c1;
+END;
+/
+
+

@@ -1,0 +1,67 @@
+UTIL PACKAGES
+=============
+
+-we use dbms_output for displaying the output in the console , you can do the same in reading the file and writing into the file to the operating systems.
+-there are some steps to be followed for getting the output
+
+steps to create the directory and access
+----------------------------------------
+Create a directory in the operating system
+
+mkdir \emp_demo
+
+Once you have the actual directory on the drive, create a directory at the database level. 
+
+You may need to access the database as a DBA or have the permission create directory assigned to you account.
+
+If you are using the HR account, you can log in as sysdba and 
+
+GRANT create any directory TO hr;
+
+or create the directory and grant read write access to HR. 
+
+
+As HR, run this to create the directory.
+
+CREATE OR REPLACE DIRECTORY file_dir AS 'C:\emp_demo'; 
+
+
+Basic struture for File hanlder
+------------------------------
+-- fh is like a pointer based like a C pointer or an ID of an File. this is used to handle multiple file so that we can use. file handle is identified by the file type called UTL_FILE.file_type package 
+
+Package_UTL_FILE_Basic_Structure.sql
+
+
+Basic Write mode operations
+--------------------------
+--check the directory where the file is listed. it will overide if the exists
+Package_UTL_FILE_Write_To_File_To_Directory.sql
+
+
+Reading a file file does not exists
+------------------------------------
+--check if it works, or else change it to the file which we have created and written.
+Package_UTL_FILE_Read_a_File_From_Directory.sql
+
+Write to a File
+----------------
+--write the file and check the 
+Package_UTL_FILE_AppendContentToFile_To_Directory.sql
+
+Reading a file from buffer
+---------------------------
+---reading from the buffers
+
+Package_UTL_FILE_ReaderFileFromBuffer_From_Directory.sql
+
+HANDLING EXCEPTION IF NO_DATA_FOUND
+----------------------------------
+Package_UTL_FILE_Handling_Exception.sql
+
+--Assigning copying the file and rename the file.
+--read and write the binary file
+
+
+
+

@@ -1,0 +1,1 @@
+select ename,nullif(shift,’d’) from emp_shift;

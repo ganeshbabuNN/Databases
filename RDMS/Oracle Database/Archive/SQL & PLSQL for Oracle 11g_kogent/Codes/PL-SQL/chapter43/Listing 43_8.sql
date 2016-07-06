@@ -1,0 +1,1 @@
+create table fabc(a number, b number, c timestamp);

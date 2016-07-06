@@ -1,0 +1,1 @@
+create table emp4(ename varchar2(10),mname varchar2(10));

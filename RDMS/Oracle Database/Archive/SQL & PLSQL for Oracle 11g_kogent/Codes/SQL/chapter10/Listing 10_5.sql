@@ -1,0 +1,1 @@
+insert into ABC values (1, 1, 1, 1, 1);

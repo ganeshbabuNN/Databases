@@ -1,0 +1,1 @@
+select ora_rowscn, sname from zpcm;

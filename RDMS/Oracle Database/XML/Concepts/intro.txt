@@ -1,0 +1,26 @@
+XML is
+-Simple
+-Unicode Based
+-Platform independent
+-A MetaData Language that contains information about the data
+
+RDBMS are still considered the most excellent system to hold huge amount of data. today most of the commerical web application holds data in relationsal database. For such application to transact, a tremendous amount of data is transferred over the internet between business
+
+those data transfer may be carried out:
+-Within a Company
+-Between Different branches of that company
+-Between Different companies
+
+For examples, suppliers accepting purchase over as XML files from their customer over the internet
+
+to allow such transfer, using XML is the format of choice
+
+this mean, the data is held in the relational database tables;
+-Need to be extracted
+-Converted in an acceptable format such as XML
+-Delivered to other end for import
+
+Oracle database provides buil-in Support for XML, which greatly simplies the retrievel of XML content and conversion between relational datasets and well-formatted XML data
+
+
+

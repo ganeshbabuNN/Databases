@@ -1,0 +1,26 @@
+DECLARE
+  TYPE t_array IS VARRAY(10) OF VARCHAR2(30);
+	
+  v_array t_array;	
+  
+  v_index BINARY_INTEGER;  
+BEGIN
+  v_array := t_array();
+  
+  v_array.extend;
+  v_array(1) := 'Hello World!';
+  
+  v_array.extend;
+  v_array(2) := 'Hello Again!';
+  
+  v_index := v_array.FIRST;  
+  
+  LOOP
+    EXIT WHEN v_index IS NULL;
+    
+    dbms_output.put_line( v_array( v_index ) );
+    
+    v_index := v_array.NEXT(v_index);
+  END LOOP;    
+END;
+/

@@ -1,0 +1,39 @@
+COMPARE the objects with quality and comparison sessions
+========================================================
+-In real world , comparing the objects will bit complex apart from the straight comparison with equality of scalar values like number to number, String to String, letter to letter
+-let us show some example which does not work..
+
+Object_Type_Comparing_The_Object_Wrong.sql
+
+the above code has some error"ORA-06550: line 22, column 16:
+PLS-00526: A MAP or ORDER function is required for comparing objects in PL/SQL.
+06550. 00000 -  "line %s, column %s:\n%s"
+*Cause:    Usually a PL/SQL compilation error."
+
+Anyway for comparing objects, we need to MAP or ORDER FUnction in PLSQL.
+
+MAP MEMBER
+==========
+-MAP MEMBER function is a simplest type of functions and map returns the scalar value when try to compare and the return compared result must be a valid sql data type like boolean, string ,number ...etc
+-rewriting the above code using MAP MEMEBER
+
+Object_Type_Comparing_The_Object_MapMember_Correct.sql
+
+****and now call the  MAP MEMBER FUnction to check how the objects is compared
+-Now call call_emp_obj6.sql and check the output. 
+-match the attributes of the objects and check the output.
+
+ORDER MEMBER FUNCTIONS
+======================
+
+-ORDER Function can be used , since it passes one instance of one object to another instance object which gives the uniqness -it always return 1(it means greater then the other) ,0(mean equal to other) and -1(less then the other)
+let take one example
+Object_Type_Comparing_The_Object_OrderMember.sql
+
+***and now call the  MAP MEMBER FUnction to check how the objects is compared
+-Now call call_emp_obj7.sql and check the output. 
+-match the attributes of the objects and check the output.
+
+test again
+-match the email and check the output
+-match email and salary and check the output

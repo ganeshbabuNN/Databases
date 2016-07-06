@@ -1,0 +1,315 @@
+Using Numberic Functions
+========================
+
+- its sometime required to perform some calcluation on the numeric values avaiable as data in the database tables.
+- Oracle offers lot of functions that allow performing calculations
+*Accepts an input number
+An input number can be fetched from 
+-A numeric column in a table
+-An expression that evaluates to a number
+*perform the required calculation
+*return a number
+
+Aggregate Functions
+===================
+-it returns a single result row based on groups of rows. it usually appears in
+*SELECT list
+*ORDER BY clause
+*HAVING Clause
+-commonly used with GROUP BY clause in a SELECT statement where Oracle splits the rows of a queried table or view into groups
+-GROUP BY clause, the elements of the selectlist can be aggregaed functions.
+-if this GROUP BY clause is ommited, it applies aggregate functions in the select list to all the rows in the queried table or view.
+-Aggregate functions are used in the HAVING clause to elimintate groups from the output based on the results of teh aggregate functions, rather then on the value of  the individual rows of the queried table or view.
+
+
+DISTINCT: cause an aggregate functions to consider only distinct values of the argument expression
+ALL : causes an aggregate funciton to consider all values including all duplicates
+
+example
+DISTINCT average of
+500 + 500 + 500 + 300 = 400
+
+the ALL Average
+500 + 500 + 500 + 300 = 450 
+
+if nneither of the options is specified, then the default is ALL.
+
+- all aggregate function except COUNT(*) and GROUPING ignore NULL values. it is good pratice touse the NVL Function as an agrument as an agrument to an aggreagate functions.
+-COUNT never returns NULL, ubt returns either number of zero.
+
+
+Average
+-------
+
+AVG() returns an average alue of expression, ignoring the null value in a column
+
+sytnax
+AVG([<Distinct>[<ALL>]<Expression>)
+
+Finding Minimum Value
+---------------------
+-MIN() returns the minimum of expression
+
+sytnax
+MIN([<Distinct>[<ALL>]<Expression>)
+
+Finding Maximum Value
+---------------------
+-MAX() returns the minimum of expression
+
+sytnax
+MAX([<Distinct>[<ALL>]<Expression>)
+
+
+Counting the record
+-------------------
+-COUNT returns the number of row where the expression is not null
+
+sytnax
+COUNT([<Distinct>[<ALL>]<Expression>)
+
+total value
+-----------
+SUM() this functions returns sume of the values of expression
+
+Syntax
+	SUM([<DISTINCT>|[ALL]<Expression>);
+
+Returning Clause
+================
+-Consider a scenario where a row in the table is updated. The Person updating the row desires to view the results
+-The most usual step to achieve this is to
+*Update the table
+*Fire a SELECT query to view the updated values
+-The Returning clause can help achieve this. it allows viewing the result of DML without executing a select query. it returns the value from an aggregate function such as AVG(),SUM(),count() and son on.
+
+Abolute Function
+----------------
+-This function ABS() returns the absolute value of an expression.
+
+syntax
+	ABS(<Expression>);
+
+
+POWER Function
+--------------
+-this POWER() returns expression raised to the nth power where, n must be an integer or else an error is returned
+
+sytnax
+POWER(<Expression>,<n>);
+
+Rouding the Numeric Value
+-------------------------
+-This ROUND() returns expression , rounded to n places to the right of a decimal point
+
+sytnax
+ 	ROUND(<Expression>[,<n>]);
+where
+-if n is omitted, then n is rounded to 0 places
+-n can be neagtive, to round off digits to the left of the decimal point
+-n must be an integer
+
+Square root
+----------
+-this SQRT() returns square root of expression, if the value of the expression is less then zero[0], then NULL value is returned, SQRT() returns a real result.
+
+Syntax
+	SQRT(<Expression>)
+
+Exponentiation
+--------------
+-this EXP() returns e raised to the nth power, where e=2.71828183
+
+syntax
+	EXP(<n>)
+
+Finding the Greatest Value
+--------------------------
+-This GREATEST() returns the greater value in a list of expressions.
+
+syntax
+	GREATEST(<Expression1>,<Expression2>,.....,<ExpressionN>)
+where expresion1,expresion2,...ExpressionN are expression that are evaluated by the greatest functions
+
+finding the least value
+-----------------------
+-this LEAST() returns the least value in a list of expressions.
+
+sytnax
+	LEAST(<Expression1>,<Expression2>,...,<ExpressionN>)
+where expresion1,expresion2,...ExpressionN are expression that are evaluated by the least functions.
+
+
+Reminder
+-------
+-this MOD() returns the remainder of the first number divided by the second number passed as a parameter. if the second number is zero , then the result is the same as the first number.
+
+syntax:
+	MOD(<m>,<n>);
+
+Truncating a Number value
+-------------------------
+-TRUNC() returns a number truncated to a certain number of decimal places. the decimal place value must be an integer.if this parameter is omitted, the TRUNC function truncates the number to 0 decimal places
+
+sytnax
+	TRUNC(<number>,[<DecimalPlaces>]);
+
+
+Returning the largest Integer Value
+-----------------------------------
+-FLOOR() returns the largest values that is equal to or less than a number.
+
+Syntax:
+	FLOOR(<n>);
+
+
+Returning the Smallest Integer Value
+-----------------------------------
+-CEIL() returns the smallest value that is greater than or equal to a number
+
+Syntax:
+	CEIL(<n>);
+
+
+Trignometric Functions
+======================
+
+SIN
+---
+Returns the sine of the specified angle. the angle specified must be expressed in radians. A radian is equal to 180/pl or roughly 57.29578
+
+syntax
+SIN(<n>| SIN(<AngleInDegree>/57.29578)
+
+
+ASIN
+----
+Returns the inverse sine. The value returned is between ~pi/2 and pi/2
+
+syntax
+ASIN(<n>)
+
+
+SINH
+---
+Returns the hyperblock sine
+
+syntax
+SINH(<n>)
+
+
+COS
+---
+Returns the cosine of the specified angle. The angel specified must be expreseed in radians. A radian is equal to 180/pior roughly 57.29578.
+
+syntax
+COS(<n>| SIN(<AngleInDegree>/57.29578)
+
+
+
+ACOSE
+----
+Returns the hyperblock cosine
+
+syntax
+ACOSE(<n>)
+
+
+COSH
+----
+Returns the Hyperblock cosine
+
+syntax
+COSH(<n>)
+
+TAN
+---
+-Returns the tangent of the specified angle. The angle specified must be expresed in radians. A Radians is equal to 180/pi or roughtly 57.29578.
+
+syntax
+TAN(<n>| SIN(<AngleInDegree>/57.29578)
+
+
+TANH
+----
+returns the hpyerblock tangent. THe value return is between pi/2 and pis/2
+
+syntax
+TANH(<n>)
+
+
+Returning the value of sign of a number
+---------------------------------------
+
+-this SING() returns the sing of the specified number.
+
+sytnax
+	SING(<n>)
+
+SIN() returns one of the three values:
+-1 if the specified number is less than zero
+1  if the specified number is greater than zero
+0  if specified number is equal to zero.
+
+
+Conversion of Number to Character
+---------------------------------
+-TO_CHAR() converts a value of a Number data type to a character data type, using the optional format string.
+-it accepsts a number[n] and a number format [fmt] in which the number has to appear.
+-if fmt is ommited, n is converted to a char value exactly long enoguth to hold all significant digits
+
+sytnax
+	TO_CHAR(<n>,[,<fmt>]);
+
+Format models
+
+Element		Descriptions
+,[comma]	returns a comma in the specified position. A comma cannot begin a number format. A comma cannot appear to the 		right of a decimal character or period in a number format.
+		Example : 9,999
+.[period]	returns a decimal point, which is a period[.] in the specified position. only one period can be specified in 			a number format Example 99.99
+$		returns value with the a leading dollar sign
+		Example : $9999
+0		Returns leading or trialing zeros
+		example : 0999 or 9990
+9		Returns value with the specified number of digits with a leading space if positive or with a leading minus if 		negative. leading zeros are blank, except for zero value, which returns a zero for the integer part of the 			fixed pooint number. Ex 9999
+B		returns blanks for the integer part of a fixed point number when the integer part is zero[regardless of "0"in 		the number format] ex : B9999
+C		returns in the specifie dposition the ISO Currency smobol [the current value of the NL_ISO_CURRENCY 				parameter] ex C9999
+D		Returns in the specified position the decimal character, which is current value of the NL_ISO_CURRENCY 				parameter. the default is a period[.].Only one decimal character can be specified in a number format. 		Example :99D99
+EEEE		Returns a value using in scientific notations
+		exampel 9.9EEEE
+FM		returns a value with no leading or trialing blanks
+		example:	FM90.9
+G		Returns a value specified position the group separater[the current value of the 				NL_NUMBERIC_CHARACTER].Mutliple group  separators can be specified in a number format model. A group 				separator 		cannot appear to the right of a decimal character or period in a number format model.
+		example: 9G999
+L		Returns in the specified position the local currency symobol[the current value of the NLS_CURRENCY Parameter]
+		Example: L999
+MI		Returns negative value with a trialing minux sign[-]. returns positive value with a trailing blank. The MI 			format element can appear only in the last position
+		example : 99999MI
+PR		returns negative value in <Angle Brackets>. Returns positive value with a leading and trailing blank. THe PR 			format element can appear only in the last position of a number format model.
+		Example: 9999PR
+RN/rn		returns a value as roman numberals in uppercase or lowercase. Value can be an integer between 1 and 3999.
+		Example: RN
+		Example: rn
+S		Returns
+		-Negative values with a leading minus sing[-]
+		-Positive value with a leading plus sing[+]
+		-Negative value with a trialing minus sign[-]
+		-positive value with a trialing plus sing[+]
+		example , S99999, 9999S
+V		returns a value multiplied by 10n[if neccessary, round itup], where n is the number of 9s after the "V"
+		example : 999V99
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

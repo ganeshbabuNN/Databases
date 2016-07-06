@@ -1,0 +1,121 @@
+--SQL in PLSQL, like an integrations into the DB.
+-- PLSQL is nothing but the extension of SQL
+--DDL is not intregrations into PLSQL
+--DML in PLSQL is possible.
+
+--Let us create a API for insert,update and delete
+
+insert
+======
+
+CREATE OR REPLACE PROCEDURE emp_insert
+as
+BEGIN
+ NULL;
+END;
+
+--let us create using RECORD API
+%ROWTYPE gets all the column name without any constraints, just column name
+Remember ROWTYPE is for entire record where as the TYPE is for the column
+--this has to be in order
+Procedure_%RowType_insert_basic.sql
+
+--assume that you want to specificy the column of that table for the insert operations based on parameters 
+Procedure_%Type_insert_Parameterized_PositionNotations.sql
+
+--inserting of positing those column each type by type, its good pratice to specify the record as show in the below example
+with our RECORD TYPE
+
+Procedure_%Type_emp_insert_Parameterized_GoodPratice.sql
+
+------Different way
+--call the procedure where we created our RECORD TYPE
+calling without the name parameters.
+Procedure_%Type_emp_insert_Parameterized_GoodPratice.sql
+
+UPDATES
+===========
+
+--create a empty update
+Procedure_Update_null.sql
+
+-- create the update procedures with record type
+Procedure%RowType_Update_Basic.sql
+
+
+--with specifying the columns where you can call through a name notations.
+Procedure%RowType_Update_Parmaterized_Null
+
+--calling the update procedures using name notations.
+in this name notations while calling the procedure, you no need to maintain in orders whereas in normal way it should be maintained in ordered way.
+Procedure%RowType_Update_Parmaterized_Null
+
+---Without name notations
+Procedure%RowType_Update_Parmaterized_Null
+
+--let us begin writing the update procedures
+based on the table characterstics where the column do not allow null with their defaults.
+
+Procedure%RowType_Update_Parmaterized_Defaults_NotNull
+
+
+---you can resue those default with those constants this will be very good in code maintenance .
+
+emp_update_params_constants.sql
+
+
+DELETE 
+==========
+--with a basic delete procedures
+-- delete the row or record based on the Primary key of the columns
+Procedure%Type_Delete.sql
+
+SELECT 
+=============
+-to select a column from the select statment just include the INTO keyword and the rest is the basic SQL
+--- put a where clause , if there is no data found, they you get a exceptions as "no data found"
+AB_Select_Usage_INTO_Keyword
+
+-- for the above exception that can be handled during the exection using a exception handler
+--- other common exception in SQL will be too many rows, toomanyrows
+AB_Select_Usage_INTO_Keyword_Exceptions
+
+-- an that exception can bee handled by exceptions
+select_into_with_handler.sql
+
+--Taking to the previous example for inserting the record if the employee id is null?
+Select_Usage_INTO_NULL.sql
+
+--- for the above warning, you need to declare a local variable assing the execution value and then storedin the record
+here what is happening , i created a local record which is assinged by the parameter record, then using the local record i did all the sequencing and return the parameter record by local record
+Select_Usage_INTO_Local_Variables.sql
+
+---- or use the IN OUT MODE instead of using the local record.
+Select_Usage_INTO_IN_OUT_MODE.sql
+
+---if you want to select the multiple columns, annotate the column name exactly with the column name of that table.
+Select_Usage_Multiple_Columns.sql
+
+-- if you want to select the entire record,
+Select_Usage_Local_Record
+
+--- You can also use as a cursor , which is nothing but the declared select statements, here you have to declare cursor has record type like did for table type. Here just defined has a cursor has a place holder to identify the column I want
+Select_Usage_Using_Cursor.sql
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

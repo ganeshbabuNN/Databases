@@ -1,0 +1,1 @@
+alter table employee add constraint pk_employee primary key(ename);

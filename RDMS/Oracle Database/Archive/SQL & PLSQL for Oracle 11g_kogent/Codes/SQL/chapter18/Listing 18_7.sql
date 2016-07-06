@@ -1,0 +1,1 @@
+select covar_pop(phy,che),covar_pop(phy,maths) from marks;

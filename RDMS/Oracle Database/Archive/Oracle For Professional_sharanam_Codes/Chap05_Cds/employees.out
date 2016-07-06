@@ -1,0 +1,189 @@
+SQL> select * from emp;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7369 SMITH      CLERK           7902 17-DEC-80        800                 
+        20                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                   800                 
+                                                                                
+                      sum                                   800                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300      
+        30                                                                      
+                                                                                
+      7521 WARD                       7698 22-FEB-81       1250        500      
+        30                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  1425                 
+                                                                                
+                      sum                                  2850                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7566 JONES      MANAGER         7839 02-APR-81       2975                 
+        20                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  2975                 
+                                                                                
+                      sum                                  2975                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400      
+        30                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  1250                 
+                                                                                
+                      sum                                  1250                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                 
+        30                                                                      
+                                                                                
+      7782 CLARK                      7839 09-JUN-81       2450                 
+        10                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  2650                 
+                                                                                
+                      sum                                  5300                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                 
+        20                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  3000                 
+                                                                                
+                      sum                                  3000                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7839 KING       PRESIDENT            17-NOV-81       5000                 
+        10                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  5000                 
+                                                                                
+                      sum                                  5000                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0      
+        30                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  1500                 
+                                                                                
+                      sum                                  1500                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                 
+        20                                                                      
+                                                                                
+      7900 JAMES                      7698 03-DEC-81        950                 
+        30                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  1025                 
+                                                                                
+                      sum                                  2050                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                 
+        20                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  3000                 
+                                                                                
+                      sum                                  3000                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                 
+        10                                                                      
+                                                                                
+                      *********                      ----------                 
+                                                                                
+                      avg                                  1300                 
+                                                                                
+                      sum                                  1300                 
+                                                                                
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM      
+========== ========== ========= ========== ========= ========== ==========      
+Department                                                                      
+    Number                                                                      
+==========                                                                      
+                                                     ----------                 
+                                                                                
+sum                                                       29025                 
+                                                                                
+
+14 rows selected.
+
+SQL> spool off

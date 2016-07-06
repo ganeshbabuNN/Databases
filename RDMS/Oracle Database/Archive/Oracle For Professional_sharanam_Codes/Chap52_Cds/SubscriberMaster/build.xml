@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<project name="SubscriberMaster" default="dist" basedir=".">
+	<property name="src" value="${basedir}"/>
+	<property name="xml" value="${basedir}"/>
+	<property name="dist" value="${basedir}/dist"/>
+	<property name="classes" value="${basedir}/classes"/>
+	<property name="javaee.jar" value="C:/Sun/AppServer/lib/javaee.jar"/>
+
+	<path id="project.class.path">
+		<pathelement location="${javaee.jar}"/>
+		<pathelement path="${classes}/"/>
+	</path>
+
+	<target name="clean">
+		<delete dir="${classes}"/>
+		<delete dir="${dist}"/>
+	</target>
+ 
+	<target name="prepare">
+		<tstamp/>
+		<mkdir dir="${classes}"/>
+	</target>
+
+	<target name="compile" depends="prepare">
+		<javac srcdir="${src}" classpathref="project.class.path" destdir="${classes}"/>
+	</target>
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}"/>
+		<war destfile="${dist}/SubscriberMaster.war" webxml="web.xml">
+			<classes dir="${classes}"/>
+			<fileset dir="jsp"/>
+		</war>
+	</target>
+</project>

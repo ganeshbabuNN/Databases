@@ -1,0 +1,1 @@
+insert into emp_shift (ename,shift) select ename,’A’ from employee;

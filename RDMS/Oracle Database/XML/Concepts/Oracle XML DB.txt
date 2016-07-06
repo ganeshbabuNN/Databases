@@ -1,0 +1,43 @@
+-Oracle DB provides XML Type as a Built-in data type, this can be used to represent XML data
+-By Default, an XML Type object stores the XML data as text in a CLOB(character large Object)
+-To generate XML for data stored in relational tables, Oracle XML DB Provides a set of SQL Functions
+
+XMLElements()
+--------------
+-this fuctions allows generating XML elements from already existing relational data
+-it returns XMLType Objects
+-it accepts element name,relational table name to be retrived.
+
+XMLELEMENT("name",Column_name);
+
+XMLAttributes()
+---------------
+-this functions is always used with the XMLELEMENT() function to specify the attributes for the XML elements that are formed by XMLELEMENT(). this function creates Attributes for the elemenet created by XMLELEMENT().
+
+XMLFOREST()
+-----------
+- this function produces a forest of XML elemetns from the given list of arguments
+-means produces many XML elements at a time.
+-it basically concates the XML elements together without having to use the concatentation operator[||] with multiple calls to XMLELEMENT()
+
+
+XMLAgg()
+-------
+-this function is an aggregation function that produces a forest of XML elements drived from a set of rows.
+-this is used typicall for grouping XML together into a common list of itemsn of one pareent or for retrieving data from collections-it allows using ORDER BY Clause
+
+
+
+XMLColattval()
+--------------
+-this functions allows creating an XML Fragment and then expand the resulting XML.
+-each XML fragment has the name column with the attribute name
+
+XMLConcat()
+-----------
+--it uses to concatenate a series of element for each row
+
+XMLCOMMENT()
+-------------
+-- allows generating the XML comment, which is a text string placed within <!-- and -->
+

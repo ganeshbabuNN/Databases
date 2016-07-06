@@ -1,0 +1,1 @@
+revoke create session from anil;

@@ -1,0 +1,1 @@
+flashback table fabc to timestamp (systimestamp - interval '1' minute);

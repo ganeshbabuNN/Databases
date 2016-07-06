@@ -1,0 +1,1 @@
+drop rollback segment rbs8;   

@@ -1,0 +1,1 @@
+create table department(empno number, dept varchar2(20)); 

@@ -1,0 +1,1 @@
+select object_name, status from user_objects where object_name 	in('pls_test','proc1');

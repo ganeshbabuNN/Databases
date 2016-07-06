@@ -1,0 +1,34 @@
+Deleting data from table
+========================
+
+-the DELETE command is used to delete rows from a table.
+-it deletes all the rows from the table if no conditions is specified using the WHERE clause.
+
+Deleting ALL Rows
+=================
+
+Sytnax
+-----
+DELETE FROM <TableName>
+or
+DELETE <TableName>
+
+Deleting Specific Row
+=====================
+
+Sytnax
+-----
+DELETE FROM <TableName> WHERE <Conditions>;
+
+Deleting Specific Row Using Exists Clause
+=========================================
+-the traditional DELETE command does not allow specifying more then one table name in the FROM Clause.
+-we need to use JOIN and delete records from one table maching criteria related to the data held in another table.
+
+Sytnax
+-----
+DELETE FROM <TableName> WHERE <Conditions>;
+-the EXISTS conditions is considered to be met if the subquery returns at least one row.
+-the EXISTS conditions can be used in any valid SQL Statement -SELECT, INSERT,UPDATE or DELETE
+-if UPDATE or DELETE statemetns are run , ensure that the ROLLBACK command is executed immediately after running every UPDATE or DELETE statements, so that the output data.
+

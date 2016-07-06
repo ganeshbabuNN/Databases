@@ -1,0 +1,1 @@
+alter rollback segment rbs8 online; 

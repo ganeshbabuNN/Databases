@@ -1,0 +1,1 @@
+select rank() over (order by sum(amount)) default_rank,cume_dist() over (order 		by sum(amount)) default_dist,to_char(timeid,’yyyy’), channelid, to_char 		(sum(amount), ’999,999,999,999.99') from sales_data					group by to_char(timeid,’yyyy’), channelid;

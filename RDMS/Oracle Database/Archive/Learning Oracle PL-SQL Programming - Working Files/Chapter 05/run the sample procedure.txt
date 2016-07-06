@@ -1,0 +1,4 @@
+SET SERVEROUTPUT ON
+
+exec hello_world
+

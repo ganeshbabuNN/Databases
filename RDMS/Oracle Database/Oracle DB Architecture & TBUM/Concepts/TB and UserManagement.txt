@@ -5,6 +5,225 @@ TableSpace
 -User Data in an Oracle Database is logically stored in tablespace and physically stored in data files, which are bound to the corresponding tablespace
 -Tablespaces are a mechanism or means by which logical objects such as tables, indexes and views are mappped to a specific data files.
 
+Creating Tablespace
+===================
+-The CREATE TABLESPACE command is used to create a new tablespace with one or more initial data files. This command also allows specifying default storage parameters
+
+Sytnax:
+	CREATE [TEMPORARY] TABLESPACE DATAFILE/TEMPFILE
+	  '<path and FileName>'[AUTOEXTEND [OFF/ON NEXT <integer>[K/M]
+	MAXSIZE[<integer>[K/M]/UNLIMITED]]] [OFFLINE/ONLINE]
+
+-the most common attributes of the CREATE TABLESPACE command are
+
+Attribute Name		Description
+--------------  	-----------
+Tablespace		Name of the tablespace to be created
+DATAFILE		Specifies the data file or files used to compose the tablespace
+AUTOEXTEND		Enables or disables the automatic extension of the data files
+			options		Descriptions
+			OFF		Disables AUTOEXTEND if set to 'ON'. NEXT and MAXSIZE are set to zero. to re-enable 						the features after AUTOEXTEND is disabled, specify the values agains for NEXT and						MAXSIZE in additional ALTER TABLESPACE AUTOEXTEND commands.	
+			ON 		Enables AUTOEXTENDED
+			NEXT		Specifies disk space to allocate to the data file when more extends are required
+			MAXSIZE		specifies the maximum disk space allowed for allocations to the data files.
+			UNLIMITED	Allows the data file to have no limit on allocations of disk space
+DEFAULT STORAGE		Specifies the default storage parameters for all objects created in the tablespace
+ONLINE			Makes the tablespace available immediately after creations to users who have been granted access t 			the tablespace
+OFFLINE			Makes the tablespace unavailable immdiately after creations.
+-Once a tablespace is created, it must be Online to be useable. The CREATE TABLSPACE syntax, by default, ensures that the tablespace is made online. Only when the tablespace is online can users bound to the tablespace use it, for storing the objects.
+
+
+Managing Users in Oracle
+========================
+-In Order for a user to access data in an oracle db, the user must have a user account associated with that B.
+-Access to each account is via a password associated with it.
+-Each user account is then granted rights to create and store DB objects within a specific tablespace[i,e oracle DB, Data storage area].
+-To create a new user in the Oracle DB using SQL Plus, the CREATE USER command can be used.
+*When using the CREATE USER syntax the DBA must specify
+-A Username
+-A Password [unique to oracle i,e the O/s Level password and the oracle password should be different].
+
+Syntax
+	CREATE USER <Username> IDENTIFIED BY <Password>;
+Where
+	the username within each DB, must be unique
+
+Modifying the existing User password
+-------------------------------------
+-A users password can be changed by issuing the following SQL command in SQL plus
+-On Oracle 8 onwards, the password command can be used to change the password of the currently logged in user. to change another user's password, the passwoerd <username> command can be used.
+
+ALTER USER <username> IDENTIFIED BY <New_Password>;
+
+--In Oracle 11g onwards, the usernames and password are case sensitive
+
+Droping the Existing User
+--------------------------
+droping the existing user, use the following command
+Sytnax
+	DROP USER <Username> [CASCADE]
+where
+	CASCADE option, if used, drops all objects in that user's schema.
+To list all the existing in the system, use the following command:
+SELECT NAME FROM SYS.USER$;
+
+
+Privileges
+==========
+-It allows safeguarding informations stored in the tables from unauthorized viewing.
+-A DBA Depending on a user role and designation provides appropriate rights on resources such as tables, views and so on. SUch rights are called privileges
+-A Privileges is a set of rights, to execute an SQL statements or to access another user's objects
+-Objects that are created by a user are owned and controlled by that user. if a user desires to access any of the objects belonging to some user, the owner of the object gives appropriate permissions to allow this. This is called Granting of Privileges
+-Privileges once given can be taken back by the owner of the objects. This is called Revoking of Privileges
+-Oracle has two kinds of privileges
+*System Privileges
+*Object Privileges
+-A Privileges can be assigned to a user or a role.
+
+System Privileges
+-----------------
+-There are around 206 system privileges that oracle has. These can be displayed using the following SELECT query.
+	SELECT NAME FROM SYSTEM_PRIVILEGE_MAP;
+-This statements when exeucted will display all the available system privilegs such as CREATE, SESSION,DROP USER ,ALTER DB and so on.
+-The most important and common system privileges are:
+a)Create Session: A User cannot login without this privileges
+b)Create Table
+c)Create View
+d)Create Procedure
+e)Create Procedures
+f)SYSDBA
+g)SYSOPER
+
+Object Privileges
+-----------------
+-Privileges that are assigned to the following types of DB Objects are called Object Privileges
+1)Tables
+SELECT
+INSERT
+UPDATE
+DELETE
+ALTER
+DEBUG
+FLASHBACK
+ON COMMIT
+REFRESH
+QUERY REWRITE
+REFERENCE ALL
+2)Views
+SELECT
+INSERT
+UPDATE
+DELETE
+UNDER 
+REFERENCES
+FLASHBACK
+DEBUG
+3)Sequence
+ALTER
+SELECT
+4)Packages,Procedures,Functions[Java classes,sources...]
+EXECUTE
+DEBUG
+5)Materialized Views
+DELETE
+FLASHBACK
+INSERT
+SELECT
+UPDATE
+6)Directories
+READ
+WRITE
+7)Libraries
+EXECUTE
+8)User defined types
+EXECUTE
+DEBUG
+UNDER
+9)Opeartors
+EXECUTE
+10)IndexTypes
+EXECUTE
+
+-For a user to be able to access an object in another users schema, appropriate object privileges are granted
+	SELECT PRIVILEGE FROM ALL_TAB_PRIVS_MADE;
+or
+	SELECT PRIVILEGE FROM USER_TAB_PRIVS_MADE;
+
+Granting Privileges Using the GRANT Statement
+---------------------------------------------
+-the GRANT command allows granting privileges to users, to allow them access to DB objects such as Tables, View and Sequences and So on.
+
+Syntax
+	GRANT <Privileges1>,<Privileges2>,..... [ON <ObjectName>]
+		TO <User1>,<User2>,......
+	[WITH ADMIN OPTION/WITH GRANT OPTION];
+
+-The ADMIN OPTION allows the Grantee to grant the granted privilege to someone else.
+
+
+Refering a Table Belonging to another user
+------------------------------------------
+-Once a user has privileges to access another users'object(s), the user can access the object by prefixing the object name with the name of the owner
+
+Select <ColumnName1>,<ColumnName2>.... FROM <SchemaName>.<UserName>;
+
+Granting Privileges When a Grantee has been given the GRANT Privilege
+---------------------------------------------------------------------
+-If the user wants to grant privileges to other users, the user must be the owner of the object or must be given the GRANT options by the owner of the object.
+
+Revoking Privileges Given
+-------------------------
+-Privileges once given can be denied to a user using the REVOKE command.
+-the object owner can revoke privileges granted to anther user.
+-A User of an object who is not the owner,but has been granted the GRANT privilege, has the power to REVOKE the privileges from a grantee
+-Reovke Statment is used to deny the grant given on an object.
+
+Syntax
+	REVOKE <privilege1>,<Privilege2>,...[ON <objectName>]
+	FROM <UserName>;
+
+-The REVOKE command is ued to revoke object privilege that that user previously granted directly to the grantee.
+
+ROLES
+-----
+- A Role is a set or group of privileges that can be granted to users or another role.
+-This is a great way for DB administration to save time and effort.
+-It provides certain predefined rols.
+
+These Roles are:
+
+CONNECT,RESOURCE ,DBA
+*CONNECT Holds privileges such as CREATE SESSION,ALTER SESSION,CREATE SYNONYM,CREATE VIEW,CREATE DATABASE LINK,CREATE TABLE,
+CREATE CLUSTER and CREATE SEQUENCE
+*RESOURCE holds privileges such as GRANTS CREATE TABLE, CREATE CLUSTER,CREATE SEQUENCE,CREATE TRIGGER,CREATE PROCEDURE,CREATE TYPE ,CREATE INDEXTYPE and CREATE OPERATOR TO
+*DBA Holds basically all prvileges with admin option
+
+
+Create a DBA User
+-----------------
+-The following steps how a DBA user can be created and appropriate privileges given to the DBA Users
+
+Create a DBA named JavaDBA
+Create USER "JavaDBA"
+ PROFILE "DEFAULT"
+ IDENTIFIED BY "abc123"
+ DEFAULT TABLESPACE "SYSTEM"
+ TEMPORARY TABLESPACE "TEMP"
+ ACCOUNT UNLOCK;
+
+Grant the connect and DBA roles to this users.
+ GRANT "CONNECT" TO "JavaDBA" WITH ADMIN OPTION;
+ GRANT "DBA" TO "JavaDBA" with ADMIN OPTION;
+
+-DBA is the standard role that is usually granted by aone administrator to another administrator
+-it includes all system privileges and should only be grant to the most trusted and qualified users.
+-Assiging the DBA role to a users enables the user to administer the DB
+-Privileges and Roles can be granted to other users only by a user who possesses the necessary privileges
+-Granting of roles and privileges begins at the administrator level. Oracle provides the administrative users called SYS.
+-This user is granted all system privileges and predefined Oracle roles
+-The users SYS can therefore grant privileges and roles to other users and also grant those user the right ot grant specific privileges to others.
+
+
 
 
 

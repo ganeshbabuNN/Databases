@@ -1,0 +1,1 @@
+create undo tablespace undodata1 datafile 'undotbs001.dbf' size 10m;

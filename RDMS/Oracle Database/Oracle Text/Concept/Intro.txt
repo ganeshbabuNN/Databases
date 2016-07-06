@@ -3,3 +3,111 @@ Intro
 -A standard SQL query allows matching strings available in the DB, however, since the Text has increased, standard string matching functions will not help. 
 -To Allow performing much more than string matches Oracke, has introduced, new text search features via a tool called Oracle Text, a Complete Text Search solutions, which is part of the oracle standard and enterprise editions
 -It preivously known as intermedia Text and Context, is an extensive full text indexing technology that allows building text queries, support multiple languages and uses advanced relevance-ranking technology to improve search quality.
+
+Oracle Text uses Standard SQL to Index, search and analyize
+a)Text
+b)Documents stored in the Oracle DB
+c)document files
+d)files on the Web
+
+it allows using a variety of search strategies such as
+a)Keyword searching
+b)Context queries
+c)Boolean Operations
+d)Pattern matching
+e)Mixed Thematic queries
+f)HTML/XML Sections searching
+
+it allows rendering search results in various formats such as
+a)Unformatted text
+b)HTML with term highlighting
+c)Orginal document format
+
+-Oracle text allows full-text retrievel against virtually any data type[Including all LOB Types],The indexing and searching abilities of Oracle Text are not restricted to data stored in the DB.
+-It can index and search documents stored on the file system and index more than 150 document types including MS Word ,PDF and XML.
+
+Oracle Text Inde
+===============
+-To enable Oracle Text Search on the desired table columns, an oracle Text index is required.
+-Creating an Oracle Text index completely diff from creating any other DB index.
+
+Oracle Text Index Types
+=======================
+***This covers only basics CONTEXT and CTXCAT indexes.
+-Three Types of Text Indexes that cover all text search needs
+1)Standard
+2)Catalog
+3)Classification
+
+1)Standard index[CONTEXT]
+-------------------------
+-This type of index is useful for traditional full-text retrievel over documents and web pages
+-The CONTEXT index type provides a rich set of text search capabilities for finding the desired content,without returning pages of spurious results
+-Use This index to build a text retrievel a application when the text searched for hold large coherent documents
+-This index can be applied to diff documents formats such as MS word,HTML,XML or plain text.
+-The operator that is used to query the text is CONTAINS
+-*This index works likea normal B-Tree index. it creates a set of tables that comprise an inverted list index on the text column.The inverted index is effectively the same as the one found in a paper book. It matches a token or phrase and its locations to speed up search with a look-up rather than a scan
+
+Sytnax
+	CONTAINS(<ColumnName>,<SearchString>)
+*The contains function accepts the following two parameter
+1)ColumnName
+2)SearchString
+
+
+2)Catalog Index[CTXCAT]
+-----------------------
+-This type of index is useful for eBussiness catalogs .
+-The CTXCAT catalog index type provides flexible searching and sorting at web-speed
+-Use This index Type to index small text fragments such as item names, prices and descriptions that are stored across columns
+-The Operator that is used to query the text is CATSEARCH
+
+syntax
+	CATSEARCH(<ColumnName>,<SearchString>,<IndexSetName>)
+*The CATSEARCH functions accepts the following three parameters
+1)ColumnName
+2)SearchString
+3)IndexSetName
+-Current, since no index set exists, the third parameter is passed as NULL.
+-The CATSEARCH functions does not return a score. However, the >0 is allowed to ease the migrations from CONTEXT index to CTXCAT
+
+
+3)Classication index[CTXRULE]
+-----------------------------
+-This type of index is useful for building classification or routing applications.
+-The CTXRULE index type is created on a table of queries, where the queries define the classification or routing criteria
+-Use This index to build a document classification application. this index is an index created on a table of queries,where each query has a classification.
+-This operator that is usef to query the text is MATCHES
+
+
+Creating Indexes
+================
+-to use the Oracle Text, text indexes need to be created on the column that holds the text to be searched.
+-A Text index is a collection of indexes and tables that oracle creates when an index creations process is initiated by the user.
+-These indexes and tables hold informations about the text stored in the column and are created to support the text queries fired.
+-Before Creating a text index on the table column,it is mandatory to have a primary key set on the table.
+-To create the text index, use the CREATE INDEX command.
+
+Difference CONTEXT and CTXCAT index
+-----------------------------------
+-CTXCAT index supports transactional synchronization between the base table and the text index
+-In case of the CONTEXT index, this needs to be done manually after data changes in the base table as:
+
+INDEX SYNC PARAMETER
+=====================
+
+ALTER INDEX <IndexName> REBUILD ONLINE PARAMETER('SYNC');
+
+-Other than this difference , the query syntax remains the same.
+-Oracle DB 10g onwards, the CONTEXT index can be maintained on commits or at specific intervals using the SYNC parameter.
+
+Syntax
+	SYNC (MANUAL|EVERY<Interval>|ON COMMIT);
+
+
+
+
+
+
+
+

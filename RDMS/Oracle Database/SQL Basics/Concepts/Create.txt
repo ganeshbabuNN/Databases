@@ -1,0 +1,90 @@
+Creating Table
+==============
+- it defines command uniquely defines each column of the table
+-A column has the following three attributes
+1)Column name
+2)the data type
+3)Column size
+
+Syntax
+------
+
+CREATE TABLE <TableName>(
+<ColumnName> <DataType>(<Size> [Primary Key] [NOT NULL|NULL][Default]),
+<ColumnName> <DataType>(<Szie> [Primary Key] [NOT NULL|NULL][Default]),..
+);
+
+-Each column that is defined in a table must have data type
+-Each Column Definition is a single clause in the CREATE TABLE Syntax
+-Each Table Column Definition is separation from the other by a comma.
+-Finally, The SQL statement is terminated with a semi colon.
+
+Rules
+-----
+1)A Table name can have maximum up to 30 characters
+2)Alphabets from A-Z ,a-z and numbers from 0-9 are allowed
+3)A Name should begin with an alphabet.
+4)the use of special character like _ is allowed and also recommended[Special character such as $,# are allowed only in Oracle)
+5)Reserved words are not allowed. For exp.. Create,select and so on.
+
+Steps to followed before creating a Table.
+-----------------------------------------
+1)what are columns of the rows to be stored?
+2)what are the data types of the columns and their respectie sizes?
+3)which column will be the record identifier[usually called primary key]?
+4)which columns do /do not allow null values?
+5)which columns do / do not allows duplicates?
+6)are there default values for certain columns?
+
+Temporary Tables
+================
+-Some of the complicated process that cannot be completed, we may require some temporary data store.
+-Here Temporary data stores are usually used to improve performance when running complex and expensive queries.The results that complex query retreives are cached in a temporary able.
+-Example : Application updated the rows -->to the temporary table --> persistent table.
+-the data held by these tables, is automatically deleted at the end of the transaction or a session, depending upon the kind of temporary table. the data in that table are private.
+-data inserted in that session can only be access by thats session only
+
+Syntax
+------
+
+CREATE GLOBAL TEMPORARY TABLE <tableName> (
+<ColumnName> <DataType>,
+<ColumnName> <DataType>) ON COMMIT DELETE ROWS;
+
+-the on commit delete rows clause indicates that the data should be deleted at the end of the transactions
+
+CREATE GLOBAL TEMPORARY TABLE <tableName> (
+<ColumnName> <DataType>,
+<ColumnName> <DataType>) ON COMMIT PRESERVE ROWS;
+
+-the ON COMMIT PRESERVE ROWS clause indicates that rows should be preserved until the end of the session.
+
+-By Creating the temprory table
+a)View can be created
+b)Triggers can be associated
+c)Indexes can be created
+
+-If the TRUNCATE Statement is isued against a temporary table, only the session specific data is truncated. there is no affect on the data of other sessions.
+
+Creating a Table from a Table
+=============================
+-For Recorganizing an oracle table or moving a table to another tablespace, the CREATE TABLE AS SELECT Command is used.
+-this command
+1)structures and creates a new table
+2)copies data from the existing table to the new table
+3)renames the new table
+
+syntax
+------
+CREATE TABLE <TableName>(<ColumnName>,<ColumnName>) AS SELECT <ColumnName>,<ColumeName> FROM <TableName>
+
+-the table name in the SELECT Query is the source table from where the data will be picked up
+-The table name in the CREATE TABLE statement is the Target table which will be created and populated within the data.
+-A table can also be created without copying any data [i,e create the structure only]from the source table. USE WHERE Clause if the condition is false, it creates the data without data.
+
+
+
+
+
+
+

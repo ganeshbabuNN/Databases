@@ -1,0 +1,19 @@
+DECLARE
+  TYPE t_varchar2 IS TABLE OF VARCHAR2(100)
+    INDEX BY BINARY_INTEGER;
+    
+  TYPE t_number IS TABLE OF NUMBER
+    INDEX BY BINARY_INTEGER;
+   
+  v_first_name t_varchar2;
+  v_last_name t_varchar2;
+  
+  v_salary t_number;
+BEGIN
+
+  SELECT first_name, last_name, salary
+    BULK COLLECT INTO v_first_name, v_last_name, v_salary
+    FROM employees;
+    
+END;
+/

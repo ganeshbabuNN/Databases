@@ -1,0 +1,1 @@
+select sn, c1 multiset intersect c2 as c1_and_c2  from csample;

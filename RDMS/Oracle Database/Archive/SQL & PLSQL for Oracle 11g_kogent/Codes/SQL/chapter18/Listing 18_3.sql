@@ -1,0 +1,1 @@
+select sum(power((phy-65.8),2)) sm from marks;

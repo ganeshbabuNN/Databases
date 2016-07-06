@@ -4,3 +4,180 @@
 1)EXP- which is used to perform backups,this also known as Logical backup utlitily as it allows taking backup of the DB objects within the DB & it may be taken with or without data being resident in them.
 2)IMP -which is used to perform a restore of the backup taken using EXP
 -this two programs are available in ORACLE_HOME/bin directory and installed when oracle is installed
+
+Uses of these Program
+---------------------
+-Exporting and importing DB objects
+-Create a copy of the entire data of a DB or of selective data within the DB to an export file
+-Transferring data across DB and schema that reside on different hardware platforms and or on diff oracle versions.
+
+--If the data is exported on diff oracle version then on the system on which data is imported should have newer version of the imp program. Exp .. if data needs to be exported from oracle DB 10g to Oracle DB 9i, it must be exported with oracle DB 9i's EXP program.
+--When exporting, DB objects are dumped to a binary file which can then be imported into another Oracle DB. Since these programs uses programs using propriety binary file format, , they can only be used between Oracle DB. this cannot be used for non-Oracle DB.
+--IMP Does not re-create an already existing table, it eithers errors out or ignores the errors.
+--starting with Oracle 10g these two utitlies are deprecated and recommeds alternatives are the data pump version of these utlitilies which provide a number of new features including the ability to disconnect and recconnect to an interactive session and improved performance.
+-**type imp help=y OR exp help=y for detailed help with options available
+
+Using the EXPORT Uitlity
+========================
+-this can be invoked at the OS prompt by typing for the following command
+
+For Windows
+	exp
+
+For Linux
+	$exp
+
+-this export dump file contains objects in the following order
+1)Type definitions(def)
+2) Table def
+3) table data
+4) table indexes
+5) integrity constraints,view,procedures and triggers
+6) bitmap,function-based and domain indexes
+
+Different modes of Export
+------------------------
+they are three modes in which a DB can export DB objects
+1)Full DB Mode
+2)User Mode
+3)Table Mode
+
+1)Full DB Mode
+*------------*
+-when an export ulitity is performed using FUll DB mode, the entire DB objects[Expect the objects owned by user SYS] are exported dump file.
+-This dump file contains exported object's business data and the Object Definitions[DDL statements] of the objects exported
+-The use of this mode is restricted to users with DB privileges or to users bound to the EXP_FULL_DATABAE Role
+
+Syntax
+	EXP <userName>/<password> FULL=y FILE=<FileName>.dmp LOG=<FileName>.log CONSISTENT=y;
+
+Using PAR File
+*-------------*
+
+2)User Mode
+*----------*
+-When selecting USER Mode for an export,all the objects owned by a particular user can be exported.
+	
+Syntax
+	EXP <userName>/<password> FILE=<FileName>.dmp OWNER=<OwnerName>
+
+
+3)Table Mode
+*----------*
+-When selecting table mode for an export, a DBA can export DB object on a table-by-table basis.
+-In this mode the DBA can also export a specific portions of a table
+
+Syntax
+	EXP <userName>/<password> FILE=<FileName>.dump TABLES=(<schemaName>.<tableName1>,schemaName>.<tableName2>...)
+
+
+Using the IMPORT Uitlity
+========================
+-The import ulitlity is used to recovering the business data of select DB objects.
+-the Import utility can read only the data stored from an Oracle Export Dump files
+
+-The Import utility performs functions as follows
+1)New Tables are created
+2)Data is imported and indexes are built
+3)Triggers are imported
+4)Integrity constraints are enabled on the new tables
+5)Any bitmap,function-based and or domain indexes are built
+-This sequence prevents data from being rejected due to the order in which tables are imported.
+-this sequence also prevents redundant triggers from firing twice on the same data.
+
+
+Different modes of Export
+-------------------------
+-It has three mode same as the EXP ultility
+1)Full DB Mode
+2)User Mode
+3)Table Mode
+
+
+1)Full DB Mode
+*------------*
+-in this mode, a DBA can import data from the Export file, which was taken with the options of full DB export.
+-Only DBA or users with IMP_FULL_DATABASE priviles can iport data using full database mode.
+
+Syntax
+	IMP <userName>/<password> FULL=y FILE=<FileName>.dmp;
+
+
+2)User Mode
+*----------*
+-In user mode, all DB oejbect belonging to a particular user can be imported
+	
+Syntax
+	IMP <userName>/<password> FILE=<FileName>.dmp;
+
+
+3)Table Mode
+*----------*
+-In this mode, the DBA can import data on a Table-by-Table basis.
+
+Syntax-FROMUSER
+	IMP <userName>/<password> FILE=<FileName>.dump FROMUSER=<UserName> TABLES=(<schemaName>.<tableName1>,schemaName>.<tableName2>...)
+
+-syntax --TO USER
+IMP <userName>/<password> FILE=<FileName>.dump FROMUSER=<UserName> TOUSER=<UserName> TABLES=(<schemaName>.<tableName1>,schemaName>.<tableName2>...)
+
+
+Interactive Mode
+================
+-this export and import ultilies can run in two modes
+1)Command Line Mode[which is explained earlier]
+2)Interactive Mode
+-if parameter are no supplied to the exp or imp command, an interactive session starts as shown belows
+-When run in interactive mode, these utlitiles prompt for all necessary input.
+
+Import
+------
+1) Type IMP in command prompt
+2) Enter user name and password for importing
+3)Enter the import location where the Exp Dump is available
+4)enter the insert buffer size ..press enter to accept default
+5)Press enter to accept defaults for listing contents of import file only
+6)Press enter to accept defaults for ignore create error due to object exists
+7)Press enter to accept defaults for import grants
+8)Press enter to accept defaults for importing table data
+9)Press enter to accept defaults for import entire export file 
+10)Enter table name specific or null list means all tables for users.
+11)Now import terminated successfully without warnings
+
+
+Export
+------
+1) Type EXP in command prompt
+2) Enter user name and password for importing
+3)Enter the export location where dump will get saved like C:\backup
+4)Enter options 3 or nesscarry options for exporting the mode of export
+5)Press enter to accept defaults for exporting table data
+6)Enter table name specific or null list means all tables for users.
+7)Now import terminated successfully without warnings
+
+
+Migrating a DB across Platform
+==============================
+-The Export and Import Ulitlities allows moving an existing oracle DB from one hardware platform to another.
+example
+1)Moving between Linux and Windows Systems
+2)Moving Two windows systems running on different platforms
+
+-The following steps present a general overview of how to move a DB between platforms
+1)As a DBA users,issues the following SQL command to retrieve the names of all available Tablespaces.this informations will be required will be required later in this process
+	SELECT Tablespace_Name from Dba_Tablespaces;
+2)As a DBA user, perform a full export from the source DB as:
+	EXP SYSTEM/<Password> FULL=y FILE=fullbackup.dump
+
+3)Copy /move the dump to the target DB server. if FTP is used, ensure to copy it in binary format by entering binary at the FTP prompt to avoid file corruptions.
+4)Create the DB on target server
+5)Before importing the dump file, create the required Tablespaces, using the information obtained in step1
+or else the import ultilies creates the corresponding data files in the same file structure as at the source database, which may not be compatible with the file strucutre on the target system
+6)As a DBA user, perform a Full Import with the IGNORE parameter enabled as:
+	IMP System<Password> FULL=y IGNORE=y FILE=Fullbackup.dmp
+   IGNORE=y instructs oracle to ignore any creations errors during the import and permit the import to complete
+7)Perform a full backup of the new DB as a backup for future.
+
+
+
+

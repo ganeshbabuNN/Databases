@@ -1,0 +1,1 @@
+alter table tpcm rename column name to sname;

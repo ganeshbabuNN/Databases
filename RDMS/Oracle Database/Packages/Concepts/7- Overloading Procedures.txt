@@ -1,0 +1,54 @@
+OVERLOADING PROCEDURES
+====================
+
+-this can be done inside the packages 
+-overloading procedures with the same name with two or more different parameters
+-we shall work on only on the three recrods
+
+select first_name,hire_date,salary
+from hr.employees
+where rownum <=3;
+
+--converting all the column into string
+
+select first_name,to_char(hire_date,'DD/MM/YYYY'),to_char(salary)
+from hr.employees
+where rownum <=3;
+
+
+Reading the data from the table and put into a file as CSV
+----------------------------------------------------------
+Package_ReadingFromTable_PuttingToCSV.sql
+
+---if you really do not know the datatype , where you are writing into a file , for this create a procedures of the package
+--you can use the overloaded functions to do this , coz you do not know the data type.
+
+Package_NotAwareOfDataType_Stringer.sql
+
+---now you can call with the stringify procedures
+
+Package_ReadingFromTable_PuttingToCSV_Using_StringerAPI.sql
+
+
+if you want to convert the procedures for converting to CSV
+-----------------------------------------------------------
+--package for for any data type 
+Package_CovertingToCSV_Stringer.sql
+
+
+--now call the procedures
+Package_UTL_FILE_Procedure_ConvertingCSV_FromattedCSV.sql
+
+---now converting to the unformatted 
+Package_UTL_FILE_Procedure_ConvertingCSV_UnFromatted.sql
+
+
+
+
+
+
+
+
+
+
+

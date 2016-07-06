@@ -1,0 +1,99 @@
+GLOBAL PUBLIC and PRIVATE VARIABLES
+===================================
+--In Package body, in the previous example in the update block of the employee API employee_api_body1.sql, we have declared with some constants which determine which should be null and which is not.
+--If i want to make it available to others, in that case i have to make the package variables.
+--Before making the package variables, first I need to decided to this package variables is availabe inside the package and available for other users.
+--Just to remember, Package variables values are available life of the sessions, that means the procedures and functions variables are declared and destoryed in every call, A package variable begins the first time its call and not destroyed in the calling sessions and disconnects, basically when you connect make a package call your variables are initialized they get a assigned values, they can also change the values over the life of the connections buts its not just a one call.
+
+
+GLOBAL PUBLIC Variables
+------------------------
+---Variable available in the package spec are called the global or public variables , where everyone can see the applications, if it is declared has constant , they can seen but cannot be changed. In General variables in the package spec should be every be constants. If we have regular changable variables that anyone can change that can create more problem in the applications, this is called as side effects.
+--- adding the local variables and putting has a package global variables. move the constants variables in the package spec as shown in the below examples.
+
+CREATE or REPLACE PACKAGE employee_api
+as
+    v_char_default CONSTANT VARCHAR2(1) := '*';
+    v_whole_number_default CONSTANT NUMBER := -1;
+    v_fractional_number_default CONSTANT NUMBER := -0.01;
+    v_date_default CONSTANT DATE := to_date('01-JAN-9999', 'DD-MON-YYYY');
+-----
+
+PROCEDURE emp_update(
+  p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+  p_first_name IN employees.first_name%TYPE DEFAULT '*',
+  p_last_name IN employees.last_name%TYPE DEFAULT '*',
+  p_email IN employees.email%TYPE DEFAULT '*',
+  p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+  p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+  p_job_id IN employees.job_id%TYPE DEFAULT '*',
+  p_salary IN employees.salary%TYPE DEFAULT -1,
+  p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+  p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+  p_department_id IN employees.department_id%TYPE DEFAULT -1
+  );
+---
+
+END;
+
+GLOBAL PRIVATE VARIABLES
+-------------------------
+- what if the variables to be changables and retains the same between the calls and don't want other users to change then make them as Global Private Variables.
+- here this variables are declared inside the body instead of declaring in the spec and only those procedures & functions can make changes into those values and access it
+
+CREATE OR REPLACE
+PACKAGE BODY EMPLOYEE_API AS
+
+----
+-----
+  PROCEDURE emp_update(
+    p_employee_id IN employees.employee_id%TYPE DEFAULT -1,
+    p_first_name IN employees.first_name%TYPE DEFAULT '*',
+    p_last_name IN employees.last_name%TYPE DEFAULT '*',
+    p_email IN employees.email%TYPE DEFAULT '*',
+    p_phone_number IN employees.phone_number%TYPE DEFAULT '*',
+    p_hire_date IN employees.hire_date%TYPE DEFAULT to_date('01-JAN-9999', 'DD-MON-YYYY'),
+    p_job_id IN employees.job_id%TYPE DEFAULT '*',
+    p_salary IN employees.salary%TYPE DEFAULT -1,
+    p_commission_pct IN employees.commission_pct%TYPE DEFAULT -0.01,
+    p_manager_id IN employees.manager_id%TYPE DEFAULT -1,
+    p_department_id IN employees.department_id%TYPE DEFAULT -1
+  )
+  AS
+    v_char_default CONSTANT VARCHAR2(1) := '*';
+    v_whole_number_default CONSTANT NUMBER := -1;
+    v_fractional_number_default CONSTANT NUMBER := -0.01;
+    v_date_default CONSTANT DATE := to_date('01-JAN-9999', 'DD-MON-YYYY');
+  BEGIN
+    UPDATE employees 
+	----
+	----
+	---- 		
+  END emp_update;
+
+END EMPLOYEE_API;
+
+
+Benifits OF PACKAGES
+--------------------
+1) logical grouping functions and procedures that makes maintence easier that make developer life easy
+2) Here the informations Hiding , where the procedures or function in the body where the definiations is available in the spec where everyone can see them
+3)Performance- if you now run the package all the associate procedure and functions runs in the memory and everyone can access that 
+
+NESTED PACKAGES
+---------------
+--Now let us convert logger procedures into packages
+
+Package_Baisc_Spec_Implementation.sql
+
+--Let us cleanup the code to take advantage of the real package use, by changing the magic variables like 'T', 'D'and 'DT' constants in the spec and replace variables across the spec and body.
+
+Package_Baisc_Spec_Cleanup_Using_Constants.sql
+
+--Now creating the strings for the package body 
+
+Package_Baisc_Spec_Cleanup_Using_Constants_Body_Strings.sql
+
+--- Here all we have done is hardcoded the strings and packages is simpliest, it can be even local variables for most part, which i do not need that in the package spec,but it might be nice to pull the variables from the table and that case use the initializations.
+
+

@@ -1,0 +1,1 @@
+select avg(phy), variance(phy), stddev(phy) from marks;

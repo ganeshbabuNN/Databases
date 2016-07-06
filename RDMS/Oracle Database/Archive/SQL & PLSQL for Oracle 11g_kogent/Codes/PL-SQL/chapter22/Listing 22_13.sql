@@ -1,0 +1,1 @@
+icode itemcode%type := 1000; 

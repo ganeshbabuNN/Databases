@@ -1,0 +1,1 @@
+select timeid,amount,sum(amount) over(order by timeid rows unbounded preceding) 		cum_amt  from sales_data where rownum < 11 order by 1;

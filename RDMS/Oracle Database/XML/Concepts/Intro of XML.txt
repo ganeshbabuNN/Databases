@@ -1,0 +1,85 @@
+XML Uses
+=======
+XML stands for eXtendsible Markup Language
+XML is designed for store and transport data.
+XML and HTML are two subsets of SGML(STANDARD GENERALIZED MARKUP LANGUAGE)
+
+XML Terms
+=========
+Element
+Tag
+Attribute
+Character Reference
+Entity Reference
+
+Element
+-------
+An XML element is the central building block of any XML document which contains start tag and end tag.
+Ex 
+<body><body>
+<p><p>
+<student></student>
+<email><email>
+Some Elements may contains only start tag without end tag
+Ex
+<br/>
+<hr/>
+
+Tag
+----
+The Markup character that indicate the start or end of an element – but not the element content itself
+
+Attribute
+---------
+A Part of an element that provides additional iformation about that element.
+
+Ex
+<font color=”red” size=”5”>JLC</font>
+<student sid=”99”  bid=”B-99”/>
+
+Reference
+------------
+Some character have a special meaning in XML.
+If you place a character like “<” inside an XML element , it will generate an error beacuase the parser interprets it as the start of a new element.
+Following line generates an XML error.
+<message> if fee < 1000 then </message>
+To avoid this error, replaces the “<”character with any eneity reference or character reference
+
+Character Reference
+--------------------
+Syntax
+
+&intnumber
+
+Ex:
+<message>if fee &60;1000 then</message>
+
+Entity Reference
+----------------
+Syntax:
+&logicalname;
+
+Ex:
+<message>if fee & lt; 1000 then</message>
+
+Example
+--------
+Ganesh.xml
+
+<?xml version =”1.0”  encoding=”UTF-8”?>
+<gb>
+<student sid=”11” job=”yes”>
+<sname> ganesh</sname>
+<email>
+<oemail>Ganesh@gb</oemail>
+<pemail>ganesh@gb.c</oemail>
+</email>
+</student>
+<course cid=”101” free=”true”>
+<cname>XML</cname>
+<cost> 101</cost>
+<faculty>&f1;</faculty>
+</course>
+</gb>
+
+

@@ -1,0 +1,1 @@
+select rank() over (order by trunc(sum(amount),-6)) default_rank,row_number() 		over (order by trunc(sum(amount),-2)) 		rw_num,to_char(timeid,'yyyy'),channelid,to_char(trunc(sum(amount),-	2),'999,999,999,999.99') from sales_data						group by to_char(timeid,'yyyy'), channelid;

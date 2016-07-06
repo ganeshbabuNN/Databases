@@ -9,7 +9,7 @@ d)Developing and running batch scripts
 e)Performing DB administrations
 -DBA's and developes are the most common users of SQL plus and DB management in regularly performed using SQL plus.
 
-How does plus functions
+How does SQLplus functions
 -----------------------
 -Users key in SQL statements at the SQL prompt in SQL plus tool
 -These statements are dispatched to the Oracle DB server.
@@ -18,4 +18,345 @@ How does plus functions
 -Besides sending SQL statements to the server, SQL plus also saves them into a local buffer and allow the users to view and change the statements
 -Diagrammatically, the above can be explained
 --check the Diagram
+
+Working with SQL Plus Command Line
+==================================
+
+Starting the SQLPlus command line
+---------------------------------
+-Open the command prompt and type sqlplus
+-Or On windows ,select start--> all programs--> Oracle-OraDb11g_home1->Application Development-->SQL Plus
+-Enter the username and password, after sucessfully logging in to the system the prompt changes to SQL> ,.This prompt accepts SQL queries and PL/SQL code blocks for interacting with the Oracle DB.
+
+SQL Plus Commandline Parameter
+------------------------------
+-if the command windows is used to invoke SQL plus, then username and password can be passed as parameters to the sqlplus command
+	sqlplus scott/tiger
+-This invocation approach has serious security implication, as using this means the password is not hidden and can be viewed by a person standing nearby.
+
+Using the nonlog Parameter
+--------------------------
+if the command window is used to invoke SQL plus, then nolog parameter can be used to inform the SQL plus, that the interface should not attempt to login.this will be done manually
+	sqlplus /nolog
+
+Logging in as SysDBA or SYSOPER
+--------------------------------
+-to perform specific DBA Activities such as backing up the DB or shutting it down, SQL plus allows the user to log in as special type of user.
+-This is because such operations requires a special set of administrative privilege such as SYSDBA and SYSOPER privileges
+-To connect using the SYSDBA privileges, use the the following command 
+	sqlplus "sys as sysdba";
+-*the connection string i,e "sys as sysdba" is enclosed in quotes.This is because there are white spaces in the connection string.
+
+Quitting sqlplus Command line
+-----------------------------
+-to quit the SQL plus command line interface, key in the following command at the SQl prompt
+	exit
+or
+	quit
+
+
+Executing Commands
+------------------
+-To inform SQL plus what to do, simply type the desired command.the words in the command are separated from each other by a space
+-The following command can be entered and executed at the SQL prompt
+*SQL commands and PL/SQL blobkc, for working with informations in the DB
+
+SQL commands
+	Select * from EMP;
+OR
+PL/SQL code blocks
+BEGIN
+	dbms_output.put_line('Hello World')l
+END;
+/
+
+*SQL Plus commands , for formatting query results, setting options and editing and storing SQL command and PL/SQL blocks
+CLEAR SCREEN
+SHOW USER
+SET PAGESIZE 100
+START myScript.sql
+
+-login to Scott/tiger
+-Type the following command at the SQL prompt,
+-SELECT ENAME,SAL FROM EMP WHERE SAL <1500;
+The semicolon [;] informs SQL plus that command has ended and it now needs to be executed.After the semicolon process the Enter Key.The SQL plus processes the command and displays the results on the screen
+-After the displaying the results and the number of rows retrieved, SQL plus displays the SQL prompt as show that is ready for next command
+-The SQL command can be terminated in any following ways
+a)A Semicolon[;] informs SQL plus that the command needs to be run SQL plus process the command and stores it in the SQL buffer
+b)A forward slash[/] on a line by itself informs SQL plus that the command needs to be run.SQL plus processes the command and stores it in the SQL buffer.
+c)A Blank line informs SQL plus that the user has finished entering the command, but does not desire executing it at the moment.
+Press the enter key again, SQL plus prompts changes to SQL>
+SQL Plus does not execute the command, but stores it in the SQL buffer. if subsequently another SQL commadn is entered and executed using a semicolon[;] or a slash [/], SQL plus overwrites the unexecuted command in the buffer.
+-The SQL Buffer stores the most recently entered SQL command or PL/SQL block,However, the SQL Plus commands are not stored
+-The command or block remains in the buffer until replaced by the next SQL commadn or PL/SQL block.
+
+A long SQLplus command on Additional Lines
+------------------------------------------
+-A long SQL plus command can be continued across additional lines by typing a hypen at the end of the line and pressing [return].
+-SQL Plus displays a right angle bracket [>] as a prompt for each additional line that keyed in.
+
+SQL> select ename,job,mgr,hiredate,-
+> sal,deptno from emp;
+
+SQL Plus commands
+-----------------
+-SQL plus commands can be used to manipulate SQL commands and PL/SQL code blocks and to format and print query results
+-There is no need to end a SQL plus command with a semicolon.When Finished with entering the command, Just press the Enter key.However as a practice, a semicolon can be entered at the end of a SQL Plus command.
+-A Number of SQL plus command can be used to edit the SQL command or PL/SQL code block currently stored in the buffer or a host operating system editor can be used to edit the buffer conetn.
+-SQL Plus stored the previous SQL commands/statements in a buffer.The SQL statemetns can be edited to correct the SQL statemetns stored in the buffer.
+
+A[PPEND] text 
+*------------*
+- adds specified text to the end of the current line of the SQL buffer. 
+-To separate text from the preceding character with a space , enter two spaces between APPEND and text.
+-To Append text that ends with a semilcolon , end the command with two semicolon as SQL plus interprets a single semicolon as a command terminator
+
+-C[HANGE] /old/new 
+*----------------*
+-changes the text specified by old or new in the current line
+
+DEL [n|n m|n *|n LAST|*| n|* LAST[LAST]
+*-------------------------------------*
+-Deletes one or more lines of the buffer and the asterix [*] indicates the current line
+-The space can be omitted between DEL and n or *, but not between DEL and LAST.Enter DEL with no clauses to delete the current line of the buffer
+
+L[IST][n|n m|n *|n LAST|*| n|* LAST|LAST]
+*---------------------------------------*
+-List one ore more lines of the buffers
+
+STORE {SET} FileName[.ext][CRE[ATE]REP][LACE]|APP[END]]
+*-----------------------------------------------------*
+-save the attributes of the current SQL plus environment into the sytem file
+
+UNDEF[FINE] Variable...
+*---------------------*
+-Deletes given user variables that is defined either explicitly[with the DEFINE Command] or Implicitly [With an argument to the START Command].
+
+PRI[NT] [Variable...]
+*-------------------*
+-Displays the current values of bind variables
+
+.[PERIOD]
+*-------*
+-Terminates a substitutions variable followed by a character that woould otherwise be part of the variable name.
+
+R[UN] or /
+*---------*
+-Runs the statement stored in the buffer.Even the slash[/] can be used to run the statements
+
+X
+*-*
+-Makes the line specified by the line number x the current line
+
+Retrieving Help
+---------------
+-if a user help on a specific SQL command, use the following command at the SQL prompt
+	HELP CONNECT
+Where CONNECT is the SQL command on which help is needed.
+
+
+Comments
+-------
+-SQL Plus uses the REM or REMARK keyword for commenting or documenting the details of file
+-The REMARK command must appear at the begining of a line and comment ends at the end of the lin.A line cannot contain both a comment and a command.
+-A Dash[-] at the end of a REMARK line is treated as a line continuations character
+
+	REM This is my first SQL*Plus comment;
+
+-Using the SQL comment delimiters, /*..... */ on separte lines in the command file on the same line as a SQL command or on a line in a PL/SQL Block.
+-Using the ANSI/ISO-\space-style comments within SQL Statements, PL/SQL blocks or SQL plus commands.Since there is no ending delimiters, the comment cannot span multiple lines.For PL/SQL and SQL enter the comment after a command on a line or on a line by itself.
+
+Run SQL Statements in a Batch
+-----------------------------
+- to run SQL COmmands in a batch , put all the SQL commands into a text file and execute these commands using this file in SQL Plus
+
+Passing a Value to A variable in a script
+-----------------------------------------
+-Oracle [10g onwards] allows passing value(s) to variable (s) contained in SQL scripts at runtime
+-A Script scan hold multiple variables that will be populated with appropriate values at runtime.Every such variable that can accept a value is precede by a number with an ampersant[&].
+-Whilst executing the script ,the value can then be passed immediatley after naming the script file.
+
+
+Using the SQL Plus edit save file[afiedt.buf]
+---------------------------------------------
+-afiedt.buf is the SQL plus default edit save file.When command ED or EDIT is ussed without arguments, the last SQl or PL/SQL command is aved to a file called afiedt.buf and opened in the default editor.
+-in the prehistoric days, when SQL plus was called UFI[User friendly interface],this file was name ufiedt.buf.When new features were added to UFI,it was initially name Advanced UFI and the filename was changed to aufiedt.buf and then to afiedt.buf
+syntax
+		EDIT or ed
+-to invoke the file afiedt.buf,enter the following command at the SQL prompt 
+-EDIT command loads the contens of the buffer into the default editor registered with the O/S when the text editor is closed, the text is saved back into current buffer.
+-A command file with a host operating system text editor can be created by entering EDIT command following by the name of the file as shown below
+	EDIT <File Name>
+-EDIT command adds the file name extension .sql to the name unless typed with a period and a different extension at the end of the file name.
+-To Load the buffer contents into a text editor other then the default[EDITOR environment variable],use the SQL plus DEFINE command, to define a variable along with _EDITOR ,to hold name of the editor as shown below
+	DEFINE _EDITOR=vi
+OR
+	DEFINE _EDITOR="C:\Program Files\EditPlus 2\editplus.ext"
+-If the contents of a command file needs to be placed in the buffer, then retrieve the commands from teh file in which they are stored as
+	GET <File Name>
+-Once the contents are in the buffer, the command can be edited further and if the file does not contains SQL Plus commands,the execute it with the RUN Command
+	START
+-The START Command retrieves a command file and run the commands it contains.Use the START to run a command file containing SQL commands,PL/SQL blocks and SQL Plus commands
+	START <FileName>
+-The at the rate sign[@] can be used to run a command file.The @Command list and runs the commands in the specified command file is the same manner as the START Command
+	@<File Name>
+-A command file can be executed when invoking SQL plus from the system prompt as 
+	sqlplus <UserName>/<password> @<File Name>
+
+Defining Variables
+------------------
+-Variables can be defined for repeated use in a single command file by using SQL plus command DEFINE
+	DEFINE CUSTOMER=GANESH;
+-to list all user variable definitions, that are available, enter DEFINE at the SQL prompt
+
+Defining Substitution Variables
+-------------------------------
+-SQL plus automatically DEFINEs substitutions variables that are preceded by two ampersands.if characters are required to be appended immediately after a substitution variable, use a period to separate the variable from the character
+-& when used, creates a temporary substitution variable that prompts for a value every time it is reference.
+- && when used, creates  a permanent substitution variable.
+-Once a value is entered on the prompt, that value is used every time , the variable is referenced.
+
+Changing SQL Prompt
+-------------------
+-the default SQL> prompt can be changed to something else as desired using the 
+	SQL SQLPROMPT <fileName>
+
+Formatting Query Results
+------------------------
+-The SQL plus column command allows changing the column geadubg ub tge query results
+-SQL plus uses the default column headings when displaying the query results
+-A more useful column heading can be defined with the HEADING clause of the COLUMN command
+syntax
+	COLUMN <columName> HEADING <NewName>
+
+-the new heading remain in effect, until a different heading is entered, each columns format is reset or an exit is made from SQL plus.
+-To change a heading to two or more words, enclose the new heading in single or doulbe quotations marks while entering the COLUMN command
+-To display a column heading, on more than one line, use a Piple [|] to indicate the begining of a new line
+-The character used to underline each column heading can be changed, by using the SET command with the UNDERLINE clause
+-The COLUMN Command is also used to change the default format of Numbers and Text
+-The COLUMN command identifies the column needed to be formatted and the model to be used.
+-To list the current display attributes for a specific column or all columns use the COLUMN command at the SQL prompt
+	COLUMN
+- For individual columns
+	COLUMN <Column Name>
+- To reset the display attributes, for all the columns [or a specific column], use the CLERAR command[or CLEAR clause of the COLUMN Command]. for all columns
+	CLEAR COLUMNS
+-For individual columns
+	COLUMN <Column_Name> CLEAR
+-The display attributes specified can be suppressed and restored to a specific column through the column command, by using the ON and OFF clause.The OFF clause informs SQLPlus to use the default display attributes for the column,but does not remove the attributes defined through the COLUMN command
+	COLUMN <Column Name> OFF
+	COLUMN <Column Name> ON
+-SQL plus wraps column values to additional lines when the values does not fit within the column width.if a record separator needs to be inserted after each WRAPPED line of output or EACH line, then user the RECSEP and RECSEPCHAR variablesof the SET command
+	SET RECSEP WRAPPED
+	SET RECSEP EACH
+	SET RECSEPCHAR '-'
+-Even the whole word can be wrapped to additional lines when a column value wraps to additional ines
+	COLUMN <ColumnName> WORD_WRAPPED
+
+
+Creating Record Subsets
+-----------------------
+-BREAK and COMPUTE Commands create subset of records and add space and /or summary lines after each subset.
+-the column specified in a BREAK command is called column which suppressed duplicate values, by including the break in the ORDER BY clause, meaningful subsets of records in created in the output.
+-formatting can be added to the subset within the same BREAK command.A summary can also be added by specifying the break column in a COMPUTE Command
+-Blank lines can be inserted or new page can be started, each time the value in teh break column changes
+-SKIP PAGE
+-Even blank lines or blank page can be inserted after every row, SKIP PAGE command only skips the number of lines defined to be page and thus it might not cause a physical page break.
+-to the list the current break definitions, ente rthe break command with no cluase at the SQL prompt,to remove the current 
+bak deinitions, enter the CLEAR COmmand with break clause
+-if the rows of a report are organised into subsets with the BREAK command, then various computations can be performed on the rows in each subset.this is done with the functions of SQL plus COMPUTE command.Use the BREAK and COMPUTE commands together in the following forms
+	sytnax
+		BREAK ON <Break Column1> SKIP PAGE ON <Break Column2> SKIP 1 COMPUTER <Function> OF <Column> <Column>...
+		ON <Break Column2>
+-the COMPUTE Command has no effect without a corresponding BREAK Command computations can be done on number columns and in certain case, on all types of columns
+-the functions like SUM,MIN,MAX,AVG,STD(standard deviations),VAR(Variance),COUNT,NUM
+-The funciton specified in the COMPUTE COMMAND, applies to all columns entered after OFF and before ON.
+-The computed values, print on the separate line, when the value of the ordered column changes. Labels for the comptued values appears in the first column
+-Summary line can be calculated and printed based on all values in a column by using BREAK and COMPUTE in the following forms
+	BREAK ON REPORT
+	COMPUTE <Function> OF <column> <Column> <Column>... ON REPORT
+-To print a grand total[or grand average,grand maximum and so on ] in additions to subtotals[or sub-average and so on],include break column and an ON REPORT clause in the BREAK command and then enter on COMPUTE command for the break column and another to compute on REPORT
+	BREAK ON <Break Column> ON REPORT
+	COMPUTE <Function> OF <Column> ON <Break Column>
+	COMPUTE <Function> OF <Column> ON REPORT
+-Multiple summary lines can be printed on teh same break column.To do so, include the function for each summary line , in the COMPUTE command as follows
+	COMPUTE <Function> <Function> ... OF <Column> <Column>.. ON <Break Column>
+
+Saving changes to the DB automatically
+--------------------------------------
+-The SQL DML COmmands such as UPDATE, INSERT and DELETE can be used independently or within PL/SQL block to change ,add or delete informations stored in the DB.
+-These changes are not made permanent,until an SQL COMMIT command or an SQL DCL or DDL Command [such as CREATE TABLE] is entered.
+-The SQL Plus autocommit featues, causes pending changes to be commited,after a specified number of sucessfull SQL DML Transactions
+-The autocommit features can be set using the SET commands AUTOCOMMIT variable
+	SET AUTOCOMMIT ON
+-Turns autocommit on
+	SET AUTOCOMMIT OFF
+-Truns autocommit off[the default]
+	SET AUTOCOMMIT n
+-commits changes after every n SQL commands or PL/SQL blocks
+	SET AUTOCOMMIT IMMEDIATE
+-Truns autocommit on.
+-After each autocommit, SQL plus displays the following messages
+-when the autocommit features in turned on, the changes made in DB cannot be rolled back.
+-to commit changes to the DB, after a number of SQL DML commands or PL/SQL blocks, type following command
+	SET AUTOCOMMIT 10
+-SQL Plus counts SQL DML command and PL/SQL blocks as they are exeucted and commits the changes after the tenth SQL DML command or PL/SQL block
+-PL/SQL block is regarded as one transaction ,regardless of the actual number of SQL commands contained within
+-To determine what the AUTOCOMMIT is set to [OFF or ON] enter the following SHOW command
+	SHOW AUTOCOMMIT
+
+Output Results to a File
+------------------------
+-SQL commands can be recorded to a file for output or editing purpose
+Syntax	
+	SPOOL <File Name>;
+-All SQL commands and their outputs , after this command are written into the file name.this file by default is stored in teh current working directory from where the SQL plus is invoked if the path is unspecified.
+-To end recording to a file, use the following command
+	SPOOL OFF;
+
+
+Output Results to an HTML File
+------------------------------
+-Static HTML pages can be generated from SQL plus by setting the MARKUP option to HTML ON.
+-this can be done by specifying MARKUP "HTML ON" from command line or with the "SET MARKUP HTML ON" command.
+
+Output Results to an CSV File
+-----------------------------
+-Creating a comma separated file
+
+Setting the page size
+---------------------
+-The Number of lines can be set in a page using the SET PAGESIZE command.This command sets the number of lines that SQL Plus consider as one page of output after which SQL Plus will displays the heading again.
+	SET PAGESIZE <Number>
+
+Setting the line size
+---------------------
+-The number of characters in a line be set using the set linesize command
+	SET LINESIZE <Number>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

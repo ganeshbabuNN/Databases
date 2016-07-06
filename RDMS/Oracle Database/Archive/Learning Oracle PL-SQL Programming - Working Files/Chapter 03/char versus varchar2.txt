@@ -1,0 +1,13 @@
+DECLARE
+  vName VARCHAR2(10) := 'Lewis';
+  cName CHAR(10) := 'Lewis';
+  
+BEGIN
+  IF vName = cName 
+  THEN
+    dbms_output.put_line('Variables Match');
+  ELSE
+   dbms_output.put_line('Variables Do Not Match');
+  END IF;  
+END;
+/

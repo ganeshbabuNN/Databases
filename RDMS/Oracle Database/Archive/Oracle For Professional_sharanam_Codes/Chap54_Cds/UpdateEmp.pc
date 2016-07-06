@@ -1,0 +1,57 @@
+/* Program to change the salary of an employee */
+	#include <stdio.h>
+	#include <string.h>
+	#include <sqlda.h>
+	#include <sqlcpr.h>
+
+	EXEC SQL BEGIN DECLARE SECTION;
+		VARCHAR uid[80];
+		VARCHAR pwd[20];
+		int empno;
+		int sal;
+		VARCHAR ename[30];
+		int newsal;
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL INCLUDE SQLCA.H;
+	void main()
+	{
+		strcpy(uid.arr, "Vaishali@Linux");
+		uid.len = strlen(uid.arr);
+		strcpy(pwd.arr, "vaishali");
+		pwd.len = strlen(pwd.arr);
+
+		EXEC SQL WHENEVER SQLERROR GOTO errexit;
+		EXEC SQL CONNECT :uid IDENTIFIED BY :pwd;
+
+	/* Accepting the employee number from user */
+		printf("Enter employee number: ");
+		scanf("%d", &empno);
+
+	/* Retrieving the details of the employee */
+		EXEC SQL WHENEVER NOTFOUND GOTO noemp;
+		EXEC SQL SELECT FirstName || ' ' || LastName, Salary INTO :ename, :sal 
+			FROM Employees WHERE EmployeeNo = :empno;
+
+	/* Displaying the employee name and salary */
+		ename.arr [ ename.len ] = '\0';
+		printf("Name: %s  Salary: %d\n", ename.arr, sal);
+		printf("Enter new salary: ");
+		scanf("%d", &newsal);
+
+	/* update employee record */
+		EXEC SQL UPDATE Employees SET Salary = :newsal 
+			WHERE EmployeeNo  = :empno;
+		printf("Updation Successful");
+		goto normalexit;
+
+		noemp:
+			printf("Sorry. Invalid employee number. Quitting...");
+
+		normalexit:
+			EXEC SQL COMMIT WORK RELEASE;
+			return;
+
+		errexit:
+			printf("Error: %70s", sqlca.sqlerrm.sqlerrmc);
+	}

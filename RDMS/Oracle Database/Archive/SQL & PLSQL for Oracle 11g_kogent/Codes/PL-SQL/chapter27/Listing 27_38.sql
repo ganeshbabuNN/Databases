@@ -1,0 +1,1 @@
+delete from empobjtab where empid=2;

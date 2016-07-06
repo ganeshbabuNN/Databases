@@ -1,0 +1,1 @@
+select ename from emp_company where not (cname=‘ACC’);

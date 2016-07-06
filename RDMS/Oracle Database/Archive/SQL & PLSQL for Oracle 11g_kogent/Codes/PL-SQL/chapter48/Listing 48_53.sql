@@ -1,0 +1,1 @@
+insert into sample(sn) values(1);

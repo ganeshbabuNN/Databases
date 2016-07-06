@@ -1,0 +1,1 @@
+create table z (a number, b number);  

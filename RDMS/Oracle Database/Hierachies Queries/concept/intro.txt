@@ -1,0 +1,117 @@
+Hiearchical Queries
+===================
+
+-A Hiearchy is built upon a parent-child relationship within the same table or view
+-Hiearchical query is one of the very first features of the oracle and was introduced mor ethen twenty year ago!
+-The main keyword in building a hiearchy are CONNECT BY, PRIOR and START WITH.
+
+Syntax
+------
+[ START WITH condition ]
+CONNECT BY [ NOCYCLE ] condition
+
+
+CONNECT BY
+----------
+-specifies the relationship between parent rows and child rows of the hierarchy
+
+START WITH
+-----------
+
+--it basically specify the Root row(s) of the hiearchy
+
+
+CONNECT BY,START WITH,PRIOR
+---------------------------
+-A hiearchy is bul when on row is the parent of anther row, start with defines the first ancestor
+
+Hiearchies_Queries_Basic.sql
+
+LEVEL
+-----
+- this will return the level of the hiearchy
+
+Hiearchies_Queries_LEVEL.sql
+
+ORDER SIBLING BY
+---------------
+-the rows in a hiearchical query are returned as a tree, the childer following the pareent,
+-it preserves the hiearch and order the children of each parent.
+
+Hiearchies_Queries_ORDERSIBLINGBY.sql
+
+ORDER BY without siblings destroys the hiearchy
+Hiearchies_Queries_ORDERBY_withoutSibling.sql
+
+PRIOR
+----
+-it is keyword in the CONNECT BY clause defines the relationship between the parent and the child
+-it identifies the column of the child row where the value matches another column of the parent row.
+-it is useful to select some child and some parent values simutltaneously.
+--It evaluates the immediately following expression for the parent row of the current row in a hierarchical query.
+--PRIOR causes Oracle to use the value of the parent row in the column. 
+
+Hiearchies_Queries_PRIOR.sql
+
+SYS_CONNECT_BY_PATH
+-----------------
+-the function SYS_CONNECT_BY_PATH returns the hiearchy from the the first ancestor to the current row. each name is separated by specific character
+-the second argument s must be a literal
+
+Hiearchies_Queries_SYSCONNECTBYPATH.sql
+
+
+CONNECT_BY_ROOT
+--------------
+-the function connect_by_root returns the first ancestor
+
+Hiearchies_Queries_CONNECTBYROOT.sql
+
+- In oracle 9i, it is simulated by using SUBSTR and SYS)CONNECT_BY_PATH, in this first ancestor is select by  SUBSTR+INSTR
+
+Hiearchies_Queries_SYSCONNECTBYPATH_Oracle9i.sql
+
+--CONNECT_BY_ROOT allows subtress to be aggregated and analyzed
+Hiearchies_Queries_CONNECTBYROOT_Aggreation_XMLAGG.sql
+
+CONNECT BY NON CYCLE and CONNECT BY ISCYLE
+------------------------------------------
+-in 10g keyword, NOCYCLE, hiearchical queries detect loops and do not generate errors, CONNECT_BY_ISCYCLE pesudo-column is a flag that can be used to detect which rows is cyclings
+
+Hiearchies_Queries_CONNECTBY_NOCYCLE_ISCYCLE.sql
+
+CONNECT BY without PRIOR
+------------------------
+-it is popular in genearate rows
+-the single row of dual is both the parent and the child of itself but no loop is genearted. it is the very efficient way to genearte to rows
+
+Hiearchies_Queries_CONNECTBY_Without_PRIOR.sql
+
+CONNECT_BY_IS_LEAF
+-----------------
+--in oracle 10g pesudo column it identifies rwos that do not have descendants.
+--only complete path from the ancestor where MGR is null to the last Descendants are displayed
+
+
+Hiearchies_Queries_CONNECTBYISLEAF.sql
+
+WHERE
+-----
+Hiearchies_Queries_WHERE_Syntax.sql
+
+JOIN
+----
+-the join syntax allows more flexibility to define what should be processed before the hiearchy and what should be processed after
+Hiearchies_Queries_JOIN_Syntax.sql
+
+Aggregations
+------------
+
+-it is possible to use aggregations, hiearchies and analytics within the same query
+
+Hiearchies_Queries_Aggregations.sql
+
+
+
+
+

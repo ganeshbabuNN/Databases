@@ -1,0 +1,29 @@
+Modifying All rows
+==================
+-to modify the data held by the table, the UPDATE command is used.
+-it can be update all the available rows in a table OR a specific set of rows in a table
+-The UPDATE command updates the column data in the existing table with new values
+
+syntax
+------
+UPDATE <TableName>
+SET <ColumnName1>=<Expression1>,
+<ColumnName2>=<Expression2>;
+
+-the SET clause indicates which column data should be modified and the new values that they should hold.
+-the WHERE clause, if specified, indicates which rows should beupdated. in absence of WHERE clause all tables rows are updated.
+
+Modifying specific rows
+========================
+-to modify specific rows the WHERE Clause can be used.
+
+syntax
+------
+UPDATE <TableName>
+SET <ColumnName1>=<Expression1>,
+<ColumnName2>=<Expression2>
+WHERE <conditions>;
+
+
+
+

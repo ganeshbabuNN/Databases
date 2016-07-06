@@ -1,0 +1,16 @@
+CREATE OR REPLACE PROCEDURE bad_abc
+AS
+  v_what NUMBER := 'abc';
+BEGIN
+  NULL;
+EXCEPTION
+  WHEN OTHERS THEN NULL;
+END;
+/
+
+
+BEGIN
+  bad_abc;
+END;
+/
+

@@ -1,0 +1,1 @@
+empcode NUMBER(6) NOT NULL;   		--Not valid

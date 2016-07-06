@@ -1,0 +1,1 @@
+select rownum, ename from employee;

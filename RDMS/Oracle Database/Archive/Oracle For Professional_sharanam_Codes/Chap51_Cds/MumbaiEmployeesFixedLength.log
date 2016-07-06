@@ -1,0 +1,54 @@
+
+SQL*Loader: Release 11.1.0.6.0 - Production on Tue May 20 01:43:27 2008
+
+Copyright (c) 1982, 2007, Oracle.  All rights reserved.
+
+Control File:   MumbaiEmployeesFixedLength.ctl
+Data File:      /MyData/CSV/MumbaiEmployeesFixedLength.txt
+  Bad File:     MumbaiEmployeesFixedLength.bad
+  Discard File:  none specified
+ 
+ (Allow all discards)
+
+Number to load: ALL
+Number to skip: 0
+Errors allowed: 50
+Continuation:    none specified
+Path used:      Direct
+
+Table MUMBAIEMPLOYEES, loaded from every logical record.
+Insert option in effect for this table: INSERT
+
+   Column Name                  Position   Len  Term Encl Datatype
+------------------------------ ---------- ----- ---- ---- ---------------------
+EMPLOYEENO                           1:10    10           CHARACTER            
+FIRSTNAME                           12:60    49           CHARACTER            
+LASTNAME                           62:110    49           CHARACTER            
+SALARY                            112:121    10           CHARACTER            
+DEPTNO                            123:132    10           CHARACTER            
+GENDER                            134:140     7           CHARACTER            
+
+
+Table MUMBAIEMPLOYEES:
+  5 Rows successfully loaded.
+  0 Rows not loaded due to data errors.
+  0 Rows not loaded because all WHEN clauses were failed.
+  0 Rows not loaded because all fields were null.
+
+Bind array size not used in direct path.
+Column array  rows :    5000
+Stream buffer bytes:  256000
+Read   buffer bytes: 1048576
+
+Total logical records skipped:          0
+Total logical records read:             5
+Total logical records rejected:         0
+Total logical records discarded:        0
+Total stream buffers loaded by SQL*Loader main thread:        1
+Total stream buffers loaded by SQL*Loader load thread:        0
+
+Run began on Tue May 20 01:43:27 2008
+Run ended on Tue May 20 01:43:27 2008
+
+Elapsed time was:     00:00:00.22
+CPU time was:         00:00:00.04

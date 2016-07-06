@@ -1,0 +1,1 @@
+set transaction use rollback segment rbs8; 

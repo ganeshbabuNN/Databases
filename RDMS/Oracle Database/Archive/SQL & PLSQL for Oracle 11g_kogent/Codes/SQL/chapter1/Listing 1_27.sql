@@ -1,0 +1,1 @@
+create table ztemp5(a char(10), b varchar2(10));

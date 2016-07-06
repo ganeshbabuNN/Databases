@@ -1,0 +1,1 @@
+select c2.city from customer c2,deposit d3 where c2.cname = d3.cname;

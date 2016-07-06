@@ -1,0 +1,1 @@
+delete student4 where sname = 'Ajay';

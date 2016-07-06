@@ -1,0 +1,1 @@
+revoke create table from anil;

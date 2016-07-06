@@ -1,0 +1,375 @@
+Intro
+========
+-A Trigger is one of the extensively used database objects.
+-it is a piece of code spec that is usually run before or after a database table is modified.
+-A Trigger can be defined on:
+1)Tables/Views: DML[INSERT,UPDATE,DELETE]
+2)Schema:DDL Triggers and Logon/Logoff event trigggers
+3)Database: System event triggers[Startup/Shutdown]
+
+Triggers Uses
+-------------
+A Trigger is common used to:
+-Generate running numbers before inserting new rows
+-Prevent invalid transactions
+-Permit DML Statement against a table only if they are issued, during regular busienss hours or on predetermiend weekdays
+-Keep an audit trail of a table[i,e to store the modified and deleted records of the Table] along with the operation performed and the time on which operations was performed.
+-Ensure that an appropriate column is populated with default information to generate running number before inserting new rows.
+-Ensure a rollback, if the information being added/modified in the DB tables is found to be inconsistent
+-populate some other columns based on the new or old column values
+
+Trigger code spec defines
+-------------------------
+-The Action the DB needs to perform whenever some DB manipulation with the help of SQL such as INSERT, UPDATE and DELETE takes place
+
+Unlike the stored procedures and functions
+------------------------------------------
+-Which have to be caleld explicitly , the DB triggers are invoked implicitly whenever the table is affected by any of the DML operations
+-Which accept parameters ,triggers do not accept parameters
+
+
+Parts of Triggers
+=================
+it has three basic parts
+1)Triggering statement
+2)Trigger Restriction
+3)Trigger Action
+
+1)Triggering statement
+----------------------
+-A Triggering event also called a triggering statement is a SQL statement, DB event or user event that causes a trigger to fire.
+-it fires automatically when any of the following events occurs.
+a)An INSERT, UPDATE or DELETE statements on a specific table or view
+b)CREATE, ALTER or DROP statements on any schema object
+c)A DB startup or instance shutdown
+d)A specific error message or any error message
+e)A user logon on logoff
+
+2)Trigger Restriction
+---------------------
+-A Trigger constraint specifies a Boolean expression that must be TRUE for the trigger to fire.
+-A allows conditional control over the exeuctions of a trigger. 
+-A Trigger is specified using a WHEN clause
+
+3)Trigger Action
+---------------
+-the Trigger Action is a PL/SQL procedure that contains the code spec to be executed when the trigger fires.
+-The PL/SQL code block can hold SQL and PL/SQL statements, can define PL/SQL language constructs and can call stored procedures
+-If the trigger is a row trigger, the statement in a trigger action have access to column values of the row begin processed by the trigger.
+-Correlations name provide access to the old and new values of each columns.
+
+Types of Triggers
+=================
+the following of three types of trigger
+1)Row Trigger
+2)Statement triggers
+3)Timed Triggers
+
+1)Row Trigger
+-------------
+-Row Triggers are used when some processing is required every time a triggering statement affects a single row in a table.
+-A Row trigger is fired each time a row in the table is affected by the triggering statement. it uses FOR EACH ROW Clause
+-ex> DELETE COmmand deletes multiples rows of a table, a row trigger is fired once for each row that is deleted. If the triggering statement affects no rows, the trigger is not executed at all.
+
+
+2)Statement triggers
+--------------------
+-A Statement triggers is fired once on behalf of the triggering statment, independent of a number of rows the triggering statement statemets affects [even if no rows are affected]
+-Statement trigger should be used when triggering statement affects rows in a table but the processing required is completely independent of the number of rows affected
+
+3)Timed Triggers
+----------------
+-When defining a triggers it is necessary to specify the trigger timing i,e specifying whether to perform the trigger action[i,e execute trigger code block] BEFORE or AFTER the triggering statement.
+-BEFORE and AFTER apply to both row and the statement triggers
+
+
+before triggers
+*-------------*
+-this indicates the trigger will be fired before, the INSERT, UPDATE or DELETE operations that occurs on the table
+-Generally if you have any trigger action uses to ensure the triggerring statement should be allowed to complete.
+-by using BEFORE trigger for this purpose, the unncessary processing of the triggering statement and its eventual rollback[in case an exception is raised in the trigger action] can be eliminated.
+
+
+After Triggers
+*------------*
+-
+This indicates that the trigger will be fired after, the INSERT, UPDATE or DELETE operations that occur on the table
+-An AFTER trigger is generally used to perform different actions on the same triggering statement if a BEFORE trigger is already present
+-The AFTEr Triggers are very useful when creating audit trial for DB tables.
+-By using AFTER Triggers, auditing information is recorded after triggering statement is subjected to applicable integrity constraints , therey by preventing cases where the audit processing is carried out unecessarily for statement that generate exception to integrity constraints
+
+Timed Triggers combined with Row and Statements
+-----------------------------------------------
+BEFORE and AFTER options apply to both statement and row triggers.Hence by using the BEFORE and AFTER options, the following four types of rows and statement triggers can be created
+
+BEFORE Statement triggers
+*-----------------------*
+the trigger aciton is executed
+	BEFORE the triggering statement is executed
+
+BEFORE Row TRigger
+*----------------*
+the trigger action is executed
+ For each row
+	BEFORE the triggering statment is executed
+
+AFTER Statement triggers
+*----------------------*
+The trigger action is executed
+	AFTER the triggering statement is executed
+
+AFTER Row Trigger
+*---------------*
+The Trigger action is executed
+   For each row
+	AFTER the triggering statement is executed.
+
+
+
+INSTEAD of Triggers
+===================
+- An INSTEAD OF Triggers[normally defined on complex views] provides a transparent way of modifying a view that cannot be modified directly through DML statements such as INSERT,UPDATE and DELETE
+-An INSTEAD OF triggers defined on a view is fired when INSERT, UPDATE or DELETE statement is executed against the view.When fired, the INSTEAD of triggers modifies the underlying tables approprately. 
+-An INSTEAD OF Triggers defined on a view is always a rows triggers i,e the trigger is fired for each modified row of the view
+-it is designed only for views and not for tables. The BEFORE and AFTER options , cannot be used with INSTEAD OF Triggers
+
+Compound Triggers
+=================
+-COMPOUND triggers allows defining more than one type of triggers in a Single triggers.
+
+spec
+----
+-Compound triggers allows combining more than one trigger with different triggering timings into a single compoun trigger. This is the biggest advantage of compound trigger as it allows modular programming with less cubersome code
+-Compound trigers contains declaration section and more than one section for each timing points such as before each row, after each row, after statements and so on.
+-This individual timing points shares a single global declartions section , whose state is maintained for the lifetime of statement ends, due to successfull completions or an error, the trigger state is cleanup up.
+
+
+DDL Triggers
+============
+-DDL trigger fires when a DDL statement[CREATE,DROP,ALTER] is executed in the database or a particular schema.
+-DDL Trigger can be created either at the DB level or schema level.
+-The BEFORE or AFTER options, can be specified for defining the timing of the triggers
+
+BEFORE CREATE or AFTER CREATE TRIGGER
+-------------------------------------
+this trigger is executed
+	when a schema object is created
+
+BEFORE OR AFTER ALTER Trigger
+-----------------------------
+This trigger is executed
+	when a schema object is alter
+
+BEFORE or AFTER DROP Trigger
+----------------------------
+This trigger is executed
+	when a schema object is dropped
+
+System Event Trigger
+====================
+-A System event trigger is a DB triggers defined on a System event.
+-it fires when a system event such as startup,shutdown,logon, logoff or error occurs
+-DB on system events can be defined at the DB or schema Level.
+-A DB Triggers on a DB fires for each for all users.
+-DB trigers defined on a schema fires for each event for that particular user.
+-Ex. Trigger on DB startup or shutdown can be defined only at the DB level.
+-A Trigger on user logon or logoff can be defined at either the DB level or schema level
+-DB Triggers can be created on the following system event
+
+SERVERROR
+-Causes the oracle server to fire the trigger whenever a server error message is logged.
+-The Trigger on a SERVERERROR event can only be an AFTER Trigger
+
+LOGON
+-Causes the ORACLE server to fire the trigger whenever a user logs on the DB.The trigger on a LOGON event can only be an AFTER triggers
+
+LOGOFF
+-causes the ORACLE server to fire the trigger whenever a user logs off the DB.The Trigger on a LOGOFF event can only be a BEFORE triggers
+
+STARTUP
+-Causes the oracle server to fire the trigger Whenever the DB is opened.The Trigger on a STARTUP event can only be an AFTER Trigger
+
+SHUTDOWN
+-Causes the Oracle server to fire the trigger whenever the DB is shut down. The Trigger on a SHUTDOWN event can only be a BEFORE Trigger
+
+Sequence of Trigger Firing
+--------------------------
+-When a two or more triggers are defiend on the table, they are fired in following order
+1)All before statement triggers
+2)All before row triggers
+3)All after row triggers
+4)All After statement triggers
+
+-Multple triggers of the same type can be defined on the same table.
+-Ex. Three Before insert triggers defined on the same table.
+-if multiple triggers are of the same type, then they follow the above order, but there is no guarantee which one will be executed first, unless it is created with FOLLOW Clause
+-Triggers as well as declarative integrity constraints can be used to constraint data input.
+
+Creating Trigger
+================
+
+Syntax
+
+CREATE OR REPLACE TRIGGER [<Schema>.]<triggerName>
+{BEFORE,AFTER}
+
+{DELETE,INSERT,UPDATE[OF<column>,...]} -- Triggering statement
+
+ON [<Schema>.]<tablename>
+	[REFERENCING {OLD AS old, NEW AS new}]
+
+	[FOR EACH ROW[ WHEN <condition>]] --- Trigger constraints
+
+DECLARE
+	<variable declarations>;
+	<constant declarations>;
+BEGIN				  --Trigger body
+	<PL/SQL subprogram body>;
+EXCEPTION
+	<Exception PL/SQL Block>;
+END;
+
+Where,
+
+*OR REPLACE
+-Recreates the trigger if it already exists
+-Changes the Definations of an existing Trigger
+
+*SCHEMA
+-is the Schema, Which contains the trigger, if ommits , oracle engine creates the trigger in the users own schema.
+
+*TriggerName
+-is the name of the trigger to be created
+
+*BEFORE
+-Indicates that the oracle engine fires the trigger before executing the triggering statements
+
+*AFTER
+-indicate the the oracle engine fires the trigger after executing the triggering statement
+
+*DELETE
+-indicate the the oracle engine fires the trigger whenever a DELETE statement removes a row from the table
+
+*INSERT
+-it indicates the Oracle engine fires the trigger whenever an INSERT statement adds a row to table
+
+*UPDATE
+-It triggers Whenever an UPDATE statement changes a value in one of the columns specified in the OF Clause
+-if this clause is ommitted, the ORACLE engine fires the triggers wheenver an UPDATE statement changesa value in any column of the table
+
+*ON
+-Specify the schema and name of the table,which the trigger is to be created
+-if schema is ommitted, it assumes the table is in the users own schema.
+-it cannot be created in the SYS Schema*REFERENCING
+
+*REFERNCING
+-it specifies the Co-relations names
+-it can be used in PLSQL block and WHEN clause of a row trigger to refer specifically to old and new values of the current row
+-the Default correlations names are OLD and NEW .
+-if row trigger is associated with a table name OLD or NEW, this clause can be used to specify different correlations names to avoid confusion between table name and the correlations name
+
+*FOR EACH ROW
+-it designates the trigger to be a row trigger.
+-this engine fires a row trigger once for each row that is affected by the trigger statement and meets the optional trigger constraint defined in the WHEN clause.
+-if this ommited the trigger is a statement trigger
+
+*WHEN
+-it specifies the trigger restriction
+-it contains a SQL conditions that must be satisfied for the oracle engine to fire the trigger.
+-this conditions must contain the Correlation names and cannot contain a query.
+-Trigger restriction can be specified only for the row triggers.
+-it evaluates this conditions for each row affected by the triggering statement
+
+*PLSQL block
+-in this PLSQL block that oracle engin executes when trigger is fired
+
+
+Mutating the Table Error
+========================
+-This error is a well-known problem encountered in development environment.
+-this error is encountered when a row-level trigger access the same table on which it is based while executing, hence table is said to be mutating
+-it will not occur if a single record is inserted in the table[Using VALUES clause].if bulk insertion is done or data is inserted from another table mutation will occur. It also occurs during insert,update and delets presetnt in the trigger.
+
+Tables for possible errors occurs
+Operation	Type				Mutating
+Insert		Before/statement-level		No
+Insert		After/statement-level		No
+Update		Before/statement-level		No
+Update		After/statement-level		No
+Delete		Before/statement-level		No
+Delete		After/statement-level		No
+insert		Before/row-level		Single-Yes,Multi-row-No
+insert		after/row-level			Yes
+update		before/row-level		Yes
+update		after/row-level			Yes
+Delete		before/row-level		Yes
+Delete		After/row-level			Yes
+
+
+-This Erorr is been encountered when querying a table other thatn the table on which the trigger is based . this usually when a foreign key reference is present with an ON DELETE CASCADE options
+-A row level trigger on the master table mutates if the detail is beging referred to in the trigger, for a delete transaction. this will happen only if the foreign key on the details table created ON DELETE CASCADE options. 
+-No mutations occurs if the maste table is beging referred in a trigger on the detail table
+-The Mutating error conflicts with maintaining a consistent view, therefore, care should be taken to write proper code and avoid such triggers. it is for the developers to write proper logic so that such complication do not raise
+
+To avoid mutating table errros
+------------------------------
+-A row-level trigger must not query or modify a mutating table, However,correlation names such as NEW and OLD can be accessed by the trigger
+-A statement-level trigger must not query or modify a mutating table if the trigger is fired as the result of a CASCADE delete
+
+Correlation Names
+=================
+-The data in the SQL statement can be classified as new values and old values.
+-When the user fires an insert statement, the values of the columns included in the insert statement can be read or set using :NEW.columnname.
+-Similary,if the user updates a record, the value before the modification can be read using :OLD.columname. The new values set using an update statement can be refereenced using :NEW.columname.
+
+
+
+RAISE_APPLICATION_ERROR
+-----------------------
+-It is procedure provided by oracle that allows programmers to issue user-defined error messages
+
+syntax
+	RAISE_APPLICATION_ERROR(<ErrorNumber>,<Message>);
+where
+-ErrorNumber
+Is a negative integer in the range -20000 to -209999
+-Message
+is a character string up to 2048 bytes in length
+
+RAISE_APPLICATION_ERROR can be called in stroed subprogram such as stored procedures, functions and database triggers
+-RAISE_APPLICATION_ERROR is most commonly used in database triggers
+-it is called wehen
+*Terminates the subprogram
+*rolls back any database changes it made
+*Returns a user-defined error number and message to the application
+
+Destroying An Existing Trigger
+==============================
+-Syntax	
+	DROP TRIGGER <Triggername>;
+where
+	TriggerName - is the name of the trigger to be dropped.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

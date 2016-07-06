@@ -1,0 +1,58 @@
+Intro
+=====
+- A GROUP BY Statement specifies the an SQL SELECT statement returns a list that is grouped by one or more columns, usually in order to apply some sort of aggregate function to Certain columns
+- The GROUP BY clause can be associated with the HAVING Clause which is similar to associating the ORDER BY Clause with the WHERE Clause, expect that the GROUP BY and HAVING Clause operator on reocrd sets and not on individual record like the ORDER BY and WHERE clauses to
+-Rules for GROUP BY and HAVING Clauses
+*columns listed in the SELECT statement have to be listed in the GROUP BY clause
+*Columns listed in the GROUP BY clause need not be listed in the SELECT Statement
+*Only group functions can be used in the HAVING Clause
+*the group functions listed in the HAVING clause need to be listed in the SELECT statement
+
+GROUP BY Clause
+===============
+-it is used with the SELECT statements. it creates  a data set, containing several sets of records grouped together based on the conditions
+
+syntax
+------
+SELECT <ColumnName1>,<ColumnName2>,<ColumnNameN>
+ AGGREGATE_FUNCTION (<Expression>)
+  FROM <TableName> WHERE <Conditions>
+   GROUP BY <ColumnName1>,<ColumnName2>,<ColumnNameN>;
+
+HAVING Clause
+=============
+-it is always used along with the GROUP BY clause, HAVING is basically a condition that is applied on the result set retrived by apply the GROUP BY clause
+-each column specified in the HAVING clause must be available within a statistical funciton or in the list of columns name in the GROUP BY Clause
+-Or it is used to provide conditions on a group of rows. the where clause is used to provide conditions on the row value but the having clause is used used to provide conditions on the group values.
+
+SELECT <ColumnName1>,<ColumnName2>,<ColumnNameN>
+ AGGREGATE_FUNCTION (<Expression>)
+  FROM <TableName> WHERE <Conditions>
+   GROUP BY <ColumnName1>,<ColumnName2>,<ColumnNameN>
+     HAVING AGGREGATE_FUNCTION (<Expression>) <condition>;
+
+
+Determing Whether values are Unique
+===================================
+- the DISTINCT Clause is that it eliminates duplicates, but does not show which values actually were duplicated in the orginal data. the HAVING clause can identify which values were unique or non-unique
+- the HAVING caluse can be used to fine unique values in situations to which DISTINCT does not apply
+
+ROLLUP Operator
+===============
+-the rollup operator is used to calculate aggregate and super aggregates for expression within a group by statements. Reports writers use this operator to extract statistics and or summaries from a resultset
+
+CUBE Operator
+=============
+-the CUBE operator can be applied to all aggreage functions such as AVG(),SUM(), MAX(), MIN() and COUNT() within a GROUP BY statements
+-this operator is usually used by report writers to extract cross-tabular reports from a result-set
+-CUBE produces subtotals for all possible combinations of grouping specified in the GROUP BY clause along with a grand total as a against the ROLLUP operator which produces only a fraction of possible subtotal combinations.
+
+WITH Clause
+===========
+-it reduce the overheads for computing the same queries.
+-Suppose you want to use the result of a certain repeatedly, you can mark that query using the WITH clause. 
+-internally oracle forms temporary tables based on the results of a query and use that for the rest of the query evaluations.
+
+ORDER BY Clause
+===============
+--you can sort the data using various ways using ORDER BY clause

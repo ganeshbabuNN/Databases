@@ -1,0 +1,219 @@
+Insert
+======
+-The insert operations begins by creating a new row [empty] in the database table and then loading it with values passed[by the SQL INSERT INTO] into the columns specified.
+-it has Two sections
+1)the first section indicates the table[Begin loaded with data] along with a list of column names in which values are begin populated
+2)the second section indicates the actual data i,e.. values begin inserted in the column list of the first section
+
+
+Insert into table with columns name
+-----------------------------------
+
+Syntax
+------
+INSERT INTO <tableName> (<columnName1>,<columnName2>) VALUES (<Expression1>,<Expression2>);
+
+-Character expression placed within the INSERT INTO Statement must be enclosed in single quotes['].
+-The table columns have values have a one-to-one reltionsihp [i,e the first value[1] describedis inserted into the first column and the second value described is inserted into the second column.
+-The Sentence, if there exist same number of values as there are columns and the values are sequenced in exactly in accordance with the data type of the table columns, there is no need to indicate the column names.
+
+
+Insert into table with out columns
+----------------------------------
+
+
+Insert data in specific columns
+-------------------------------
+-if there are less values begin described than there are columns in the table, then it is mandatory to indicate both the table column name and its corresponding values in the INSERT INTO SQL Sentences.
+
+-if the mapping between table columns and its values do not exists in the INSERT INTO SQL Sentence. Oracle will be unaware about which columns to insert the data into. This will generally cause a loss of data integrity. Then the data held within the table will be largely usel
+ess.
+
+Copying all data from another table
+===================================
+-copying all the data from the another table
+
+sytnax
+------
+INSERT INTO <TableName>
+SELECT <ColumnName1>,<ColumnNameN> FROM <TableName>;
+
+Copying specific data from another table
+===================================
+-Copying specific data from the another table
+
+sytnax
+------
+INSERT INTO <TableName>
+SELECT <ColumnName1>,<ColumnNameN> FROM <TableName>
+WHERE <Condition>;
+
+Inserting Using TimeStamp
+=========================
+-Oracle have improved on the date data type, to produce a new data type called timestamp. 
+-it stores all the informations, includes fractions of seconds
+A timestamp columns holds in the following format:
+
+format
+YYYY-MM-DD HH24:MI:SS.SSSSSSSSS
+*SSSSSSSSS is the seconds and its fractions
+
+Inserting using BINARY_FLOAT and BINARY_DOUBLE
+==============================================
+BINARY_FLOAT
+---------------
+-this data type was introduced in oracle DB 10g. its stores a precision 32-bit floating point number.
+-BINARY_FLOAT is a 32 bit, single-precision floating-point number data type. 
+-Each values requires 5 bytes including a length byte.
+
+BINARY_DOUBLE
+----------------
+-this data type was introduced in DB 10g. it stores a double precision 64 bit floating point number.
+-it is a 64 bit ,double-precision floating point number data type. 
+-Each values requires 9 bytes including a length byt
+
+In addition to literal values, the following special values can be used with the BINARY_FLOAT and BINARY_DOUBLE data types;
+-BINARY_FLOAT_NAN : not a number
+-BINARY_FLOAT_INFINITY:Infinity
+-BINARY_DOUBLE_NAN: Not a number
+-BINARY_DOUBLE_INFINITY: Infinity
+
+
+Inserting using INTERVAL
+========================
+its difficult records an individual moments in time. this makes it difficult to express an interval of time. To express an interval of time. To express an interval, the interval is converted to raw seconds and helds in a Number column.
+
+-Performing time calculations as:
+1)60 Seconds to the minute
+2)60 minutes to the hour
+3)24 Hours in a day
+-it will be difficult using a number data tpe
+
+
+Multi-Table Insert Statements uSING INSERT ALL/FIRST (insert all)
+====================================================
+-this basically helps in inserting into multiple tables at the same time
+-can be used to copy data from one or more tables to a difficult set of target tables
+-There are two forms of statement i,e unconditional and conditional.
+
+1)Unconditional form
+--------------------
+-An INTO Clause list is executed once for each row returned by the sub query
+
+syntax
+------
+INSERT ALL INTO <TableName1>[VALUES(...)]
+INTO <TableName1>[VALUES(...)]... 
+SELECT ...
+
+2)conditional form
+------------------
+-An INTO Clause list are guarded by WHEN clauses that determine whether the corresponding INTO Clause list is executed or NOT.
+
+syntax
+------
+
+INSERT {ALL|FIRST}
+WHEN <Expression> THEN INTO <TableName1> [VALEUS(...)]
+WHEN <Expression> THEN INTO <TableName1> [VALEUS(...)]...
+[ELSE INTO <TableNameN> [VALUES(...)]]
+SELECT ...
+
+-INTO Clause list consists of one ore more INTO Clauses. the execution of an INTO Clause list causes the insertion of one row for each INTO Clause in the list.
+-INTO Clause specifies the target into which a computed row is inserted.the target specified, can be any table expression that is legal for an INSER.. SELECT statement. aliases cannot be used. the same table can be specified as the target for more then on INTO clause
+-INTO clause provides the value of the row to be inserted using a VALUES clause.
+
+the following are the lcauses that are used with INSERT Statement for multi-table inserts
+
+ALL..INSERT INTO Clause
+*---------------------*
+-ALL followed by multiple INSERT INTO Clause to perform a unconditional multi table insert
+-Oracle exeuctes each INSERT INTO Clause once for each row returned by the subquery
+
+Conditional INSERT Clause
+*---------------------*
+-CONDITIONAL INSERT clause to perform a conditional multi-table insert
+-Oracle filters each INSERT INTO clause through the corresponding WHEN Condition, which determines whether that INSERT INTO CLAUSE is executed. 
+-A single multi-table insert statement can contain up to 127 WHEN Clauses
+
+ALL Clause
+*--------*
+-It evalutes each WHEN clause, regardless of the results of the evaluation of any other WHEN Clause.
+-For each WHEN clause whose conditons evalues to true  oracle exuectes the corresponding INTO Clause list.
+
+
+FIRST Clause
+*--------*
+-in this case, Orcale evalues each WHEN clause in the order in which it appears in the statement. for the first WHEN clause that evalutes to true, it executes the corresponding INTO Cluase and skips subsequent WHEN clauses for a given row.
+
+ELSE Clause
+*--------*
+-Oracle reaches ELSE CLAUSE, if no WHEN clauses evalutes to true, if ELSE CLAUSE is specified,it exeuctes the INTO Clause list associated with the ELSE clause. if ELSE CLAUSE is not specified, it takes no action for that row.
+
+SUBQUERY
+*--------*
+-acts as a source to data held in the table
+-it returns rows from the desired table.
+-it can refer to any table, view or materialized view including the target table of the INSERT statement
+-if it select no rows, no rows will insert into the table
+
+Inserting in unconditional statment
+-----------------------------------
+-the VALUES clause, can only contain columns referenced in the SELECT statement in the subquery
+-if the VALUES clause is not included, the SELECT statement in the subquery will define the values to be inserted
+-All indicates evaluation of all WHEN clauses. for each WHEN clause that evalutes to true, oracle processes the coresponding INTO Clause
+
+
+Inserting in Conditional statment
+-----------------------------------
+-THE VALUES clause can only contains columns referenced in the SELECT satement in subquery
+-if the VALUES clause is not included, the SELECT statement in the subquery will defined the values to be inserted
+-the INSERT FIRST will execute the FIRST INTO clause that matches on the experssion, it will, then skip all the following WHEN Clause
+-the same table can be specified fo rmultiple target INTO Clause
+-can have upto 127 WHEN Clauses
+
+Inserting in Conditional using Subquery
+---------------------------------------
+-THE VALUES clause can only contains columns referenced in the SELECT satement in subquery
+-if the VALUES clause is not included, the SELECT statement in the subquery will defined the values to be inserted
+-ALL indicates evluations of all WHEN clauses . for each WHEN clause that evalutes to true, Oracle will process the corresponding INTO Clause
+
+Multi_Table Restriction
+-----------------------
+the are the few restrictions on using multi-insert INSERTS
+-cannot be used with views and materialized. Only tables are supported
+-Cannot be performed on a remote table
+-Cannot use a collection expression
+-Cannot be parallelized in a Real Application Cluster environment
+-Cannot use plan stablity
+-Cannot use a sequence in a subquery
+
+
+MERGING ROWS 
+============
+
+-it the combination of INSERT and UPDATE operations on a single table with respect to the data held in another table.
+-Oracle allows doing so using MERGE DML Command
+
+sytnax
+------
+MERGE INTO <TableName>
+  USING <TableViewORQuery> ON (<Condition>)
+    WHEN MATCHED THEN <UpdateClause>
+      DELETE <WhereClause>
+    WHEN NOT MATCHED THEN <InsertClause>;
+
+-MERGET INTO clauses specifies of the table to merget the two tables
+-The USING .... ON Clause specifies a table join
+-then WHEN MATCHED THEN Clause specifies the action to take when the USING... ON Clause is satisfied for a row
+-THEN WHEN NOT MATCHED clause specifies the action to take when the USING ... on clause is not satisfied for a row
+
+
+
+
+
+
+
+
+
+

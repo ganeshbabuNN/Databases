@@ -1,0 +1,1 @@
+grant create table to anil;

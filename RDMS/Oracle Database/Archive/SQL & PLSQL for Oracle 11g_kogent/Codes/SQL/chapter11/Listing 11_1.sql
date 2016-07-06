@@ -1,0 +1,1 @@
+select * from sales_data where rownum < 11;

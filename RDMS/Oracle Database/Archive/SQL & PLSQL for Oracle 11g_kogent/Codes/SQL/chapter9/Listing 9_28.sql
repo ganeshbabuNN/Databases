@@ -1,0 +1,1 @@
+select rn,phy,decode((trunc(phy/25)),0,'A',1,'B',2,'C','D') from marks;

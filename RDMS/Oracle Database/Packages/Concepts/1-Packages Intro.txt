@@ -1,0 +1,132 @@
+Packages
+========
+
+-we have seen how to create the standalone procedures, we have to use the functions and procedures content of packages
+-A package is sort of the libraries, its a logical related program units of other PLSQL constructs such as variables and cursors
+-There are many reason why use packages instead of using standalone procedures,functions
+-there are other reasons also like performance issues , where the packages is loaded once and every uses it whereas the standalone procedures ,functions loads every time when they call modularity ,application design 
+-if you thinking how to group logical related constructs then always put more time into thought of modularity what can be Re-used like that also like information hiding i,e ablitity to separate the public declarations from backend code which works
+
+BASIC PACKAGE SPECIFICATION
+============================
+
+-its basically looks like any other block structures programming unit that we have been looking at
+
+mypackage_spec.sql
+create or replace
+PACKAGE myPackage
+AS
+  PROCEDURE abc;
+  
+END;
+
+-the whole purpose of this specification is to provide the public definiations , so we can think the package spec is a contract that anyone call into the code/block.
+-the specifications is here set of procedures ,functions and data structures,that you can call to happen certains things to happen in the program
+-basically spec is all about the informations hiding and encapsulations
+-By providing the public specification , you can provide the stable interface , most of the features changes will be body of the package where the real code.
+-In our previous example, we have the following scenarios in SQL in PLSQL session 
+
+1)Procedure_%RowType_Insert_Basic.sql
+2)Procedure_%Type_Insert_Parameterized_GoodPratice.sql
+3)Procedure%RowType_Update_Parmaterized_Defaults _NotNull_Constants.sql
+4)Procedure%Type_Delete.sql
+
+--the above all are logical related where logical related working on the employees tables, this may be the ideal solutions of the packages or ideal program for package solutions
+--Now let us combine all the above procedures into a packages called the employees_api
+
+CREATE or REPLACE PACKAGE employee_api
+as
+---
+--
+END;
+
+-Now combine all the declarations into the package as a Specification
+
+Package_Spec_insert_update_delete.sql
+
+-There is a concept call package overloading where it carries the same proc/function name which different signatures or parameters. this will be discussed in the upcoming chapters
+
+PACKAGE BODY
+============
+
+
+-If package spec is a public contracts where it can be read where the body cannot be read, where body is the actual implementations of the spec
+-For creating the package body 
+*SQL Developer --> 
+1)Navigate to the object explorer
+2)Right click on the API which you are create i,e employee_api(in this example)
+3)Click on "create Body" on the Package spec  which will create a stub on the spec, which create the null block carried with the procedures definiations with the null block.
+4) you will observer a name called XXXX_BODY with the suffix create on the sub package spec.
+5) click on the compile options and check the spec with the body is compiled properly. this ensure you have a stable package.
+
+CREATE or REPLACE PACKAGE employee_api
+as
+
+PROCEDURE emp_insert(
+  p_employees_rec IN EMPLOYEES%ROWTYPE ) AS
+BEGIN
+  ----- implemenations code
+NULL
+END emp_insert;
+
+---
+---
+---
+
+END;
+
+- implement all the code inside the null block
+
+Package_Body_insert_update_delete.sql
+
+-Now let us test the api with the individual blocks in a AB ,but this will not work coz its carrying the same procedure name which is getting conflict but using the package, you call the procedure in the package with different parameters which is called as overloading.
+
+Package_Callingthe_Package_API.sql
+
+-Here to work just add the package name as a prefix on each procedures
+
+call_employee_api.sql
+DECLARE
+  v_employees_rec employees%ROWTYPE;
+BEGIN
+
+  -- Initialize record
+  v_employees_rec.employee_id := 998;
+  v_employees_rec.first_name := 'Ganesh';
+  v_employees_rec.last_name := 'babu';
+  v_employees_rec.email := 'Ganeshc@yahoo.com';
+  v_employees_rec.phone_number := '937372833';
+  v_employees_rec.hire_date := sysdate;
+  v_employees_rec.job_id := 'IT_PROG';
+  v_employees_rec.salary := 50000;
+  v_employees_rec.commission_pct := 0;
+  v_employees_rec.manager_id := 100;
+  v_employees_rec.department_id := 60;
+  
+  
+  -- Called record based API
+  employee_api.emp_insert( 
+  ---
+  );
+  
+  -- Call parameterized api
+  employee_api.emp_insert(
+  ----
+  ---- 
+  );
+  
+  -- call update api
+  employee_api.emp_update(
+  ----
+  ----
+  );
+  
+  -- call delete api
+  employee_api.emp_delete(
+  ---
+  ---
+  );
+  
+END;
+/
+

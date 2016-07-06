@@ -1,0 +1,68 @@
+Intro
+======
+-PL/SQL allows writing subprograms
+-A subprograms is a named block of code block made up of logically grouped SQL and PL/SQL statements that perform a specific task.
+
+A Subprogram
+------------
+-Allows to write PL/SQL programs to meet the requirements
+-Breakings the PL/SQL prgoram into management modules
+-allows resuing of code spec and thus improve code maintainablity
+-Enforces security by giving appropriate permission, on a procedure or funciton querying a paritcular table , to users
+-improve db performance as no compilation is required to execute the procedure or functions
+
+subprogram can be classified into
+---------------------------------
+-Procedures
+-Functions
+
+-Both Procedures and functions can be invoked by an PL/SQL code block that appears within an appplication .
+-Before procedure or function is stored, the oracle engine parses and compiler the procedure or functions.
+-these subprograms are compiled and stored in the Oracle DB as stored programs. since these program are stored in compiled form, whenever they are invoked, only program execution takes place
+-A procedures or functions when executed is processed on the Oracle DB server, thus reduces network traffic.s
+
+
+Section of Procedures and Functions
+===================================
+-Every subprogram i,e procedures and functions are made up of:
+
+Declarations section
+--------------------
+-the Declarative section usually holds the declarations of
+a)Cursors
+b)Constants
+c)Variables
+d)Exceptions
+e)Subprograms
+-these declarations are local to the subprogram and become invalid once the subprogram i,e procedures or functions exits
+
+Executable Sections
+-------------------
+-this holds SQL and PL/SQL statements that helps achieve the purpose for which procedures or function is written and holds code spec that
+*Assigns value to variables
+*Controls executions
+*Manipulates table data
+*Returns data to the calling environment after completing processing the code spec.
+-the variables are declared in the declarative section are used within this code blcok.
+
+Exception Handling section
+--------------------------
+-THis exception handling seciton holds exceptions [if any] that may be raised during the executin of code block in the executable sections
+-the congfrol from the exception handling section cannot be shifted to the executable paDrt
+
+Difference between procedures Vs Functions
+=========================================
+steps		Procedures						FUnctions
+-----		----------						---------
+Return value	A procedure may return one ore more value through 	a function always return a value using the return 
+		parameter or may not return values at all.		statement
+Multiple Return	By defining multiple OUT Parameter in a procedures,	A Function can return only one value to the calling
+value		mulitple values can be passed/returned to the caller.   PL/SQL Code block.
+		the OUT variable beging global by nature, its value is 
+		accessible by any PL/SQL code block including the PL/SQL
+		block via which it was called
+SQL Select	A SELECT query can call a function			A SELECT SQL query cannot call a procedures
+Queries
+DML Queries	DML Statements can be used in procedures		DML Statements cannot be used in functions
+When to 	if it is desried to update product prices, a procedure	if it is desired to retrieve the mpeloyee number 
+Create		ie prefered						[code] for a particular employee, a function is pre										-ferred.

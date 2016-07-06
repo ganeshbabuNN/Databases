@@ -1,0 +1,172 @@
+Introduction
+============
+-Any OOP languages allows defining class which are templates and spawn objects on demand.
+-Class defines attributes which are use to store an objects state and methods which are used to model an object's behavior.
+-it also made objects avaiable to the DB. this means Oracle DB capabilities are integrated with Object programming language
+capabilities resulting in an object-orirented Management system[ODBMS]
+-Oracle now allows defining classes, know as Object Types[also known as User-defined Types]. 
+-These Object types can contain attributes and methods
+
+for example,
+an Object type can be used to represent a Employee infromations
+
+since it represent employee
+it holds the following attributes
+-Employee ID
+-First Name
+-last Name
+-email
+-phone number
+-hire date
+-job ID
+-salary
+
+it can hold the following method
+GetEmployeeSalary(employeID); this will return the salary of that employee
+
+the object can have nested objects within it
+--like addtional information of an object can be stored in Departments Object
+Department ID
+Department Name
+Manager ID
+
+Similarly location informations which contain state, postal area code
+Location ID
+street Address
+Postal code
+city
+state Province
+country ID
+
+Creating Object TYPES
+======================
+-Oracle allows creating objects using the CREATE TYPE Command.
+
+Sytnax
+
+CREATE OR REPLACE TYPE <objectName> AS OBJECT (
+<AttributeName> <DataTYpe>,
+<AttributeName> <DataTYpe>,
+<AttributeName> <DataTYpe>,
+<AttributeName> <DataTYpe>,
+);
+
+Describing the Object Types
+===========================
+- Oracle allows viewing the information of the object named .
+
+sytnax
+------
+DESC <ObjectName>
+
+-in this output, DESCRIBE command displays information of all the attributes held within g, however, for object such as author and publisher that are nested within the object book are not drilled down till their attributes.
+
+this can be achieve by setting DEPTH attribute of the DESC Command as
+SET DESCRIBE DEPTH 2;
+
+-later then Describe the object
+
+Defining Columns Using Object Types
+===================================
+-Once the object types are defined, they can put to use by defining table column based on that object type.
+-An Object type can be used to define.
+--An individual column in a table . In such a case, the objects subsequently stored in that column are known column objects.
+--An entire row in a table. In such a case, the table is known as an Object Table.
+
+Column Objects
+==============
+-Let us create a table which holds book informations under WROX Series publications.
+--and insert into the table
+
+Reteriving Records
+------------------
+-After the data is successfully added to the database table, it can be retrieved using the SELECT command.
+
+
+Reteriving selected Records and column
+--------------------------------------
+-the SELECT command can also be instructed to retrieve select columns and select rows
+
+Invoking object functions
+-------------------------
+
+Updating Records
+----------------
+
+Deleting Records
+----------------
+
+
+Object Tables
+=============
+- A table that is defined on an already object type is known as an object table. 
+-to define on an object type the CREATE TABLE ... OF command is used.
+
+Creating Table
+--------------
+Create <TableName> of <ObjectName>;
+
+Adding Records
+--------------
+-When inserting records into an object able , either
+--A constructor can be used to supply attribute/column values
+--The values can be specified in the same manner that is used for a normal relational table.
+
+Reteriving Records
+------------------
+-data can be retrieved from an object able inthe same manner as the relational table.
+
+Reteriving selected Records and column
+--------------------------------------
+-Individual object attributes or column names can also be specified to retrieve selected columns and selected row
+
+Retrieving records using Value()
+--------------------------------
+-Oracle provides a built-in functions called value() that can be also be used to select a row from an object table
+-Value() acceptes a parameter containing a table alais and treats the row as an actual object and returns the attributes for the object within a constructor for the object type.
+
+Value with columns/Attributes
+-----------------------------
+-A object attribute can also be specified along with value() functions
+
+Comparing the object values
+---------------------------
+-The value() function can also be used to compare the value of two objects using a WHERE clause and the equality operator[=].
+-the <> and IN operators can also be used in the WHERE clause
+
+invoking object functions
+-------------------------
+-The function named GetBookPrice(Discount), which accepts a discount value.
+
+update records
+--------------
+
+Deleting Records
+----------------
+
+Implementing Object View
+========================
+-Oracle allows creating object views on existing relational tables
+-Object views allow creationg of abstract data types within tables that already exist.
+-since the same abstract data types can be used in multiple tables within an applications, an application adherence to standard representation of data and the ability to reuse existing objects can be improved.
+
+-creating the Object View on creating a relational table.
+
+
+Creating Views on Object Tables
+===============================
+
+Adding Records
+--------------
+-Data in the object able can be inserted or updated using an object view, or the object table directly
+1)Using Object view
+2)Using Object table
+
+Explanation 
+-Here, the INSERT INTO command inserts records directly into the object table.
+-this means even though a object view has been created on that table, the object table can still be treated as a relational table.
+
+
+
+
+

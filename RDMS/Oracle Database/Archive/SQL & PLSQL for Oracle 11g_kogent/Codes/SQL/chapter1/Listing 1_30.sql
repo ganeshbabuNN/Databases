@@ -1,0 +1,1 @@
+select a from ztemp5 where a='anil ' --with blank;char data is compared even if blank is present;

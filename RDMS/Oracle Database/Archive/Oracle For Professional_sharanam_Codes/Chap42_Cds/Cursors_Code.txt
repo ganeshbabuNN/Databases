@@ -1,0 +1,519 @@
+-----------------------------------------------------------------------------------------------------
+-- Write a program using PL/SQL that:
+-- 1. Accepts the EmployeeNo of the employee to be transferred 
+-- 2. Validates the existence of that Employee
+-- 3. Accepts the new DeptNo of that employee
+-- 4.Updates the Department number of that employee to the new DeptNo
+-- After the employee has been successfully transferred, indicates the same using a message.
+-----------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+		varDeptNo Employees.DeptNo%TYPE;
+
+	BEGIN
+	/* Accepting employee number */
+		varEmployeeNo := &EmployeeNo;
+	/* Accepting department number */
+		varDeptNo := &DeptNo;
+
+	/* Updating the department number */
+		UPDATE Employees SET DeptNo = varDeptNo WHERE EmployeeNo = varEmployeeNo;
+
+	/* Displaying a message if the update is successful */
+		IF SQL%FOUND THEN
+			DBMS_OUTPUT.PUT_LINE('Employee ' || varEmployeeNo || ' Successfully Transferred to DeptNo: ' || varDeptNo);
+		END IF;
+
+	/* Validating the existence of the employee and department */
+		IF SQL%NOTFOUND THEN
+			DBMS_OUTPUT.PUT_LINE('Employee ' || varEmployeeNo || ' does not exist.');
+		END IF;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company maintains the employee attendance of all the employees. This data is held in the EmployeesMuster table.
+-- Write a program using PL/SQL that:
+-- 1. Accepts a date
+-- 2. Determines the number of employees who were sick 
+-- 3. Updates the attendance column value to hold present instead of sick leave 
+-- 4. Return this number with an appropriate message
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+		varEmpSick Number(10);
+		varDate EmployeeMuster.MusterDate%TYPE;
+		varEmployeeNo EmployeeMuster.EmployeeNo%TYPE;
+
+	BEGIN
+	/* Accepting a date */
+		varDate := '&EnterDate';
+	/* Updating the attendance column */
+		UPDATE EmployeeMuster SET Attendance = 'Present'
+			WHERE TO_CHAR(MusterDate,'DD-Mon-YY') = varDate AND Attendance = 'Sick Leave';
+
+	/* Determining the number of employee who is sick */
+		varEmpSick := SQL%ROWCOUNT;
+
+	/* Returning the employee number with a message */
+		IF varEmpSick > 0 THEN
+			DBMS_OUTPUT.PUT_LINE(TO_CHAR(varEmpSick) || ' employees are found sick on ' varDate);
+		ELSE			
+			DBMS_OUTPUT.PUT_LINE('All employees found present on ' || varDate);
+		END IF;
+	END;
+	/
+
+-----------------------------------
+-- Fetching data from cursor
+-----------------------------------
+	DECLARE
+		varCustomerName Customers.CustomerName%TYPE;
+		varCustomerNo Customers.CustomerNo%TYPE;
+		varContactNo Customers.ContactNo%TYPE;
+
+		CURSOR curCustomers IS SELECT CustomerName, CustomerNo, ContactNo
+			FROM Customers WHERE CustomerNo = '1';
+	BEGIN
+		OPEN curCustomers;
+		FETCH curCustomers INTO varCustomerName, varCustomerNo, varContactNo;
+	END;
+	/
+
+-----------------------------------------------------------------------
+-- Write a program using PL/SQL that:
+-- 1. Retrieves customer name, customer number and contact number
+-- 2. Displays the same 
+-----------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+		varCustomerName Customers.CustomerName%TYPE;
+		varCustomerNo Customers.CustomerNo%TYPE;
+		varContactNo Customers.ContactNo%TYPE;
+
+	/* Declaring a cursor to hold customer details */
+		CURSOR curCustomers IS SELECT CustomerName, CustomerNo, ContactNo FROM Customers;
+	BEGIN
+	/* Opening cursor */
+		OPEN curCustomers;
+	/* Traversing throught the cursor */
+		LOOP
+		/* Fetching cursor data into memory variables */
+			FETCH curCustomers INTO varCustomerName, varCustomerNo, varContactNo;
+		/* Defining an exit condition */
+			EXIT WHEN curCustomers%NOTFOUND;
+		/* Displaying customer details */
+			DBMS_OUTPUT.PUT_LINE('Customer Name ' || varCustomerName);
+			DBMS_OUTPUT.PUT_LINE('Customer ID ' || varCustomerNo);
+			DBMS_OUTPUT.PUT_LINE('Contact Number ' || varContactNo);
+		END LOOP;
+	END;
+	/
+
+--------------------------------------------------------------------------------------------
+-- Closing the cursor
+--------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+		varCustomerName Customers.CustomerName%TYPE;
+		varCustomerNo Customers.CustomerNo%TYPE;
+		varContactNo Customers.ContactNo%TYPE;
+
+		CURSOR curCustomers IS SELECT CustomerName, CustomerNo, ContactNo FROM Customers;
+	BEGIN
+		OPEN curCustomers;
+		LOOP
+			FETCH curCustomers INTO varCustomerName, varCustomerNo, varContactNo;
+		/* Exit the loop when there are no more rows, as indicated by the Boolean variable NOTFOUND (= true when there are no more rows) */
+			EXIT WHEN curCustomers%NOTFOUND;
+			DBMS_OUTPUT.PUT_LINE('Customer Name ' || varCustomerName);
+			DBMS_OUTPUT.PUT_LINE('Customer ID ' || varCustomerNo);
+			DBMS_OUTPUT.PUT_LINE('Contact No ' || varContactNo);
+		END LOOP;
+		CLOSE curCustomers;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- SIMPLE LOOP
+-- The company has decided to issue username and password to all the existing employees.
+-- Write a program using PL/SQL that:
+-- 1. Fetches employee records in memory
+-- 2. Generates Username and Password for each employee that is fetched
+-- 3. Updates the Username and Password column of the Employees table with the generated values
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees IS SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees;
+
+	/* Memory variables to hold the data fetched. */
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+		varFirstName Employees.FirstName%TYPE;
+		varLastName Employees.LastName%TYPE;
+		varSalary Employees.Salary%TYPE;
+
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Opening cursor. */
+		OPEN curEmployees;
+	/* If the cursor is open continue with the data processing else display an appropriate error message. */
+		IF curEmployees%ISOPEN THEN
+			LOOP
+				FETCH curEmployees INTO varEmployeeNo, varFirstName, varLastName, varSalary;
+			/* Exiting the loop if no records are available. */
+				EXIT WHEN curEmployees%NOTFOUND;
+				IF curEmployees%FOUND THEN
+				/* Generating Usernames and Passwords. */
+					varUsername := SUBSTR(varFirstName, -2, 2) || SUBSTR(varLastName, 1, 2) || varEmployeeNo;
+					varPassword := SUBSTR(varFirstName, 1, 2) || SUBSTR(varLastName, 1, 2) || SUBSTR(TO_CHAR(varSalary), -2, 2);
+
+				/* Updating Employees table with the generated values. */
+					UPDATE Employees SET Username = varUsername, Password = varPassword 
+						WHERE EmployeeNo = varEmployeeNo;
+				END IF;
+			END LOOP;
+		/* Making the changes permanent. */
+			COMMIT;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('No records found in the Employees table');
+		END IF;
+	/* Closing the cursor. */
+		CLOSE curEmployees;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- WHILE LOOP
+-- The company has decided to issue username and password to all the existing employees.
+-- Write a program using PL/SQL that:
+-- 1. Fetches employee records in memory
+-- 2. Generates Username and Password for each employee that is fetched
+-- 3. Updates the Username and Password column of the Employees table with the generated values
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees IS SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees;
+
+	/* Memory variables to hold the data fetched. */
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+		varFirstName Employees.FirstName%TYPE;
+		varLastName Employees.LastName%TYPE;
+		varSalary Employees.Salary%TYPE;
+
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Opening cursor. */
+		OPEN curEmployees;
+	/* If the cursor is open continue with the data processing else display an appropriate error message. */
+		IF curEmployees%ISOPEN THEN
+			FETCH curEmployees INTO varEmployeeNo, varFirstName, varLastName, varSalary;
+			WHILE curEmployees%FOUND
+			LOOP
+			/* Exiting the loop if no records are available. */
+				EXIT WHEN curEmployees%NOTFOUND;
+				IF curEmployees%FOUND THEN
+				/* Generating Usernames and Passwords. */
+					varUsername := SUBSTR(varFirstName, -2, 2) || SUBSTR(varLastName, 1, 2) || varEmployeeNo;
+					varPassword := SUBSTR(varFirstName, 1, 2) || SUBSTR(varLastName, 1, 2) || SUBSTR(TO_CHAR(varSalary), -2, 2);
+
+				/* Updating Employees table with the generated values. */
+					UPDATE Employees SET Username = varUsername, Password = varPassword 
+						WHERE EmployeeNo = varEmployeeNo;
+				FETCH curEmployees INTO varEmployeeNo, varFirstName, varLastName, varSalary;
+				END IF;
+			END LOOP;
+		/* Making the changes permanent. */
+			COMMIT;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('No records found in the Employees table');
+		END IF;	
+	/* Closing cursor. */
+		CLOSE curEmployees;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company desires to do so only for the first 5 employees on a testing purpose. Once the test is over, it can be done for the rest.
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees IS SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees;
+
+	/* Memory variables to hold the data fetched. */
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+		varFirstName Employees.FirstName%TYPE;
+		varLastName Employees.LastName%TYPE;
+		varSalary Employees.Salary%TYPE;
+
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Opening cursor. */
+		OPEN curEmployees;
+	/* If the cursor is open continue with the data processing else display an appropriate error message. */
+		IF curEmployees%ISOPEN THEN
+			LOOP
+				FETCH curEmployees INTO varEmployeeNo, varFirstName, varLastName, varSalary;
+			/* Exiting the loop if the first five records are retrieved or no records are available whichever happens first. */
+				EXIT WHEN (curEmployees%ROWCOUNT - 1) = 5 OR curEmployees%NOTFOUND;
+				IF curEmployees%FOUND THEN
+				/* Generating Usernames and Passwords. */
+					varUsername := SUBSTR(varFirstName, -2, 2) || SUBSTR(varLastName, 1, 2) || varEmployeeNo;
+					varPassword := SUBSTR(varFirstName, 1, 2) || SUBSTR(varLastName, 1, 2) || SUBSTR(TO_CHAR(varSalary), -2, 2);
+
+				/* Updating Employees table with the generated values. */
+					UPDATE Employees SET Username = varUsername, Password = varPassword 
+						WHERE EmployeeNo = varEmployeeNo;
+				END IF;
+			END LOOP;
+		/* Making the changes permanent. */
+			COMMIT;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('No records found in the Employees table');
+		END IF;	
+	/* Closing cursor. */
+		CLOSE curEmployees;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- FOR LOOP
+-- The company has decided to issue username and password to all the existing employees.
+-- Write a program using PL/SQL that:
+-- 1. Fetches employee records in memory
+-- 2. Generates Username and Password for each employee that is fetched
+-- 3. Updates the Username and Password column of the Employees table with the generated values
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees IS SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees;
+
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Using a For Loop. */
+		FOR typEmployees IN curEmployees
+		LOOP
+		/* Generating Usernames and Passwords. */
+			varUsername := SUBSTR(typEmployees.FirstName, -2, 2) || SUBSTR(typEmployees.LastName, 1, 2) || typEmployees.EmployeeNo;
+			varPassword := SUBSTR(typEmployees.FirstName, 1, 2) || SUBSTR(typEmployees.LastName, 1, 2) || SUBSTR(TO_CHAR(typEmployees.Salary), -2, 2);
+
+		/* Updating Employees table with the generated values. */
+			UPDATE Employees SET Username = varUsername, Password = varPassword 
+				WHERE EmployeeNo = typEmployees.EmployeeNo;
+		END LOOP;
+	/* Making the changes permanent. */
+		COMMIT;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company has decided to issue username and password to all the existing employees.
+-- Write a program using PL/SQL that using an inline cursor:
+-- 1. Fetches employee records in memory
+-- 2. Generates Username and Password for each employee that is fetched
+-- 3. Updates the Username and Password column of the Employees table with the generated values
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Using a For Loop. */
+		FOR typEmployees IN (SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees)
+		LOOP
+		/* Generating Usernames and Passwords. */
+			varUsername := SUBSTR(typEmployees.FirstName, -2, 2) 
+					|| SUBSTR(typEmployees.LastName, 1, 2) 
+						|| typEmployees.EmployeeNo;
+			varPassword := SUBSTR(typEmployees.FirstName, 1, 2) 
+					|| SUBSTR(typEmployees.LastName, 1, 2) 
+						|| SUBSTR(TO_CHAR(typEmployees.Salary), -2, 2);
+		/* Updating Employees table with the generated values. */
+			UPDATE Employees SET Username = varUsername, Password = varPassword 
+				WHERE EmployeeNo = typEmployees.EmployeeNo;
+		END LOOP;
+	/* Making the changes permanent. */
+		COMMIT;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company has decided to issue username and password to selected employees.
+-- Write a program using PL/SQL that:
+-- 1. Fetches employee records in memory
+-- 2. Generates Username and Password for each employee that is fetched
+-- 3. Updates the Username and Password column of the Employees table with the generated values
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees (varLastName Employees.LastName%TYPE) 
+			IS SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees
+				WHERE LastName = varLastName;
+
+	/* Memory variables to hold the data fetched. */
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+		varFirstName Employees.FirstName%TYPE;
+		varLastName Employees.LastName%TYPE;
+		varSalary Employees.Salary%TYPE;
+
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Opening cursor. */
+		OPEN curEmployees('&LastName');
+	/* If the cursor is open continue with the data processing else display an appropriate error message. */
+		IF curEmployees%ISOPEN THEN
+			LOOP
+				FETCH curEmployees INTO varEmployeeNo, varFirstName, varLastName, varSalary;
+			/* Exiting the loop if no records are available. */
+				EXIT WHEN curEmployees%NOTFOUND;
+				IF curEmployees%FOUND THEN
+				/* Generating Usernames and Passwords. */
+					varUsername := SUBSTR(varFirstName, -2, 2) || SUBSTR(varLastName, 1, 2) || varEmployeeNo;
+					varPassword := SUBSTR(varFirstName, 1, 2) || SUBSTR(varLastName, 1, 2) || SUBSTR(TO_CHAR(varSalary), -2, 2);
+
+				/* Updating Employees table with the generated values. */
+					UPDATE Employees SET Username = varUsername, Password = varPassword 
+						WHERE EmployeeNo = varEmployeeNo;
+				END IF;
+			END LOOP;
+		/* Making the changes permanent. */
+			COMMIT;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('No records found in the Employees table');
+		END IF;	
+	/* Closing cursor. */
+		CLOSE curEmployees;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company holds Employees and Departments details in Master tables called Employees and Departments.
+-- For reporting purposes, it is required to store the information from these tables in a de-normalized table EmployeesDept.
+-- Write a program using PL/SQL that:
+-- 1. Fetches departments from the Departments table
+-- 2. For every department, fetches employees belonging to that department from the Employees table
+-- 3. Adds all the information from both the tables to the EmployeesDept table
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+		/* First cursor */
+			CURSOR curDepartments IS SELECT * FROM Departments;
+		/* Second cursor */
+			CURSOR curEmployees(varDeptNo Departments.DeptNo%TYPE) 
+				IS SELECT * FROM Employees WHERE DeptNo = varDeptNo;
+
+		BEGIN
+		/* Defining a For loop for first cursor */
+			FOR typDepartments IN curDepartments
+			LOOP
+			/* Defining a For loop for second cursor */
+				FOR typEmployees IN curEmployees (typDepartments.DeptNo)
+				LOOP
+				/* Inserting data from both the cursor */
+					INSERT INTO EmployeesDept (EmployeeNo, FirstName, LastName, DateOfBirth, ContactNo, Salary, Designation, ManagerNo, DeptNo, DepartmentName, UserName, Password) 
+						VALUES (typEmployees.EmployeeNo, typEmployees.FirstName, typEmployees.LastName, typEmployees.DateOfBirth, typEmployees.ContactNo, typEmployees.Salary, typEmployees.Designation, typEmployees.ManagerNo, typDepartments.DeptNo, typDepartments.DepartmentName, typEmployees.UserName, typEmployees.Password);
+				END LOOP;
+			END LOOP;
+		/* Make the changes permanent. */
+			COMMIT;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company has decided to issue username and password to selected employees.
+-- Write a program using PL/SQL that:
+-- 1. Fetches employee records in memory
+-- 2. Generates Username and Password for each employee that is fetched
+-- 3. Updates the Username and Password column of the Employees table with the generated values
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees IS 
+			SELECT EmployeeNo, FirstName, LastName, Salary FROM Employees FOR UPDATE;
+
+	/* Memory variables to hold the data fetched. */
+		varEmployeeNo Employees.EmployeeNo%TYPE;
+		varFirstName Employees.FirstName%TYPE;
+		varLastName Employees.LastName%TYPE;
+		varSalary Employees.Salary%TYPE;
+
+	/* Memory variables to hold the username and password. */
+		varUsername Employees.Username%TYPE;
+		varPassword Employees.Password%TYPE;
+
+	BEGIN
+	/* Opening cursor. */
+		OPEN curEmployees;
+	/* If the cursor is open continue with the data processing else display an appropriate error message. */
+		IF curEmployees%ISOPEN THEN
+			LOOP
+				FETCH curEmployees INTO varEmployeeNo, varFirstName, varLastName, varSalary;
+			/* Exiting the loop if no records are available. */
+				EXIT WHEN curEmployees%NOTFOUND;
+				IF curEmployees%FOUND THEN
+				/* Generating Usernames and Passwords. */
+					varUsername := SUBSTR(varFirstName, -2, 2) || SUBSTR(varLastName, 1, 2) || varEmployeeNo;
+					varPassword := SUBSTR(varFirstName, 1, 2) || SUBSTR(varLastName, 1, 2) || SUBSTR(TO_CHAR(varSalary), -2, 2);
+
+				/* Updating Employees table with the generated values. */
+					UPDATE Employees SET Username = varUsername, Password = varPassword 
+						WHERE EmployeeNo = varEmployeeNo;
+				END IF;
+			END LOOP;
+		/* Making the changes permanent. */
+			COMMIT;
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('No records found in the Employees table');
+		END IF;	
+	/* Closing cursor. */
+		CLOSE curEmployees;
+	END;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- The company has decided to:
+-- 1. Change the designation of all those employees who are Peon to Office Boy 
+-- 2. Remove the employees who are designated as Designers as the company has changed the line of business and hence does not require designers
+-- Write a program using PL/SQL that:
+-- 1. Fetches employee records in memory 
+-- 2. Updates the designation  Peon to Office Boy
+-- 3. Deletes the employees with Designer as the designation
+-- Whilst the employees table is being updated, ensure that, no one else updates the same table at the same time.
+-------------------------------------------------------------------------------------------------------------
+	DECLARE
+	/* Cursor Declaration. */
+		CURSOR curEmployees IS SELECT * FROM Employees FOR UPDATE;
+
+	BEGIN
+		FOR typEmployees IN curEmployees
+		LOOP
+			IF typEmployees.Designation = 'Peon' THEN
+			/* Updating Employees table. */
+				UPDATE Employees SET Designation = 'Office Boy' 
+					WHERE CURRENT OF curEmployees;
+			ELSIF typEmployees.Designation = 'Designers' THEN
+			/* Deleting from Employees table. */
+				DELETE FROM Employees WHERE CURRENT OF curEmployees;
+			END IF;
+		END LOOP;
+	END;
+	/

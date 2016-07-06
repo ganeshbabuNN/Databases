@@ -1,0 +1,207 @@
+Data Types
+==========
+
+-SQL stands for structured Query Language. It is an ANSI[American National Standards Institue] standard computer language that helps accessing and manipulating data available in database Systems.
+
+Category 		Descriptions
+--------		------------
+Character	 	Strings of character
+Numberic	 	Integer,decimal and floating-point num
+Temporal	 	Dates,times,time intervals and timestamps
+large Object(LBO)	Text,images,sound and video
+Rowid		 	Address for each row in the database	
+
+Table Fundamentals
+==================
+-A database contains one or more tables, which are database objects that hold user data. Each table is identified by a name.
+-A table consists of rows and within rows , columns. Hence in a spreadsheets with rows and columns
+-A row in a spreadsheet consists of several cells
+-The cells of the spreadsheet are equivalent to the columns of  a table having specific data type associated with them.
+
+Oracle DataTypes
+================
+-A Data type is an attribute of the data being stored in the database which indicates what kind of data is begin delt with.
+-Oracle supports several data types that can be used to handle data in an oracle DB.
+-the Following are the datatypes
+1)Char(Size)
+2)Varchar2(Size)
+3)Date
+4)TimeStamp
+5)Time intervals
+6)Integer
+7)Number (percision,scale or Numeric(Percision,scale)
+8)Dec or Decimal
+9)Long
+10)Raw/Long Raw
+11)BINARY_FLOAT
+12)BINARY_DOUBLE
+13)NChar(size)
+14)NVarchar2(Size)
+
+1)Char(Size)
+------------
+-This data type is used to store character string values of fixed length. 
+-The size parameter specified the length of the string.
+-if a String of a smaller length than the one specified is stored, it is right-padded with spaces.
+-these spaces will be removed when the value is retrived through.
+-The maximum number of characters [i,e size] this data type can hold is 2000 bytes or characters.
+
+2)Varchar2(Size)
+----------------
+-This data type is used to store variable length alphanumeric data.
+-The size parameter specifies the maximum length of the string.
+-This is more flexible form of the char data type. the inserted values will not be padded with spaces.
+*the main diff between varchar and the char data type is that oracle compares varchar2 values using non-padded comparison semntics.
+*Oracle uses two kinds of comparisons
+-Blank padded comparison
+Example  'Ganesh '='Ganesh'
+-Non-Padded comparison
+Example  'Ganesh '>'Ganesh'
+For Example firstName VARCHAR(50)
+if the data held in the variale first Name is "Ganesh" which is only 8 characters in length then the entry will not be padded with 42 characters worth of spaces.
+
+-varchar2 is usually a wiser choice than char, due to its variable length format characteristics, but , keep in mind, that char is much faster than varchar2 sometimes up to 50%.
+-the maximum this data type can hold up to 4000 bytes or characters.
+-the varchar data type is currently deprecated and is synonymous with the varchar2 data type. Oracle recommends using varchar2 rather than varchar
+-Oracle uses the following two kinds of comparisons semantics for string values.
+
+
+Blank-Padded comparison semantics
+---------------------------------
+-If the two values being compared, have diff lengths, oracle first adds blank spaces to the end of the shorter one to make the length of both the values are same.
+-it compareis the values character by character up to the first character that differs
+-the value with the greater char in the first diff positions is considered greater. if two values have no differing char, then they are considered equal.
+-this rule means the two values are equal , if they differ only in the number of trailing blanks
+-it uses blank-padded coparison semantics, only wen both values in the comparison have the data type char or are text literals.
+
+Non-Padded comparison semantics
+---------------------------------
+-it compares two values character by character up to the first character that differs. the value with the greater character in that position is considered greater. 
+-if two values of diff length are identical up to the end of the shorter one, the longer values is considered great.
+-this rules means that if two values of eqal length have no different characters, then the values are considered equal.
+-Oracle uses non-padded comparison semantics, whenever one or both values in the comparison have data type varchar2.
+
+3)Date
+-------
+-the data type is used to represent data and time.
+-the standard format is DD-MON-YY i,e 03-jan-81
+-the DATE Types stores
+1)the century
+2)all four digits of a year
+3)the month
+4)the day
+5)the hour[in 24-hour format]
+6)the minute
+7)the second
+
+-to enter dates, other than the standard , appropriate data time functions can be used.
+-By default , the time in a date field is 12:00:00 am, if no time portions is specified.
+-the date type allows storing dates and times between January 1,4712 B.C and December 31,9999 A.D
+
+4)TimeStamp
+-----------
+-the problem with the date type is its granularity, when trying to determine a time interval between two events when the events happen within a second of each other
+-Oracle have improved on the date data type, to produce a new data type called timestamp. 
+-it stores all the informations, includes fractions of seconds
+A timestamp columns holds in the following format:
+
+format
+YYYY-MM-DD HH24:MI:SS.SSSSSSSSS
+*SSSSSSSSS is the seconds and its fractions
+
+5)Time Intervals
+----------------
+-Prior to Oracle 9i,there were no data type that could hold the passage of time.
+-its difficult records an individual moments in time. this makes it difficult to express an interval of time. To express an interval of time. To express an interval, the interval is converted to raw seconds and helds in a Number column
+
+-Performing time calculations as:
+1)60 Seconds to the minute
+2)60 minutes to the hour
+3)24 Hours in a day
+-it will be difficult using a number data tpe
+--to make such task easier, Oracle 9i introduced the following time interval data types.
+
+Interval Year to Month
+----------------------
+-stores a time interval measured in years and months
+
+syntax
+INTERVAL'[+[-] [y] [m]'[YEAR[(<yearPrecesion>)]] [TO MONTH]
+
+where
+- + sign or the - sign is an options indicaitor that specifies whether the time interval is positive or negative
+- y is the optional number of year for the interval
+- m is the optional number of months for the interval. To month is included in instances where the years and months are included in the literal
+- YearsPrecision is the optional precision for the year [default is 2]
+
+Interval Day to Seconds
+-----------------------
+-stores a time interval measured in days and seconds
+
+syntax
+INTERVAL '[+|-][d] [h[:m[:s]]]' [DAY[(<DaysPreceision>)]] [TO HOURS | MINUTE | SECOND [(<SecondsPrecision>)]]
+- + sign or the - sign is an options indicaitor that specifies whether the time interval is positive or negative
+-d is the optiona number of days for the interval
+-h is the optional number of hour for the interval. The To hour is included in instances where the days and hours are included in the literal.
+-m is the optional number of minutes for the interval. the To minutes is included in instances where the days and minutes are included in the literal.
+-s is the optional number of seconds for the interval. the to seconds is included in instances where the days and seconds are included in the literal
+-DaysPrecision is the optional precision for the days [Default is 2]
+-SecondsPrecision is the optional precision for the fractional secons[default is 2]
+
+6)Integer
+---------
+-this type is used to represent integer values. An integer does not contains a floating point. 
+-it is a whole number such as 1,10 and 115
+-this integer data type can stores integers that contains up to 38 digits
+-if a real number is stores i a integer column, Oracles rounds off the real number to the nearest integer.
+
+7)Number (percision,scale or Numeric(Percision,scale)
+-----------------------------------------------------
+-this type of data type is used to store number [fixed or floating point]
+-it can stored upto 38 digits of precision
+-the precision is the maximum number of digits[left and right of a decimal point, if used] that may be used for the number.
+-valid values are 0 and positive and negative numbers with magnitude 1.0E-130 to 9.0 ..E125
+-the scale is the limit is upto 38 digits
+
+8)Dec or Decimal
+----------------
+-This data type is a subtype of the number data type. it represnets a fixed-point decimal number with upt to 38 digits of decimal precision.
+
+9)Long
+-------
+-this type stores used to store variable length character strings containing up to 2 GB
+-it can be used to store binary data in ASCII format.
+-Note: this long values cannot be used in sub-queries,functions, expression WHERE clauses or indexes and the normal character functions such as SUBSTR canot to applied to long values.
+-A table containing a long value cannot be clustered
+
+10)Raw/Long Raw
+---------------
+-this type are used to store binary data such as digitized picture or image
+-its maximu legth is 255 bytes and the long raw data type can contain up to 2 GB
+
+11)BINARY_FLOAT
+---------------
+-this data type was introduced in oracle DB 10g. its stores a precision 32-bit floating point number.
+-BINARY_FLOAT is a 32 bit, single-precision floating-point number data type. 
+-Each values requires 5 bytes including a length byte.
+
+12)BINARY_DOUBLE
+----------------
+-this data type was introduced in DB 10g. it stores a double precision 64 bit floating point number.
+-it is a 64 bit ,double-precision floating point number data type. 
+-Each values requires 9 bytes including a length byte.
+
+13)NChar(size)
+--------------
+-this data type represents fixed-length unicode character data of length characters
+-number of bytes stored is 2 multiplied by length for AL16UTF16 encoding and 3 multiplied by length for UTF8 encoding.
+-maximum length is 2000 bytes
+
+14)NVarchar2(Size)
+------------------
+-this represents variable-length unicode character data of length characters
+-Number of bytes storesd is 2 multiplied by length for AL16UTF16 encoding and 3 multiplied by length for UTF8 encoding. 
+-Maximum lenght is 4000 bytes
+-this is the most commonly used Data type
+
+Note: Oracles stores table structures informations [specificed in the create table command] within its data dictionary.

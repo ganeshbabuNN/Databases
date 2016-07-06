@@ -1,0 +1,136 @@
+Packages
+========
+-It is a standard pratice to group logically related code blocks such as procedures and functions into modules.
+-Each such module is then accessed via an interface by application programmers to utitlize the implemented functionality
+-Oracle allows grouping stroed procedures, funciton , variable ,constants, cursors and exceptions into packages.
+
+Package Specification
+=====================
+-it acts as a interface to the package.if defines the interface that is visible to app programmer. it list the available prodcueds, functions,types and objects. the specification cannot hold that actual procedures and functions code spec
+-it can be created using the CREATE Package statements
+
+Syntax
+	CREATE [OR REPLACE] PACKAGE <packageName>
+	{IS | AS }
+		<PackageSpecification>
+	END <PackageName>;
+where
+*PackageName is the name of the package
+*PackageSpecification lists the public procedures, functions, types and objects
+*OR REPLACE clause indicates to recreate the package specification without loosing any grants that already exists.
+
+Package BODY
+============
+-Package body holds the actual implementation/code specification of the package specification.Any objects in the body that are not listed in the specification are private to the package. Private items can be used only inside the package body
+-A package body can be created using the CREATE PACKAGE BODY Statemetns.
+
+Syntax
+	CREATE [OR REPLACE] PACKAGE BODY <PackageName>
+	{IS | AS }
+		<PackageBody>
+	END <PackageName>;
+where
+*PackageName is the name of the package, which must be the same as the package name in the specification
+*PackageBody holds the procedures and functions code spec
+*OR REPLACE clause indicates to recreate the package specification without loosing any grants that already exists
+-It is advisiable to use a combinations of public and private objects whilst building a package to hide the complexity from the outside world.
+-A Package once written is compiled and stored in the ORACE DB. Only those users who have execute permissions on that package can use it
+
+Packages uses
+-------------
+-Encapsulate related functionality into on individual unit.
+-Modularize PL/SQL code blocks and building up code libraries that can be resued by others, thereby reducing redundant coding.
+-Enable Overloading of procedures and functions when required.
+-Improve performance by loading mutliple objects/subprograms held within into memory at once.therefore, subsequent calls to related subprograms in the package require no I/O.
+
+Oracle provides several packages such as:
+-UTL_FILE for reading and writing files from PL/SQL program
+-DBMS_JOB for job scheduling
+-DBMS_SQL to generate SQL statemetns dynamically i,e during program execution.The package DMBS_SQL is typically used to create and delete tables from within PL/SQL programs
+-DBMS_OUTPUT to generate output.
+
+-Every package holds a set of useful procedures and functions.For example the most common procedures provided by DBMS_OUTPUT are listed below
+
+Procedure_Name 				Description
+DBMS OUTPUT.ENABLE			Enables output.to display data on the screen, the output has to be enabled either 						using the procedure DBMS OUTPUT.ENABLE or Using the SQL Plus command SET 					SERVEROUTPUT ON
+DBMS OUTPUT.DISABLE			Disable output
+DBMS OUTPUT.PUT(<String>)		Appends[Displays] <string> to output buffer
+DBMS OUTPUT.PUT_LINE(<string>)		Appends <String> to output buffer and appends a new-line marker
+DBMS OUTPUT.NEW_LINE			Displays a new-line marker
+
+Creating Packages
+=================
+-Once the specification is created, the body of the package needs to be created
+-Subprograms written in the package body are accessible outside the package only if their specification are included in the package specifications.
+-The package body can also contain private declarations.These private objects are usually declared for use in the internal processing of the package and are local in scope and hence cannot be accessed by external PL/SQL code blocks.
+
+Invoking A package
+==================
+-A procedure or function implemented in a package can be invoked from other procedures and function using the following syntax
+	<PackageName>.<TypeName>
+*TypeName is the name of the type that is user defined, such as record
+	<PackageName>.<ObjectName>
+*ObjectName is the name of the constant or variable that is declared by the user
+	<PackageName>.<Subprogram>[(<list of Parameter)]
+*SubProgram is the name of the procedure or function contained in the package body
+Calling a procedure from the SQL plus requires the exeucte command
+	EXEC <PackageName>.<subProgram>[(<List of Parameter>)]
+
+-When a subprogram held within the package is invoked, oracle creates an implicit save point
+-If the subprogram fails with an unhandled exception, before returning to the host environment .Oracle rolls back to that save point and undoes changes made by that subprogram in that package.
+
+
+Recompiling Existing Packages
+=============================
+-The ALTER PACKAGE command with the compile keyword can be used to recompile a package
+-Recompiling a package recompiles all objects defined within the package.Recompiling does not change the definition of the package or any of its object
+Syntax
+	ALTER PACKAGE <PackageName> COMPILE PACKAGE;
+
+Dropping a Package
+==================
+-An already existing package can be dropped using the DROP PACKAGE command
+	DROP PACKAGE <packagename>;
+
+Overloading Procedures and Functions
+====================================
+-Just like the overloading concept in other programming languages, PL/SQL also allows overloading its subprogram i,e procedures and functions.
+-this means, more than one subprogram can be created with the same name within a package but having different parameters
+-Oracle itself make extensive use of overloading ,
+For Example
+TO_CHAR is an overloaded function that allows converting both numbers and dates to characters format.
+-Overloading greatly simplifies the processing logic of a program by eliminating multiple IF constructs or CASE constructs that would check the parameter passed and perform appropriate operations
+-Standalone programs cannot be overloaded nor can two independent modules be created with the same name but different parameter lists.
+-If an attempt is made to overloaded an already existing procedures, the second attempt attempt to create the second version of the procedure fails.
+
+
+Restriction on Overloading
+--------------------------
+When overloading  funcitons or procedures, the following points need to be considered.
+1)the data type of at least one parameter of the overloaded function or procedure must differ.
+example this is not allowed
+	PROcEDURE myproc(varstr1 IN CHAR, varstr2 OUT CHAR)
+	PROcEDURE myproc(varstr1 IN varchar2, varstr2 OUT varchar2)
+*Here, an overloaded procedure in being defined which is distinquished by parameter with varchar2 and char data types. this is not allowed
+2)The parameter list of overloaded functions must differ by more than name or parameter mode.
+example, this is not allowed
+	FUNCTION MyProc(VarDate1 IN DATE ) Return Boolean
+	FUNCTION MyProc(VarDate2 IN DATE ) Return Boolean
+*Here, only the parameter names differ which is not allowed, the parameter name is replaced by the values sent to the objects when a package is called, so difference in name do not offer a guide to the overloaded objects that must be used.The name of the parameter is not available in the module call and thus PL/SQL interpreter cannot distinguish objects by name
+3)Similarly, if the parameter in the first version of the overloaded subprogram is IN and the same parameter is IN OUT in the second version of the overloaded subprograms, PL/SQL interpreter cannot distinquish using the package call.
+example,the following is not allowed
+	FUNCTION MyProc(VarDate1 IN DATE ) Return Boolean
+	FUNCTION MyProc(VarDate2 IN OUT DATE ) Return Boolean
+*the overloading attemps will result in the following error message
+  "Too many declarations of 'value_check' match this call.
+4)Overloaded functions must differ by more than their return data type
+Example, the following is not allowed
+	FUNCTION MyProc(VarDate1 IN DATE ) Return Boolean
+	FUNCTION MyProc(VarDate2 IN DATE ) Return NUMBER
+*At the time that overloaded function is called the PL/SQL interpreter does not know what type of data that function will return.The interpreter therefore cannot distinquish between overloaded functions based on the return data type.
+--*when a subprogram is invoked, oracle chooses the procedures or functions whose number of parmeter and data type matches the values passed by the caller.
+
+
+
+	
+

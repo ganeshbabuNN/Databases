@@ -1,0 +1,1 @@
+select ename from employee where city in (select city from employee where 		ename = ’SUNIL’);

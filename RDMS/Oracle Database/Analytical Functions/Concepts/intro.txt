@@ -1,0 +1,15 @@
+-Analytical functions are commonly used to compute cummulative,moving,centered and reporting aggregates
+-it helps remove a lot of procedural code and complex code spec that would have taken a long time to develop,to achieve the same result
+
+
+Anayltic vs Aggregate
+--------------------
+-it differs from aggregate functions, aggregate functions such as SUM() or COUNT() when used with a GROUP BY, the details is lost in the aggregate.
+-Analytic functions provides the details in form of simple, un-aggregated ros and at the same time, on the very same row, as result that is computed from operations on several rows that are related in one way or another to the current one.
+
+features
+--------
+-The Analytic functions are the last set of operations performed in a query except for the final ORDER BY clause
+-these functions are processed only after processing the JOINS,WHERE,GROUP BY and HAVING Clause in the query.
+-this functions are only permitted in the SELECT list and in the GROUP BY clause
+

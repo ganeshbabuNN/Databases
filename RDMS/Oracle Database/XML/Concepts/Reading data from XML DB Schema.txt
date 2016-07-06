@@ -1,0 +1,22 @@
+Retriving data from XML DB Schema
+==================================
+
+
+
+Displaying the product Details
+-------------------------------
+- // is used to include all the products
+
+
+displaying the first product details
+------------------------------------
+
+
+
+displaying the those specific product details
+---------------------------------------------
+
+
+Conditional evaluations _EXISTSNODE()
+----------------------
+-existsnode function checks if an XML element exists and if it does, returns 1, otherwise return 0.

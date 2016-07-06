@@ -1,0 +1,8 @@
+BEGIN
+
+  UPDATE employees
+    SET salary = salary * 1.05
+    WHERE job_id LIKE 'SA%';
+
+END;
+/

@@ -1,0 +1,1 @@
+select sessiontimezone from dual;

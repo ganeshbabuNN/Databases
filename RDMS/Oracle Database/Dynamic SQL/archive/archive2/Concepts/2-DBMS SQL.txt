@@ -1,0 +1,44 @@
+DDL with DBMS SQL
+=================
+-DDL way of Dynamic SQL is basicall used for creating table, granting persmission, creating stored procedures, functions...etc, dropping objects...like that
+-Here we are creating the Table using the Dynamic SQL concept where table is created based on the table name, column is passed to the AB.
+
+DBMS_SQL_DDL_Create_Table.sql
+
+DML with DBMS SQL
+==================
+In this we can cover insert ,update and deletes.
+---inserting a row
+--create the package spec with the body for the insert procedures.
+
+DBMS_SQL_DML_Insert.sql
+
+
+---now for the update
+DBMS_SQL_DML_Update.sql
+
+
+---delete procedures
+DBMS_SQL_DML_Delete.sql
+
+
+all the above script are combined in one scripts
+DBMS_SQL_Packaged_Combined_DML_Inser_Delete_Insert.sql
+
+now let us know how to call the basic procedure  for delete procedures
+=================================================================
+
+By calling dbms_call_func.sql basic procedure, you are dynamically passing the variable dynamically by passing the value, where it executes .
+
+DBMS_SQL_DML_Passing_Delete_API_Dynamically.sql
+
+
+now let us how to call the basic functions for delete procedures
+=================================================================
+Here you trying to passing string which is a string value, , you are setting those Bind variable to the local variable and executing the cursor and printing the output
+
+DBMS_SQL_DML_Passing_Delete_API_Dynamically_StringValue.sql
+
+
+**like this in this package, you can do more number of operations can be done like bulk processing,writing dynamic utility type programs and read the structure from the data dictionary.
+

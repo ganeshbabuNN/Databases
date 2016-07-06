@@ -1,0 +1,112 @@
+-------------------------------------------------------------------------------------------------------
+-- View Database Options And O/s Version
+-------------------------------------------------------------------------------------------------------
+	SET HEAD OFF FEED OFF PAGES 0 SERVEROUTPUT ON
+
+	COL BANNER FORMAT A72 WRAP
+
+	SELECT BANNER FROM SYS.V_$VERSION;
+
+	SELECT 'With the ' || parameter || ' option' FROM SYS.V_$OPTION WHERE VALUE = 'TRUE';
+
+	SELECT 'The ' || parameter || ' option is not installed' FROM SYS.V_$OPTION WHERE VALUE <> 'TRUE';
+
+	BEGIN
+		DBMS_OUTPUT.PUT_LINE('Port String: ' || DBMS_UTILITY.PORT_STRING);
+	END;
+	/
+
+	SET HEAD ON FEED ON
+
+-------------------------------------------------------------------------------------------------------
+-- View Current User's Details
+-------------------------------------------------------------------------------------------------------
+	SET TERMOUT OFF
+	STORE SET STORE REP
+	SET HEAD OFF
+	SET PAUSE OFF
+	SET TERMOUT ON
+
+	SELECT 'User: ' || USER || ' on database ' || GLOBAL_NAME, 
+		'(TERM=' || USERENV('TERMINAL') || ', AUDSID=' || USERENV('SESSIONID') || ')' AS MYCONTEXT 
+			FROM GLOBAL_NAME;
+
+	@store
+	SET TERMOUT ON
+
+-------------------------------------------------------------------------------------------------------
+-- Display Help On An SQL Command
+-------------------------------------------------------------------------------------------------------
+	SELECT INFO FROM SYSTEM.HELP WHERE UPPER(TOPIC) = UPPER('&1');
+
+-------------------------------------------------------------------------------------------------------
+-- Determining Leap Years
+-------------------------------------------------------------------------------------------------------
+SELECT EXTRACT(YEAR FROM DateOfBirth),
+	DECODE(MOD(EXTRACT(YEAR FROM DateOfBirth), 4),  0,
+		DECODE(MOD(EXTRACT(YEAR FROM DateOfBirth), 400),  0,  'Leap Year',
+			DECODE(MOD(EXTRACT(YEAR FROM DateOfBirth), 100), 0, 
+				'Not a Leap Year', 'Leap Year')), 'Not a Leap Year') 
+					AS "Leap Year Indicator"
+						FROM Employees;
+
+-------------------------------------------------------------------------------------------------------
+-- Lookup Oracle Error Messages
+-------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	SET VERI OFF FEED OFF
+
+	PROMPT Lookup Oracle error messages:
+	PROMPT
+	PROMPT Please enter error numbers as negatives. E.g. -1
+	PROMPT
+
+	EXEC DBMS_OUTPUT.PUT_LINE('==> ' || SQLERRM(&errno));
+
+	SET VERI ON FEED ON
+	UNDEF ERRNO
+
+-------------------------------------------------------------------------------------------------------
+-- Encoding And Decoding Text
+-------------------------------------------------------------------------------------------------------
+	SELECT TRANSLATE('SHARANAM SHAH', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ', '1234567890!@#$%^&*()-=_+;,.') 
+		"Encoded Message" FROM DUAL;
+
+	SELECT TRANSLATE('(81*1$1#.(818', '1234567890!@#$%^&*()-=_+;,.', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ') 
+		"Decoded Message" FROM DUAL;
+
+------------------------------------------------------------------------------------------------------- 
+-- Determine Rows In All Tables Of The Current Schema
+-------------------------------------------------------------------------------------------------------
+	SET TERMOUT OFF ECHO OFF FEED OFF TRIMSPOOL ON HEAD OFF PAGES 0
+
+	SPOOL C:/tables.tmp
+	SELECT 'SELECT COUNT(*), ''' || TABLE_NAME || ''' FROM ' || TABLE_NAME || ';' FROM USER_TABLES;
+	SPOOL OFF
+
+	SET TERMOUT ON
+	@@C:/tables.tmp
+
+	SET HEAD ON FEED ON
+
+------------------------------------------------------------------------------------------------------- 
+-- Generate Triggers Creation Scripts 
+-------------------------------------------------------------------------------------------------------
+	SET FEEDBACK OFF
+	SET HEAD OFF
+	SET ECHO OFF
+	SET RECSEP OFF
+	SET PAGES 50000
+	SET LONG 5000
+	SET LINES 200
+	COLUMN Trigger_Body FORMAT A9999 WRAP WORD;
+
+	SPOOL C:\triggers.sql
+
+	SELECT 'CREATE OR REPLACE TRIGGER ' || Description, CHR(10), Trigger_Body,'/', CHR(10), CHR(10) 
+		FROM User_Triggers;
+
+	SPOOL OFF;
+	SET FEEDBACK ON
+	SET HEAD ON
+	SET ECHO ON

@@ -1,0 +1,10 @@
+DECLARE
+  v_person employees%ROWTYPE;	
+BEGIN
+
+ v_person.first_name := 'Lewis';
+ v_person.last_name := 'Cunningham';
+ v_person.salary := 2100.00; 
+END;
+/
+

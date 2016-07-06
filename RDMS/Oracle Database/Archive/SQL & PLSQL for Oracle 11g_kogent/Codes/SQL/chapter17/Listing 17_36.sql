@@ -1,0 +1,1 @@
+SELECT REGEXP_replace('BB,BBBB,BBB,BBB','B,',' ') "REGEXP_replace" FROM DUAL;

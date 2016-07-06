@@ -9,12 +9,96 @@ Logical structure
 -The logical structure of the Oracle DB consists of
 1)TableSpace
 2)Schema
+
+1)TableSpace
+------------
+-A Tablespace is a logical grouping of related data. In oracle, user data is logically stored in tablespaces which is physically stored in data files.
+-Database,tablespaces and data files are closely related to each other
+1)A DB can hold more than one tablespace
+2)each tablespace can be stretched across multiple data files
+3)The size of the tablespace is calculated as the sume of the sizes of all its data files
+4)the sum of the size of all the tablespace represents the storage capacity of the DB.
+-In oracle, a typical DB usally holds, at least on tablespace. In DB, a Tablespace is something very similar to a folder on a HDD.
+-Tablespace are used to map logical objects such as tables, indexes and views to a specific Data files. In other words, Tablespaces are used to group different logical DB objects together.
+-Technically , a tablespace is used to manage disk space allocation for DB data.
+-A DB administrator usually uses a tablespace, to assign specific hard disk space[quota] for specific DB users.
+-Tablespaces are very useful in controlling the availablity of data. This is possible, by switching individual tablespace ONLINE or OFFLINE. Simillary, tablespace makes it possible to perform partial DB backup or recovery operations.
+-Performance can be improved to a great extent by allocating data storage across multiple devices using tablespaces
+-Oracle Strongly recommends that a spearate tablespace is created within the DB and users are bound to this tablespace.This ensure the Orcle Objects are kept completely isolated from user objects.A separate Tablespace can be created[Within the Database] either using Oracle's GUI tols or SQL syntax
+*-Each DB has at least one Tablespace called SYSTEM Tablespace
+
+The SYstem Tablespace
+*-------------------*
+-it is used by the Oracle DB Engine to hold system informations such as:
+1)Data Dictionary
+2)Names and Locations of
+*Tablespaces
+*Tables
+*Indexes
+*Clusters
+-Data dictionary stores the metadata which is data about data.This includes informations such as table access permissions, informations about keys and so on.
+-When installing the Fresh DB using CREATE DATABASE Statement, a SYSTEM tablespace is automatically created within the new DB schema.
+-*if no other tablespaces exists within the DB, all the users objects such as tables, views, indexes and so on when created are stored in the SYSTEM tablespace. When a users is created, in the absence of any other tablespace in the DB, the user is automatically bound to the system Tablespace
+
+Data File Decomposition
+=======================
+Every Data file consists of
+
+Data File
+---------
+-At the finest level of granularity, the data is stored in data blocks.Data blocks are also called as logical blocks, Oracle blocks or pages.
+-It uses and allocates free DB space in the Oracle Data blocks
+
+Extents
+-------
+-The next level of logical DB space is called an Extent. An Extent is specific number of contiguous data blocks that are allocated for storing a specific type of informations.
+
+Segements
+---------
+-Each table has a single are of disk space called a Segements, set aside for its in the Tablespace.The level of logical DB storage above an extent is called is segement
+-Each segements has an initial area of disk space called the initial extent set aside for it in the tablespace,Oracle allocats space for segements in extents. Therefore, when the existing extens of a segment are full, Oracle allocates another extent for that segement. Since extents are allocated as needed, the extents of a segements may or may not be contiguous on disk and may or may not span files
+-A Segements is a set of extents that have been allocated for a specific type of data structure and all are stored in the same tablespace.
+-An Oracle DB can therefore be divided into the the following four types of segements
+1)Data Segements : stores user data within the DB
+2)Index Segments :Stores indexes
+3)Rollback Segments : stores rollback informations.This informations is used when data has to be rolled back.
+4)Temporary segements: Is created when an SQL statements needs a temporary work are.these segements are destroyed the moment the SQL statements is executed.
+
+Schema
+======
+-These Objects are logical strucutes created by users to contain or reference, their data.
+-A DB schema is collection of logical structures objects known as schema objects.
+-In other words, all the logical objects such as tables, Clusters, indexes, Views, stored procedures,Triggers, sequences and so on are grouped into a schema
+-it is also defines a level of access for the user. A schema is owned by a Database users and has the same name as that of the user
+
 Physical Strutures
 ==================
 The physical layer of the DB consists of three types of files
 1)Data files
 2)Redo log files
 3)Control files
+
+1)Data Files
+----------
+-The Data files holds informations contained in the DB.
+-A DB will have at least one data file or as may as hundreds of data files
+-The information for a single table can span across many data files or may tables can shae a set of data file.Tablespace are sually spanned across many data files to gain a significant improvment on the performance
+
+2)Redo log files
+----------------
+-Oracle Maintains logs of all transactions that are fired against the DB.
+-These Transactions are recorded in files called online redo Log files[Redo logs].The main purpose of the Redo log files is to hold informations as recovery in the event of a system failure
+-Redo log stores a log of all changes made to the DB.
+-*The redo log files must perform well and should be protected against hardware failures. if redo log informations is lost, it is not possible to recover the system
+-When a Transactino occurs in the DB, it is entered in the redo log buffers, while the data blocks affected by the transactions are not immediatley written to disk.
+-It writes to redo log file in a cyclical order i,e after the first log fiel is filled, it writes to the second log file, until the one is filled.When all the redo log files have filled, it returns to the first log file and beings overwriting its content with new transacitons data.
+-If the DB is running in the ARCHIEVELOG mode, the DB will make a copy of online redo log files before overwriting them.
+
+3)Control Files
+---------------
+-Control files record control informations about all of the files within the DB.These files maintain internal consistency and guid recovery operations.Control files contain informations used to start an instance such as location of data file and redo log file. such informations is required by oracle to start he DB instance.
+-*Control file must be protected.Oracle Provides a mechanism for storing multiple copies of control files.These muliple copies are stored an separate disks to minimize the potential damage due to disk failure.
+-Oracle uses an area of shared memory called the Sytem Global Area[SGA] and a private memory are for each process called the Program Global Area[PGA].
 
 Sytem Global Area[SGA]
 ======================
@@ -25,6 +109,19 @@ Sytem Global Area[SGA]
 1)DataBase Buffers cache
 2)Redo log buffers
 3)Shared pool
+
+1)Database Buffer Cache
+---------------------
+-The Database Stores the most recently used blocks of data.The set of DB buffers in an instance is the DB buffers cache.The Buffer Cache contains modifed as well as unmodified blocks.Since the most recently and most frequently used data is kept in memory, the performance of system is improved by reducing the disk I/O operations
+
+2)Redo log buffers
+------------------
+-The redo log buffer stored redo entries.This is log of changes made to the DB.The Redo entries stored in the Redo log buffers are written to an online redo log.An online redo log is set of two or more files that records all the changes made to oracle data files and control files.
+
+3)Shared Pool
+-------------
+-This shared pool caches various constructs that can be shared among users, for example SQL shared area
+-SQL statements are cached so that they can be reused. stored procedures can be cached for faster access.
 
 Program Global Area[PGA]
 ========================
@@ -46,4 +143,31 @@ c)DBWR-Database Writer
 d)LGWR-Log Writer
 e)ARCH-Archiever
 
+a)SMON-System Monitor
+---------------------
+-this background process performs instance recovery at the start of the DB.
+-In multiple instance system,SMON of one instance can also perform instance recovery for other instance that have failed
+-SMON also cleans up temporary segements that are no longer in use and recovers dead transactions skipped during crash and instance recovery because of file-read or offline errors . it combines contiguous free extents into larger free extents
+
+b)PMON-Process Monitor
+----------------------
+-this DB background process cleans up fialed users process.
+-It is responsible for releasing the lock i,e cleaning upthe cache and freeing resources that the process was using.
+
+c)DBWR-Database Writer
+----------------------
+-This background process is responsible for management the content of the data block buffer cache and dictionary cache.
+-it performs batch writes of changed blcok, since oracle uses write-ahead logging,DBWR does not need to write blocks when a transaction commits.
+-In the most common case, DBWR writes only when more data needs to be read into the system global area and too few DB buffers are free.
+-the least recenlty used data is written to the data files first.
+
+d)LGWR-Log Writer
+-----------------
+-this manages the writing of the contents of the redo log buffers to the online redo logs files.
+-it writes the log entries in the batches form.
+-the Redo log buffers enteries always contain the most up-to date status of the DB.
+
+e)ARCH-Archiever
+----------------
+-This DB background process reads the redo log files once once has filled them and writes a copy of the used redo log files to the specifided archieve log desintions(S);
 

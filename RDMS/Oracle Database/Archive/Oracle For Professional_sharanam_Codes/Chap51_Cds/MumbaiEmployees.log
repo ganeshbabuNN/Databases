@@ -1,0 +1,51 @@
+
+SQL*Loader: Release 11.1.0.6.0 - Production on Tue May 20 01:32:16 2008
+
+Copyright (c) 1982, 2007, Oracle.  All rights reserved.
+
+Control File:   MumbaiEmployees.ctl
+Data File:      /MyData/CSV/MumbaiEmployees.csv
+  Bad File:     /MyData/CSV/MumbaiEmployees.bad
+  Discard File: /MyData/CSV/MumbaiEmployees.dsc 
+ (Allow all discards)
+
+Number to load: ALL
+Number to skip: 0
+Errors allowed: 50
+Bind array:     64 rows, maximum of 256000 bytes
+Continuation:    none specified
+Path used:      Conventional
+
+Table MUMBAIEMPLOYEES, loaded from every logical record.
+Insert option in effect for this table: INSERT
+
+   Column Name                  Position   Len  Term Encl Datatype
+------------------------------ ---------- ----- ---- ---- ---------------------
+EMPLOYEENO                          FIRST     *   ,  O(") CHARACTER            
+FIRSTNAME                            NEXT     *   ,  O(") CHARACTER            
+LASTNAME                             NEXT     *   ,  O(") CHARACTER            
+SALARY                               NEXT     *   ,  O(") CHARACTER            
+DEPTNO                               NEXT     *   ,  O(") CHARACTER            
+GENDER                               NEXT     *   ,  O(") CHARACTER            
+
+
+Table MUMBAIEMPLOYEES:
+  5 Rows successfully loaded.
+  0 Rows not loaded due to data errors.
+  0 Rows not loaded because all WHEN clauses were failed.
+  0 Rows not loaded because all fields were null.
+
+
+Space allocated for bind array:                  99072 bytes(64 rows)
+Read   buffer bytes: 1048576
+
+Total logical records skipped:          0
+Total logical records read:             5
+Total logical records rejected:         0
+Total logical records discarded:        0
+
+Run began on Tue May 20 01:32:16 2008
+Run ended on Tue May 20 01:32:17 2008
+
+Elapsed time was:     00:00:00.10
+CPU time was:         00:00:00.02

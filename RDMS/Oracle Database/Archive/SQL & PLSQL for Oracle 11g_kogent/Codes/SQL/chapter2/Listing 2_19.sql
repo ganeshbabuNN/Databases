@@ -1,0 +1,1 @@
+select emp1.ename from employee emp1 where exists(select emp2.city from 		employee emp2 where emp2.ename = ’SUNIL’ and emp1.city = emp2.city);

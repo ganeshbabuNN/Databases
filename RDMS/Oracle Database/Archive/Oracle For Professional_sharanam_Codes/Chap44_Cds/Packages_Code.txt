@@ -1,0 +1,201 @@
+-------------------------------------------------------------------------------------------------------------
+-- Create a package named ShahLib. This package will hold the following:
+-- Procedures
+-- 1. CalculateEmpLeaves
+-- 2. AccountCredit
+-- 3. IncrementDeptSal
+-- Functions
+-- 1.FetchAccountBal
+-- 2.SalOfDept
+-------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PACKAGE ShahLib AS 
+		Author Varchar2(25) := 'Sharanam Shah';
+		Version Varchar2(5) := '1.0';
+
+		PROCEDURE CalculateEmpLeaves(varEmployeeNo IN Varchar2, varLeaves OUT Number);
+		PROCEDURE AccountCredit(varAccountNo Number, varCreditAmount Number);
+		PROCEDURE IncrementDeptSal(varDeptNo Number, varIncrement Number DEFAULT 1.10);
+		FUNCTION FetchAccountBal(varAccountNo IN Number) RETURN Number;
+		FUNCTION SalOfDept(varDeptNo Number) RETURN Number;
+	END ShahLib;
+	/
+-------------------------------------------------------------------------------------------------------------
+-- After the specification is created, the body of the package needs to be created. 
+-------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PACKAGE BODY ShahLib AS
+		PROCEDURE CalculateEmpLeaves(varEmployeeNo IN Varchar2, varLeaves OUT Number) IS
+		BEGIN
+		/* Retrieving the number of leaves from EmployeeMuster. */
+			SELECT COUNT(*) INTO varLeaves FROM EmployeeMuster 
+				WHERE EmployeeNo = varEmployeeNo AND Attendance <> 'Present';
+		END;
+
+		PROCEDURE AccountCredit(varAccountNo Number, varCreditAmount Number) AS 
+			varBalance Number; 
+			varUpdatedBalance Number; 
+		BEGIN 
+		/* Defining SQL query to retrieve the current balance */
+			SELECT CurrentBalance INTO varBalance FROM Accounts WHERE AccountNo = varAccountNo 
+				FOR UPDATE OF CurrentBalance;
+		/* Calculating the new balance */
+			varUpdatedBalance := varBalance + varCreditAmount; 
+		/* Updating current balance in the Accounts table */
+			UPDATE Accounts SET CurrentBalance = varUpdatedBalance WHERE AccountNo = varAccountNo; 
+		/* Making the changes permanent */
+			COMMIT; 
+			EXCEPTION 
+			/* Defining an exception to handle new account opening */
+				WHEN NO_DATA_FOUND THEN 
+					INSERT INTO Accounts (AccountNo, CurrentBalance) 
+						VALUES(varAccountNo, varCreditAmount); 
+			/* Defining an exception to handle other errors */
+				WHEN OTHERS THEN 
+					ROLLBACK; 
+			END AccountCredit;
+
+		PROCEDURE IncrementDeptSal(varDeptNo Number, varIncrement Number DEFAULT 1.10) IS
+		/* Defining a cursor to hold salary of all employees in a particular department */
+		CURSOR curEmployees (varDeptNo Number) IS
+			SELECT Salary FROM Employees WHERE DeptNo = varDeptNo
+				FOR UPDATE OF Salary;
+		BEGIN
+		/* Defining a For loop */
+			FOR typEmployees IN curEmployees(varDeptNo)
+		/* Traversing through the loop */
+			LOOP
+			/* Updating salary of the current employee in the loop */
+				UPDATE Employees SET Salary = typEmployees.Salary *((100 + varIncrement)/100)
+					WHERE CURRENT OF curEmployees;
+			END LOOP;
+		/* Making the changes permanent */
+			COMMIT;
+		END IncrementDeptSal;
+
+		FUNCTION FetchAccountBal(varAccountNo IN Number) RETURN Number IS 
+			varCurrentBalance Number(12, 2);
+		BEGIN
+		/* Retrieving the current balance */
+			SELECT CurrentBalance INTO varCurrentBalance FROM Accounts WHERE AccountNo = varAccountNo; 
+			RETURN(varCurrentBalance); 
+		END;
+
+		FUNCTION SalOfDept(varDeptNo Number) RETURN Number IS
+			varTotalSal Number;
+		BEGIN
+			varTotalSal := 0;
+		/* Defining a For loop with an inline cursor */
+			FOR typSal IN (SELECT Salary FROM Employees WHERE DeptNO = varDeptNo) 
+			LOOP
+			/* Calculating total salary */
+				varTotalSal := varTotalSal + typSal.Salary;
+			END LOOP;
+			RETURN varTotalSal;
+		END SalOfDept;
+	END ShahLib;
+	/
+
+-------------------------------------------------------------------------------------------------------------
+-- Create a package that holds two overloaded procedures named IncrementDeptSal. 
+-- This procedure accepts DeptNo and percentage increase in salary
+-- OR
+-- DeptName and percentage increase in salary
+-- and increments the salary of all the employees in that department.
+-------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PACKAGE EmpLib IS
+		PROCEDURE IncrementDeptSal(varDeptName Varchar2, varIncrement Number DEFAULT 1.10);
+		PROCEDURE IncrementDeptSal(varDeptNo Number, varIncrement Number DEFAULT 1.10);
+	END;
+	/
+-------------------------------------------------------------------------------------------------------------
+-- After the specification is created, the body of the package needs to be created. 
+-------------------------------------------------------------------------------------------------------------	
+	CREATE OR REPLACE PACKAGE BODY EmpLib IS
+		PROCEDURE IncrementDeptSal(varDeptName Varchar2, varIncrement Number DEFAULT 1.10) IS
+		/* Defining parameterized cursor to hold salary of all employees in a particular */
+			CURSOR curEmployees (varDeptName Varchar2) IS
+				SELECT Salary FROM Employees WHERE DeptNo = (SELECT DeptNo 
+					FROM Departments WHERE DepartmentName = varDeptName)
+						FOR UPDATE OF Salary;
+			BEGIN
+			/* Defining a For loop */
+				FOR typEmployees IN curEmployees(varDeptName)
+			/* Traversing through cursor */
+				LOOP
+				/* Updating salary of the current employee in the loop */
+					UPDATE Employees 
+						SET Salary = typEmployees.Salary *((100 + varIncrement)/100)
+							WHERE CURRENT OF curEmployees;
+				END LOOP;
+				COMMIT;
+			END IncrementDeptSal;
+
+		PROCEDURE IncrementDeptSal(varDeptNo Number, varIncrement Number DEFAULT 1.10) IS
+		/* Defining parameterized cursor to hold salary of all employees in a particular */
+			CURSOR curEmployees (varDeptNo Number) IS
+				SELECT Salary FROM Employees WHERE DeptNo = varDeptNo
+					FOR UPDATE OF Salary;
+			BEGIN
+			/* Defining a For loop */
+				FOR typEmployees IN curEmployees(varDeptNo)
+			/* Traversing through cursor */
+				LOOP
+				/* Updating salary of the current employee in the loop */
+					UPDATE Employees 
+						SET Salary = typEmployees.Salary *((100 + varIncrement)/100)
+							WHERE CURRENT OF curEmployees;
+				END LOOP;
+				COMMIT;
+			END IncrementDeptSal;
+		END;
+	/
+-----------------------------------
+-- Execute the package
+-----------------------------------
+	EXEC EmpLib.IncrementDeptSal(3, 5);
+	EXEC EmpLib.IncrementDeptSal('HR Department', 3);
+
+--------------------------------------------------------------------------------------------
+-- Write a function that accepts:
+-- DeptNo and returns Total salaries of all the employees in that department
+-- OR
+-- DeptNo and H and returns Highest paid salary in that department
+-- OR
+-- DeptNo and L and returnsLowest paid salary in that department
+--------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PACKAGE NewEmpLib IS
+		FUNCTION SalOfDept(varDeptNo Number) RETURN Number; 
+		FUNCTION SalOfDept(varDeptNo Number, varType Varchar2) RETURN Number; 
+	END;
+	/
+-------------------------------------------------------------------------------------------------------------
+-- After the specification is created, the body of the package needs to be created. 
+-------------------------------------------------------------------------------------------------------------	
+	CREATE OR REPLACE PACKAGE BODY NewEmpLib IS
+		FUNCTION SalOfDept(varDeptNo Number) RETURN Number IS
+			varTotalSal Number;
+			BEGIN
+				varTotalSal := 0;
+			/* Defining a For loop with an inline cursor */
+				FOR typSal IN (SELECT Salary FROM Employees WHERE DeptNO = varDeptNo) 
+				LOOP
+				/* Calculating total salary */
+					varTotalSal := varTotalSal + typSal.Salary;
+				END LOOP;
+				RETURN varTotalSal;
+			END SalOfDept;
+
+		FUNCTION SalOfDept(varDeptNo Number, varType Varchar2) RETURN Number IS
+			varSal Number;
+			BEGIN
+				varSal := 0;
+				IF varType = 'H' THEN
+					SELECT MAX(Salary) INTO varSal FROM Employees 
+						WHERE DeptNO = varDeptNo;
+				ELSE
+					SELECT MIN(Salary) INTO varSal FROM Employees 
+						WHERE DeptNO = varDeptNo;
+				END IF;
+				RETURN varSal;
+			END SalOfDept;
+		END;
+	/

@@ -1,0 +1,1 @@
+execute U1.emp_proc1(1);

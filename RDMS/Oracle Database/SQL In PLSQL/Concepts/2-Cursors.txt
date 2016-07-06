@@ -1,0 +1,250 @@
+CURSOR
+=======
+
+-Oracle DB allocates a certain portion in the memory , for every SQL query that is executed. Using PL/SQL this portion in the meory can be given a name of choice. this portion is called the context area or a cursor.
+-A Cursor is basically a pointer to the context are and thus represents a struture in memory using a PL/SQL program. this context are can be controlled using the cursor.
+-When a cursor is declare, a pointer is returned which initially point to noting.When the cursor is opened , appropriate memory is allocated and the cursor structure is create. The cursor variable now points to the cursor area in the memory. When the cursor is close the memory allocated for cursor is released.
+-cursor are usually used to hold the data that is retrieved from tables(s) and perform actions on that data one row at a time.
+
+TYPES of Cursor
+===============
+1)implicit Cursor
+2)Explicit Cursor
+
+1)Implicit Cursor 
+-----------------
+If Oracle opened a cursor for its internal processing it is known as the implicit Cursor
+
+2)Explicit Cursor
+----------------
+A cursor can also be opened for processing data through PL/SQL block, on demand, those user-defined cursor is known as Explicit Cursors.
+
+Cursor Attributes
+=================
+-Oracle provides such four variables which helps keep track of the current status of a cursor. these cursor variables can be accessed and used in a PL/SQL code block.
+-These Attribute can be used by preceding the cursor attribute with the cursor name, for implicit cursor the cursor nameis always "SQL".
+
+Four Attribute
+--------------
+1)%ISOPEN
+2)%FOUND
+3)%NOTFOUND
+4)%ROWCOUNT
+
+1)%ISOPEN
+---------
+For Explicit Cursor: it is a boolean variable, which evaluates to TRUE, if the cursor is opened, otherwise to FALSE
+For Implicit cursor: SQL%ISOPEN always evaluates to FALSE. this is because, implicit cursors are automatically opened and closed after executing SELECT, INSERT,UPDATE or DELETE SQL Queries, due to which the SQL%ISOPEN attribute of an implicit cursor cannot be referenced outside its SQL Query.
+
+2)%FOUND
+--------
+For Explicit Cursor: it evaluates to TRUE, if the record was fetched sucessfully, or else FALSE. if the cursor has not ben opened , a reference to the %FOUND attribute raises the INVALID_CURSOR exception
+For Implicit cursor: if Oracle does not opened implicit cursor, it reference to %FOUND attributes returns Null instead of INVALID_CURSOR exception
+
+3)%NOTFOUND
+------------
+For Explicit Cursor:SQL%NOTFOUND it evaluates to TRUE, if the record was not fetched sucessfully, or else FALSE.if the cursor has not been opened , a reference to the %FOUND attribute raises the INVALID_CURSOR exception
+For Implicit cursor:if Oracle does not opened implicit cursor, it reference to %NOTFOUND attributes returns Null instead of INVALID_CURSOR exception
+
+
+-if you want to catch that exception or hiding exception which is cursor branch the statement and proceed
+%NOTFOUND is a cursor attributes. there are more attributes like FOUND, ROWCOUNT
+Cursor_Attribute_%NOTFOUND.sql
+
+
+4)%ROWCOUNT
+-----------
+For Explicit Cursor:SQL%ROWCOUNT returns the number of rows fetched from a cursor at the time this attribute is queried,
+if the cursor has not been opened , a reference to the %ROWCOUNT attribute raises the INVALID_CURSOR exception
+if the cursor has not been opened, a reference to the %ROWCOUNT attributes raises the INVALID_CURSOR exceptions.
+
+
+Cursor%RowCount%_Loop.sql
+
+-restrict the rowcount during iterations
+Cursor%RowCount%_Loop_Restrict_rowcount.sql
+
+
+Implicit Cursor
+===============
+-Oracle impicitly declares cursos for all DML Statement written in PL/SQL . since the implicit cursor is declared, opened and managed by Oracle internally, following functions are taken care of by Oracle.
+1)reserving a portion of memory
+2)Populating this portion with apporpriate data
+3)Processing the data in the memory area
+4)Releasing the memory are when processing is complete.
+-When an implicit cursor for a SELECT query does not return any rows, PL/SQL raises the NO_DATA_FOUND exception
+-When an implicit cursor for a SELECT query returns more then one row, PL/SQL raises the TOO_MANY_ROWS exceptions.
+
+Explicit Cursor
+===============
+-It is used explicitly opened for processing data using PL/SQL block is known as an Excplicit Cursor.
+-This is useful ,when it is required to process individual records from a database table.
+-It is declared in the DECLARE section of the PL/SQL program.
+
+--declaring the explicit Cursor
+syntax
+------
+
+CURSOR <CursorName> IS <Select Query>
+
+-Explicit cursors are used in queries for multiple the multiple rows.similarly like a files like opening the file,processing and later closing the file
+
+-Similary in Cursors can be processed as:
+a)declare a cursor mapped to an SQL SELECT query
+b)open the cursor
+c)Fetch records/rows from the cursor one row at a time into memeory variables
+d)process the data held in the memory variable as required using a loop
+d)Exit from the loop processing is complete
+e)Close the cursor
+
+Opening the cursor
+-----------------
+-if this are delcared need to be opened.
+
+sytnax
+------
+OPEN <CursorName>;
+
+the open command 
+1)defines the name portions in the memory
+2)Executes the associated SQL query
+3)Creates the Active Data set by retrieving data and populating the name portions of the memory
+4)Establishes a row pointer and set it to point to the first row in the Active Data set
+
+
+-Cursor is a select statement or kind of statement stuck into a varaibles. here you open the cursor,fetch a rows and then close the cursors
+-In this below example, I declared p_employee_id a variable in a type employee_id which is a parameter, where i can reuse the varaible in the select statements and then declared a local record of the cursor type as Record type.
+1) open the cursor and pass the Id i,e 101
+2) and fetch that row that i opened and fetch into the local record or else you can fetch into individual column like featch c1 into first_name, last_name,email...etc instead of that you can you local record which is declared as Record type
+3) closed the cursor
+ 
+Cursor%RowType%Open_Fetch_Close.sql
+
+
+---let try it again, where the employee_id does not exists, you may observer cursor will not raise any exception ..basically it hides exception if there is not record
+Cursor%RowType%Open_Fetch_Close_Exceptions.sql
+
+
+Fetching Data From Cursor
+-------------------------
+-Now since the data is avaiable in the cursor [Active Data Set], to manipulate it, it need to be fetched into a set of memory variables. 
+-the FETCH command alows moving such data into memory variable. it retrives one row a time.
+
+*syntax
+FETCH <CursorName> INTO <variable1>,<Variable2>...;
+
+-It will be a good pratice to place FETCH command inside a loop construct, which cause the data to be fetched into memory variables and processed until all the rows in the Active Data Set are processed.
+
+Closing Cursor
+--------------
+-After data is fetched from the Active Data set, the cursor need to be closed and it also help in releasing the memory occupied by the cursor and its Active Data Set.
+
+*Syntax:
+CLOSE <CursorName>;
+-after closing the cursor ,it can be opened again using the REOPEN Command.
+
+CURSOR USING LOOP..END LOOP
+===========================
+-The meomroy variables declared to hold them
+-the loop is used to tranverse through the records return.it iterate every time.
+1.Fetches the data retrieved by the ucrsor into memory variables
+2.Checks if the data was retrived using FETCH , if it was returned.
+a)Generates the Username and Password.
+b)Update the Employees table with the generated username and password for an employee.
+Position 1 and 2 are repeated for all records that are held in the Active Data Set.
+
+Cursor_ExplicitCursor_SIMPLE_LOOP.sql
+
+
+CURSOR USING WHILE LOOP
+=======================
+Cursor_ExplicitCursor_WHILE_LOOP.sql
+
+CURSOR USING FOR LOOP
+=====================
+-if you want to fetch multiple rows then use the cursor FOR loop
+
+Cursor_Usage_For_loop.sql
+-Still we can clean the above code, the key message over here to see how tightly SQL is intregrated into PLSQL, it makes the life easier
+
+Cursor_Usage_For_loop_Clean.sql
+
+Note
+----
+-Since a FOR Loop is used, there is not need to declare any memory variables to hold cursor values.
+--it automatically fetches the data retrieved by the cursor into the record set.
+--It implicity declares a%ROWTYPE variable, also use it as LOOP index.
+--Open a Cursor
+--Read Cursor
+--Close the cursor automatically when all records have been processed.
+
+in this commands such as OPEN, FETCH and close are not required.
+
+syntax
+------
+FOR <Variable> IN <CursorName>.
+-Each record in the open cursor becomes a value for the memory variable of the %ROWTYPE
+-A Cursor can also be close using an EXIT or a GOTO command to leave the loop permaturely or if an exception is raise inside the loop.
+
+Cursor_ExplicitCursor_FOR_LOOP.sql
+
+-if you want similar like FOR LOOP which is SUPER serialized the BULK COLLECT
+
+InLINE CURSOR
+============
+-The FOR LOOP, allows defining a inline cursor
+-An inline cursor is a cursor that is not delcared in the DECLARE section but the cursor definitions is included in the FOR LOOP
+Advantages
+1)definine incline cursor has the advantage of self documenting the cursor in the code instead of going back to the declare section to determine the cursor definitions the progrmmer maintaining the code can be see the definitions right there in the code that calls it
+2)where the cursor uses multiple times in the same code block, it will have to define inlne in multiple locations which reduces code maintainablity.
+
+Disadvanatages
+1)here in the inline cursor, it does not have any defined name, hence cursor attributes cannot be accessed. this can be an issue, if an exceptions is raised inside the cursors that jumps out of the loop.
+
+Cursor_ExplicitCursor_FORL_LOOP_InlineCursor.sql
+
+Passing parameter TO CURSOR
+===========================
+-the cursor uses an SQL query to reterive the required data can be passed a paramter which in turn can be passed to the WHERE conditions of the actual query.
+-A cursor that accepts parameters is called a Parameterized cursor. the content of such a cursor changes depending upon the values passed to its parameter.
+
+Declaring Cursor
+-----------------
+Syntax
+CURSOR <CursorName> (<variablename<DataTYpe>) IS <Select statement...>
+
+Opening Cursor
+--------------
+OPEN <cursorName> (<value>|<variable> |<expression>)
+
+FOR <variablename>
+IN <cursorName> (<value>|<Variable>|<expression>)
+
+Cursor_ExplicitCursor_NestedCursor.sql
+
+LOCKING Cursor Data
+===================
+-If you want to lock set of records before any changes are applied by the program PLSQL. oracle provide the FOR UPDATE clause that can be used with a SELECT statement to perform this locking
+-if FOR UPDATE clause is used with SELECT query, Oracle obtains an exclusive row-level lock on all rows identified by the SELECT statment. On applying an exclusive lock, no one else will be able to change any of these records until a ROLL BACK or a COMMIT is fired.
+
+Update/Delete Via Cursors
+=========================
+-The records referenced using a select query with FOR UPDATE clause, can be updated or deleted using the WHERE CURRENT OF statement.
+- THE WHERE CURRENT OF Statement allows updating or deleting the record that was last fetched by the cursor
+-the FOR UPDATE clause which get the exculsive lock on all the employee records
+-the UPDATE... WHERE CURRENT OF Clause automatically updates the row that the cursor is currently using at that time. coz the update SQL does not have to relocate the row to update, it is very fast.
+-all the rows selected by the cursor are still locked including the changed rwos.
+-the transaction stays open and the locks are held until a rollback or commit is issued.
+
+sytnax
+UPDATE <tableName> SET <Clause>
+ WHERE CURRENT OF <CursorName>;
+
+DELETE FROM <TableName> WHERE CURRENT OF <CursorName>;
+
+REF CURSOR
+==========
+
+syntax:
+------
+TYPE <ref_cur_name> IS REF CURSOR[RETURN return_type].

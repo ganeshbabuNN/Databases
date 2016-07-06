@@ -1,0 +1,1 @@
+select sysdate, ename from emp_company;

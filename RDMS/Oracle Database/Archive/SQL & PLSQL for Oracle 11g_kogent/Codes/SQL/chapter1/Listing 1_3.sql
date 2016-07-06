@@ -1,0 +1,1 @@
+delete company where cname = ‘ACC’;

@@ -1,0 +1,1 @@
+Select ename, mname, level from emp2 connect by prior ename = mname;

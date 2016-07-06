@@ -1,0 +1,1 @@
+insert into fabc values(56,78,systimestamp);

@@ -1,0 +1,214 @@
+---------------------------------------------------------------------------------------------------------
+-- Write a procedure that:
+-- 1. Accepts a table name and a column name
+-- 2. Displays the number of values held in that table's column
+---------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PROCEDURE CountRecords(varTableName IN Varchar2, varColumnName IN Varchar2)
+		IS 
+	/* Declaring a handle to the Dynamic SQL cursor. */
+		varCursor Number;
+	/* Declaring a variable to hold the SQL query. */
+		varSQL Varchar2(200);
+	/* Declaring a variable to hold the return value from the EXECUTE. */
+		varResult Number;
+	/* Declaring a variable to hold the number of count. */
+		varCount Number;
+
+		BEGIN
+		/* Defining Dynamic SQL statement. */
+			varSQL := 'SELECT COUNT(:ColName) ColumnCount FROM ' || varTableName;
+		/* Opening Cursor. */
+			varCursor := DBMS_SQL.OPEN_CURSOR;
+		/* Parsing SQL statement. */
+			DBMS_SQL.PARSE(varCursor, varSQL, DBMS_SQL.v7);
+		/* Binding Data. */
+			DBMS_SQL.BIND_VARIABLE (varCursor, 'ColName', varColumnName);
+		/* Defining variables to fetch data from the cursor. */
+			DBMS_SQL.DEFINE_COLUMN(varCursor, 1, varCount);
+		/* Executing SQL statement. */
+			varResult := DBMS_SQL.EXECUTE(varCursor);
+
+		/* Fetching and Processing. */
+			LOOP
+			/* Exit condition for the loop. */
+				EXIT WHEN DBMS_SQL.FETCH_ROWS (varCursor) = 0;
+			/* Transferring value from the SELECT column list to the variable. */
+				DBMS_SQL.COLUMN_VALUE(varCursor, 1, varCount);
+			END LOOP;
+		/* Displaying the number of rows as a message. */
+			DBMS_OUTPUT.PUT_LINE('Number of Rows in table named ' || varTableName || ' is ' || varCount);
+		/* Closing Cursor. */
+			DBMS_SQL.CLOSE_CURSOR(varCursor);
+		END CountRecords;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Write a function that:
+-- 1. Accepts: 
+--    a. Table name
+--    b. Column name
+--    c. Column value
+-- 2. Determines if the column value is available in the column of that table
+-- 3. If it is, then return 1 otherwise return 0
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE FUNCTION ChkAvailability (varTableName IN Varchar2, 
+		varColumnName IN Varchar2, varColumnValue IN Varchar2) 
+		RETURN Number AS
+
+		/* Declaring a handle to the Dynamic SQL cursor. */
+			curChkAvl Integer;
+		/* Declaring a variable to hold the return value from the EXECUTE. */
+			EXECUTE_FEEDBACK Integer;
+
+		BEGIN
+		/* Opening a cursor and storing the returned cursor ID. */ 
+			curChkAvl := DBMS_SQL.OPEN_CURSOR;
+		/* Parsing the SQL query with the columns in the SELECT list. */
+		DBMS_SQL.PARSE (curChkAvl, 'SELECT :ColumnName FROM ' || varTableName || 'WHERE :ColumnName = :ColumnValue', DBMS_SQL.V7);
+
+		/* Binding columns to Cursor Columns. */
+			DBMS_SQL.BIND_VARIABLE (curChkAvl, 'ColumnName', varColumnName);
+			DBMS_SQL.BIND_VARIABLE (curChkAvl, 'ColumnValue', varColumnValue);
+		/* Executing the SQL statement. */
+			EXECUTE_FEEDBACK := DBMS_SQL.EXECUTE(curChkAvl);
+
+		/* Determining if the SQL query execution returned records. */
+			IF DBMS_SQL.FETCH_ROWS (curChkAvl) = 0 THEN
+				RETURN 0;
+			ELSE
+				RETURN 1;
+			END IF;
+	/* Closing the Cursor. */
+			DBMS_SQL.CLOSE_CURSOR (curChkAvl);
+		END;
+	/
+------------------------------------------------------------------------------------------------------------
+-- Test the function ChkAvailability as:
+------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+	/* Declaring a variable that holds the return value of the function. */
+		varAvailability Number;
+
+		BEGIN
+		/* Calling the function ChkAvailability that takes the table name and column name/value as parameters and returns a number. */
+			varAvailability := ChkAvailability ('&TABLENAME', '&COLUMNNAME', '&COLUMNVALUE');
+		/* Displaying an appropriate message to the user */
+			IF varAvailability = 1 THEN
+				DBMS_OUTPUT.PUT_LINE ('The column value is available.');
+			ELSE
+				DBMS_OUTPUT.PUT_LINE ('The column value is not available');
+			END IF;
+		END;
+	/
+
+
+------------------------------------------------------------------------------------------------------------
+-- Write a procedure that:
+-- 1. Accepts an object name either as a complete object name or as wildcards
+-- 2. Drops the object(s) matching the object name 
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PROCEDURE DestroyObject (varObjType IN Varchar2, varObjName IN Varchar2) IS
+	/* Creating a static cursor to retrieve user objects. */
+		CURSOR OBJ_CUR IS 
+			SELECT OBJECT_NAME, OBJECT_TYPE FROM USER_OBJECTS 
+				WHERE OBJECT_NAME LIKE UPPER(varObjName) 
+					AND OBJECT_TYPE LIKE UPPER(varObjType) 
+						ORDER BY OBJECT_NAME;
+	/* Declaring a handle to the Dynamic SQL cursor. */
+		curDrop Integer;
+
+		BEGIN
+		/* For each object in the cursor. */
+			FOR OBJ_REC IN OBJ_CUR
+			LOOP
+			/* Opening a cursor and returning cursor ID. */ 
+				curDrop := DBMS_SQL.OPEN_CURSOR;
+			/* Parsing dynamic SQL command to drop the object. */
+				DBMS_SQL.PARSE (curDrop, 'DROP ' || OBJ_REC.OBJECT_TYPE || ' ' || OBJ_REC.OBJECT_NAME, DBMS_SQL.V7);
+			/* Closing the cursor. */ 
+				DBMS_SQL.CLOSE_CURSOR (curDrop);
+			END LOOP;
+		END;
+	/
+
+------------------------------------------------------------------------------------------------------------
+-- Write a procedure that:
+-- 1. Accepts a table name either and a view name
+-- 2. Creates a view on all columns of that table 
+------------------------------------------------------------------------------------------------------------
+	CREATE OR REPLACE PROCEDURE CreateView (varTableName IN Varchar2, varViewName IN Varchar2) IS
+		/* Declaring a handle to the Dynamic SQL cursor. */
+			curView Integer;
+		BEGIN
+			/* Opening a cursor and returning a cursor ID. */ 
+				curView := DBMS_SQL.OPEN_CURSOR;
+			/* Parsing dynamic SQL command to create a view. */
+				DBMS_SQL.PARSE (curView, 'CREATE VIEW ' || varViewName || 'AS SELECT * FROM ' || varTableName, DBMS_SQL.V7);
+			/* Binding columns to Cursor Columns. */
+				DBMS_SQL.BIND_VARIABLE (curView, 'ViewName', varViewName);
+			/* Closing the cursor. */ 
+				DBMS_SQL.CLOSE_CURSOR (curView);
+		END;
+	/
+
+----------------------------------------------------------------------------------------------------------
+-- Write a procedure that accepts:
+-- 1. A REF Cursor as a parameter
+-- 2. Displays the structure of that cursor
+----------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE DescStructure (varCursor SYS_REFCURSOR) IS
+	/* Declaring a REF Cursor. */
+		curRef SYS_REFCURSOR;
+	/* Declaring a DBMS_SQL Cursor. */
+		curDyn Integer;
+	/* Declaring a variable to hold the number of columns. */
+		varNoOfCols Integer;
+	/* Declaring a record type. */
+		varDescTab DBMS_SQL.DESC_TAB;
+
+	BEGIN
+	/* Assigning the cursor received as a parameter to a local REF Cursor. */
+		curRef := varCursor;
+	/* Converting A REF Cursor TO DBMS_SQL Cursor. */
+		curDyn := DBMS_SQL.TO_CURSOR_NUMBER(curRef);
+
+	/* Calling DESCRIBE_COLUMNS to populate the table with the description of each column */
+		DBMS_SQL.DESCRIBE_COLUMNS(curDyn, varNoOfCols, varDescTab);
+	/* Displaying the number of columns. */
+		DBMS_OUTPUT.PUT_LINE('number of columns = ' || varNoOfCols);
+	/* Displaying the column description. */
+		DBMS_OUTPUT.NEW_LINE;
+		DBMS_OUTPUT.PUT_LINE('Columns');
+		DBMS_OUTPUT.PUT_LINE('===========================');
+
+	/* Traversing through the available columns. */
+		FOR i IN 1..varNoOfCols
+		LOOP
+		/* Retrieving the column description for each column in the loop. */
+			DBMS_OUTPUT.PUT_LINE(varDescTab(i).col_name);
+		END LOOP;
+
+	/* Closing the cursor. */
+		DBMS_SQL.CLOSE_CURSOR(curDyn);
+
+	/* Handling Exceptions. */
+		EXCEPTION
+			WHEN OTHERS THEN
+				IF DBMS_SQL.IS_OPEN(curDyn) THEN
+					DBMS_SQL.CLOSE_CURSOR(curDyn);
+				END IF;
+		RAISE;
+	END DescStructure;
+ /
+-------------------------------------------------------------------------------------------------------------
+-- Test the procedure
+-------------------------------------------------------------------------------------------------------------
+	SET SERVEROUTPUT ON
+	DECLARE
+		curTemp SYS_REFCURSOR;
+	BEGIN
+		OPEN curTemp FOR SELECT * FROM Employees;
+		DescStructure(curTemp);
+	END;
+	/

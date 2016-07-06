@@ -1,0 +1,25 @@
+
+--let us use the logit autonomous transaction.sql add some logic using IF satement where procedures should either print in console or insert in table
+--let us design where procedure should call for D for console and T for table.
+
+IF Statement
+============
+-- now call logit procedures, check in the console and table .
+Control_IF_dbms_output
+
+--now lets design where both the logit procedures should go to the console,
+--you can use the named notations for directly using the paramater name  and whereas the positional notations is exactly.
+
+Control_IF_dbms_Name_Parameter_Console.sql
+
+--you can go from positional to name notations not from positional to name
+Control_IF_dbms_Name_Name_Notations_Lost_Message.sql
+
+---now try to call 'P' and check the outpoint
+--basicall this is the lost message
+Control_IF_dbms_Name_Name_Notations_Lost_Message.sql
+
+IF-ELSE Statement
+=================
+Control_IF_ELSE_Statements.sql
+

@@ -1,0 +1,1 @@
+UNDO_TABLESPACE=<name>;

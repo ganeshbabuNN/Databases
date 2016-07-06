@@ -1,0 +1,235 @@
+/* Create an object named ContactDetails */
+	CREATE OR REPLACE TYPE typContactDetails AS OBJECT(
+		Address1 Varchar2(50),
+		Address2 Varchar2(50),
+		City Varchar2(15),
+		State Varchar2(25),
+		Pincode Number(10),
+		Country Varchar2(20),
+		ContactNo Varchar2(25))
+	/
+
+/* Create an object named Author */
+	CREATE TYPE typAuthor AS OBJECT(
+		AuthorName Varchar2(50),
+		ContactDetails typContactDetails)
+	/
+
+/* Create an object named Publisher */
+	CREATE TYPE typPublisher AS OBJECT (
+		PublisherName Varchar2(50),
+		ContactDetails typContactDetails)
+	/
+
+/* Create an object named Book */
+	CREATE TYPE typBook AS OBJECT (
+		BookName Varchar2(100),
+		ISBN Varchar2(50), 
+		Description Varchar2(1000),
+		Price Number(12,2),
+		Author typAuthor,
+		Publisher typPublisher,
+		NoOfPages Number(4),
+		NoOfChapters Number(4),
+		MEMBER FUNCTION GetBookPrice(varDiscount Number) RETURN Number)
+	/
+
+/* Create a body for the object named Book */
+	CREATE TYPE BODY typBook AS 
+		MEMBER FUNCTION GetBookPrice(varDiscount Number) RETURN Number 
+		IS
+		varBookPrice Number(12, 2);
+		BEGIN
+			SELECT (Price - (Price * varDiscount/100)) INTO varBookPrice FROM DUAL;
+			RETURN varBookPrice;
+		END;
+	END;
+	/
+
+/* Create a public synonym for an object type named typBook */ 
+	CREATE PUBLIC SYNONYM typPubBook FOR typBook;
+
+/* Create a table named XTeamBooks. The purpose of this table is to hold all the books that are published under the X-Team series */
+	CREATE TABLE XTeamBooks(
+		BookDetails typBook,
+		QtySold Number(12),
+		AmtSold Number(12,2));
+
+/* Adding records in XTeamBooks table */ 
+	INSERT INTO XTeamBooks (BookDetails, QtySold, AmtSold) 
+		VALUES (
+			typBook('PHP 5.1 For Professionals', 'X-1238743-FE-34', 'A Book for professionals wanting to learn PHP', 675, 
+				typAuthor('Sharanam Shah', 
+					typContactDetails('Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-9845763483')), 
+				typPublisher('SPD', 
+					typContactDetails('MIDC', 'New Bombay', 'Mumbai', 'Maharashtra', 400098, 'India', '91-022-38475636')), 
+			1500, 28), 
+		8000, 5400000);
+	INSERT INTO XTeamBooks (BookDetails, QtySold, AmtSold) 
+		VALUES (
+			typBook('Oracle For Professionals', 'X-4565722-AB-67', 'A Book for professionals wanting to learn Oracle 9, 10 and 11g', 875, 
+				typAuthor('Vaishali Sharanam Shah', 
+					typContactDetails('Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-9845763483')), 
+				typPublisher('ABC', 
+					typContactDetails('FTDC', 'Old Bombay', 'Mumbai', 'Maharashtra', 400034, 'India', '91-022-98876532')), 
+			1900, 38), 
+		25000, 21875000);
+
+/* Create a table named BestSellingBooks on an object type called typBook that already exists */
+	CREATE TABLE BestSellingBooks OF typBook;
+
+/* Adding records in the BestSellingBooks table */
+-- Using a constructor
+	INSERT INTO BestSellingBooks 
+		VALUES (
+			typBook('PHP 5.1 For Professionals', 'X-1238743-FE-34', 'A Book for professionals wanting to learn PHP', 675, 
+				typAuthor('Sharanam Shah', 
+					typContactDetails('Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-9845763483')), 
+				typPublisher('SPD', 
+					typContactDetails('MIDC', 'New Bombay', 'Mumbai', 'Maharashtra', 400098, 'India', '91-022-38475636')), 
+			1500, 28));
+-- Without using a constructor
+	INSERT INTO BestSellingBooks 
+		VALUES ('Oracle For Professionals', 'X-4565722-AB-67', 'A Book for professionals wanting to learn Oracle 9, 10 and 11g', 875, 
+				typAuthor('Vaishali Sharanam Shah', 
+					typContactDetails('Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-9845763483')), 
+				typPublisher('ABC', 
+					typContactDetails('FTDC', 'Old Bombay', 'Mumbai', 'Maharashtra', 400034, 'India', '91-022-98876532')), 
+			1900, 38);
+
+/* Create a relational table named HighestSellingBooks */
+	CREATE TABLE HighestSellingBooks (
+		BookName Varchar2(100),
+		ISBN Varchar2(50), 
+		Description Varchar2(1000),
+		Price Number(12,2),
+		AuthorName Varchar2(50),
+		AuthorAddress1 Varchar2(50),
+		AuthorAddress2 Varchar2(50),
+		AuthorCity Varchar2(15),
+		AuthorState Varchar2(25),
+		AuthorPincode Number(10),
+		AuthorCountry Varchar2(20),
+		AuthorContactNo Varchar2(25),
+		PublisherName Varchar2(50),
+		PublisherAddress1 Varchar2(50),
+		PublisherAddress2 Varchar2(50),
+		PublisherCity Varchar2(15),
+		PublisherState Varchar2(25),
+		PublisherPincode Number(10),
+		PublisherCountry Varchar2(20),
+		PublisherContactNo Varchar2(25),
+		NoOfPages Number(4),
+		NoOfChapters Number(4));
+
+/* Create a view that includes all the columns of the existing relational table named HighestSellingBooks table along with Author and Publisher details with the help of object types */
+	CREATE OR REPLACE VIEW objVwHighestSellingBooks (BookName, ISBN, Description, Price, Author, Publisher, NoOfPages, NoOfChapters) AS 
+		SELECT 
+			BookName, ISBN, Description, Price, 
+				typAuthor(hsb.AuthorName, 
+					typContactDetails(hsb.AuthorAddress1, hsb.AuthorAddress2, hsb.AuthorCity, hsb.AuthorState, hsb.AuthorPincode, hsb.AuthorCountry, hsb.AuthorContactNo)), 
+				typPublisher(hsb.PublisherName, 
+					typContactDetails(hsb.PublisherAddress1, hsb.PublisherAddress2, hsb.PublisherCity, hsb.PublisherState, hsb.PublisherPincode, hsb.PublisherCountry, hsb.PublisherContactNo)), 
+			NoOfPages, NoOfChapters
+		FROM HighestSellingBooks hsb;
+
+/* Adding records in the HighestSellingBooks using the objVwHighestSellingBooks view */
+	INSERT INTO objVwHighestSellingBooks
+		VALUES ('MySQL 5 For Beginners', 'X-9898765-ER-23', 'A Book for beginners wanting to learn MySQL', 475, 
+				typAuthor('Sharanam Shah', 
+					typContactDetails('Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-9845763483')), 
+				typPublisher('XYZ', 
+					typContactDetails('FTDC', 'New Bombay', 'Mumbai', 'Maharashtra', 400035, 'India', '91-022-66554636')), 
+			800, 16);
+	INSERT INTO objVwHighestSellingBooks
+		VALUES ('Java Server Programming For Professionals', 'X-7766554-JW-11', 'A 
+			Book for professionals wanting to learn Java 1.5', 866, 
+				typAuthor('Vaishali Sharanam Shah', 
+					typContactDetails('Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-2345763483')), 
+				typPublisher('PQR', 
+					typContactDetails('ABDC', 'Nerul', 'Mumbai', 'Maharashtra', 400022, 'India', '91-022-653636')), 
+			1300, 20);
+
+/* Adding records in the HighestSellingBooks using the table directly */
+	INSERT INTO HighestSellingBooks 
+		VALUES ('MySQL 5 For Beignners', 'X-9898765-ER-23', 'A Book for beginners wanting to learn MySQL', 575, 'Vaishali Sharanam Shah', 'Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-2345763483', 'PQR', 'ABDC', 'Nerul', 'Mumbai', 'Maharashtra', 400022, 'India', '91-022-653636', 1300, 20);
+	INSERT INTO HighestSellingBooks
+		VALUES ('Java Server Pages For Beginners', 'X-7766554-JW-11', 'A Book for beginners wanting to learn JSP', 786, 'Sharanam Shah', 'Kokan Mansion', 'IT Road', 'Mumbai', 'Maharashtra', 400057, 'India', '91-022-9845763483', 'XYZ', 'FTDC', 'New Bombay', 'Mumbai', 'Maharashtra', 400035, 'India', '91-022-66554636', 800, 16);
+
+/* Create an object type named typCitizen */
+	CREATE OR REPLACE TYPE typCitizen AS OBJECT(
+		First Varchar2(60),
+		Last Varchar2(60),
+		Middle Varchar2(30),
+		Prefix Varchar2(10),
+		Suffix Varchar2(10))
+	/
+
+/* Create an object type named typCitizenPersonalDetails */
+	CREATE OR REPLACE TYPE typCitizenPersonalDetails AS OBJECT(
+		SSN Varchar2(9),
+		Gender Varchar2(2),
+		DateOfBirth Date,
+		Ethnicity Varchar2(25),
+		MaritalStatus Varchar2(2),
+		Hair Varchar2(10),
+		Eyes Varchar2(10),
+		Height Varchar2(10))
+	/
+
+/* Create an object type named typCitizenEmpDetails */
+	CREATE OR REPLACE TYPE typCitizenEmpDetails AS OBJECT(
+		JobTitle Varchar2(60),
+		StartDate Date,
+		Terminated Varchar2(1),
+		EndDate Date,
+		Salary Number(12, 2))
+	/
+
+/* Create a table type named ListOfCitizenEmpDetails */
+	CREATE OR REPLACE TYPE ListOfCitizenEmpDetails
+		AS TABLE OF typCitizenEmpDetails
+	/
+
+/* Create a table based on the object types named typCitizen, typCitizenPersonalDetails and table types named ListOfCitizenEmpDetails */
+	CREATE TABLE Citizen(
+		CitizenNo Number(10) NOT NULL,
+		NameDetails typCitizen,
+		PersonDetails typCitizenPersonalDetails,
+		EmploymentDetails ListOfCitizenEmpDetails DEFAULT ListOfCitizenEmpDetails(),
+		PRIMARY KEY (CitizenNo))
+	NESTED TABLE EmploymentDetails STORE AS CitizenEmploymentDetails
+	/
+
+/* Adding records in Citizen table */
+	INSERT INTO Citizen VALUES(1, 
+		typCitizen('Vaishali', 'Shah', 'Sharanam', 'Mrs.', 'Ph.D'),
+		typCitizenPersonalDetails('C002', 'F', '22-NOV-1981', 'Hindu', 'M', 'Black', 'Brown', '5.4 inch'),
+		ListOfCitizenEmpDetails(
+			typCitizenEmpDetails('Programmer', '01-JUL-2005', 'Y', '15-DEC-2005', 8000), 
+			typCitizenEmpDetails('Project Manager', '15-DEC-2005', 'Y', '31-JAN-2007', 65000)));
+	INSERT INTO Citizen VALUES(2, 
+		typCitizen('Sharanam', 'Shah', 'Chaitanya', 'Mr.', 'Ph.D'),
+		typCitizenPersonalDetails('C001', 'M', '01-JAN-1981', 'Hindu', 'M', 'Black', 'Brown', '5.8 inch'),
+		ListOfCitizenEmpDetails(
+			typCitizenEmpDetails('Programmer', '05-Feb-2003', 'Y', '15-Jun-2005', 6500), 
+			typCitizenEmpDetails('Project Manager', '15-Jun-2003', 'Y', '31-Jan-2007', 55000), 
+			typCitizenEmpDetails('Technical Author', '01-Feb-2008', 'N', NULL, 100000)));
+
+/* Adding record to store the employment details for the Citizen numbered 1 */
+	INSERT INTO TABLE(SELECT Citizen.EmploymentDetails FROM Citizen 
+		WHERE Citizen.CitizenNo = 1)
+			VALUES('Technical Author', '01-FEB-2007', 'N', NULL, 75000);
+
+/* Create a table named PublisherAddresses to hold the publisher name and two addresses */ 
+	CREATE TABLE PublisherAddresses(
+		PublisherName Varchar2(50),
+		Address typAddress);
+
+/* Adding records in the PublisherAddresses table */
+	INSERT INTO PublisherAddresses VALUES('SPD', 
+		typAddress('ABC Mansion, MIDC Road, Kurla West, Mumbai 400056', NULL));
+	INSERT INTO PublisherAddresses VALUES('SPD', 
+		typAddress('ABC Mansion, MIDC Road, Kurla West, Mumbai 400056', 'PQR Mansion, FTDC Road, Parle West, Mumbai 400058'));
+	INSERT INTO PublisherAddresses VALUES('BpB', 
+		typAddress('Sita Sadan, L. J. Road, Mahim, Mumbai 400029', 'Prakash Towers, FTDC Road, Kurla West, Mumbai 400058'));

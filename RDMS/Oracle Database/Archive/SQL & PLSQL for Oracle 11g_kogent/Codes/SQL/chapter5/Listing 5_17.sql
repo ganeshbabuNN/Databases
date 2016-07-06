@@ -1,0 +1,1 @@
+delete emp_company where salary > 8000;

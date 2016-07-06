@@ -1,0 +1,1 @@
+select b from ztemp5 where b='anil ' -- with blank;varchar2 data does not ignore blanks

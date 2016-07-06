@@ -1,0 +1,1 @@
+alter trigger trg1 enable;

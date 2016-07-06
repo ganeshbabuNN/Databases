@@ -1,0 +1,1 @@
+insert into ztemp6 values (INTERVAL '2-2' year to month, INTERVAL '2		2:2:2.2222'day to second(4));

@@ -1,0 +1,36 @@
+Dynamic SQL is available in PLSQL.
+==================================
+
+its something like this 
+
+select first_name,last_name from employees where last_name='v_last_name';
+
+Here if you want to call this variable from a function or procedure by passing value the value dynamically . this is called the dynamic variable.
+
+In PLSQL, we have levarage to use dynamic SQL using Bind variables.
+
+
+select first_name,last_name from employees where last_name= :'v_last_name'; this denotes the way where you can v
+
+
+Bind Variables
+==============
+the below AB is used in the Dynamical Way of executing the DML statements using bind variables..
+
+like example dbms_sql1.sql
+
+but in using the static means... use like Call_cursor_static.sql 
+
+java_query.sql
+
+for binding variables
+java_with_bind.sql
+
+
+
+
+
+
+
+
+

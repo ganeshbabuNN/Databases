@@ -1,0 +1,1 @@
+DROP TABLESPACE <UNDO_ts_name>;

@@ -1,0 +1,31 @@
+<?xml version="1.0"?> 
+<POrder>
+	<OrderNo>1</OrderNo>
+	<OrderDate>2006-01-22</OrderDate>
+	<CustomerName>Sharanam Shah</CustomerName>
+	<CustomerAddress>Larsen Mansion, Andheri, Mumbai 400016. 
+	</CustomerAddress>
+	<CustomerContactNo>91-022-23344556</CustomerContactNo>
+	<ProductDetails>
+		<Product>
+			<ProductNo>1</ProductNo>
+			<ProductName>PHP 5.1 For Professionals</ProductName>
+			<Qty>35</Qty>
+		</Product>
+		<Product>
+			<ProductNo>2</ProductNo>
+			<ProductName>Java Server Pages For Professionals</ProductName>
+			<Qty>40</Qty>
+		</Product>
+		<Product>
+			<ProductNo>3</ProductNo>
+			<ProductName>MySQL  For Professionals</ProductName>
+			<Qty>32</Qty>
+		</Product>
+		<Product>
+			<ProductNo>4</ProductNo>
+			<ProductName>Ajax For Beginners</ProductName>
+			<Qty>56</Qty>
+		</Product>
+	</ProductDetails>
+</POrder> 

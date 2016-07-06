@@ -1,0 +1,325 @@
+Intro
+=====
+
+-Every business organization requires data related to their business to be gathered ,stored and finally analyzed
+-The data that is gathered is in raw format.Business managers of that organization,determine a set of rules that must be applied to such a raw data, before the data is stored in the DB. the application of such rules on raw data ensures data integrity.
+-Every business organization's rules are completely dependent on their own business model.Hence , the rules applied to the data gathered and processed by one organsization will differe from the business rules applied to data gathered and processed by another
+
+Rules can be
+*A customer cannot have the credit limit of the card increased until the customer holds that card for at least six months.
+*An Employee's identification number cannot be issued to another employees in the organsization
+*Stock in hand cannot be less than the reorder level
+
+-Such rules always enforced on the data being stored in the database. Hence the database will only hold data that satisfies the rules.if the data gathered fails to satisfy the rules, it is rejected. this ensures that the data stored in a table will alwaysbe valid and have integrity.
+-In database terms, a rule that is enforced on data being stored in a database is called a constraint which helps maintaining the integrity of the data in the database.
+
+Apply Data Constaints
+=====================
+-Oracle permits data constraints to be attached to table columns using SQL syntax.Technically data constraints are a part of the table column construct.
+-Once the constraints are defined for all required columns in a particular DB table. Oracle checks the data being entered into a table column against these data constraints.If the data passes this check, it is stored in the table column ,else the data is rejected.
+-It rejects the entire record, even if a single column of the record being entered into the table fails a constraints.
+-Constraints can be defined to the table columns using
+1)Create Table
+2)Alter Table
+-Constraints can be defined at column as well as table level.
+
+Column Level Constraints
+------------------------
+-if data constraints are defined as an attribute of a column definition when creating or altering a table structure, they are column level constraints
+*it can be applied to the current column. the current column is the column that immediately precedes the constraints[i,e they are local to the specific column].A column level constraints cannot be applied, if the data constraints spans across muliple columns in a table.
+
+
+Table Level Constraints
+-----------------------
+-If data constraints are defined after defining all table column attributes when creating or altering a table structure, it is a table level constraints
+-*a table level constraints must be applied, if the data constraints spans across multiple columns in a table
+-constraints are stored as a part of the global table definition by oracle in the system tables.
+-The SQL syntax used to attach the constraint changes depending upon whether it is a column level or table level constraints.
+
+
+Unique Key constraints
+======================
+-it ensures that all column values within a table never contain a duplicate entry. 
+-it can be applied more then one column
+*A Unique index is created automatically on the column that hold a unique constraints
+
+Differ between unique constraints vs Primary Key
+-A table can have more then one unique key which is not possible in primary key.
+-The unique column constraints allows multiple NULL values which is not allowed by primarky key column
+
+Unique COnstraint-at Column Level
+---------------------------------
+
+sytnax
+	<columnName> <dataType>(<size>)UNIQUE
+
+
+Unique COnstraint-at table Level
+--------------------------------
+
+syntax
+	CREATE TABLE <tablename>(
+		<columname1> <Datatype>(<Size>),
+		<columname2> <datatype>(<size>),
+	UNIQUE(<columname1>,<columname2>));
+
+
+Altering the constraints
+*----------------------*
+Adding Constraints
+------------------
+
+-integrity constraints can be defined using the constraint clause of the ALTER TABLE COmmand
+-but Oracle does not allow defining constraints using the ALTER TABLE, if the previous data that the table holds violates such constraints
+-if the primary key constraints is begin applied to a table on a a column that holds duplicates values in it, PK constraitns will not be set for that column.
+
+sytnax
+	ALTER TABLE <tableName>
+	ADD CONSTRAINTS <constraintsName> UNIQUE(<columnName>);
+
+-Here the constraints is named ConstraintsName, giving the user-defined name to the constraints is explained.
+
+Dropping Constraints
+------------------
+-Integrity constraints can be dropped if the rule that it enforces is no longer true or if the constraints is no longer needed.
+-A constraint can be dropped using the ALTER TABLE command with the DROP clause.
+
+sytnax
+	ALTER TABLE <tableName>
+	DROP CONSTRAINTS <constraintsName>;
+
+PRIMARY KEY Constraints
+=======================
+-It can consists one ore more fields on a table. When multiple fields are used as a Primary key, they are called a composite key.
+-A table can have only one primary key. A primary key column in a table has special attributes
+1)The NOT NULL attributes is switched on and hence the column becomes a mandatory column [i,e the column cannot be left blank]
+2)no duplicate values are accepted and hence the data held across the column is always UNIQUE
+
+-A single column primary key is called simple key. A multicolumn primary key is called composite primary key.
+-it is not mandatory but it is recommended as it helps distinguish one record from another.
+-A composite key is usually a choice when a record in the table cannot be uniquely identified using a value in a simple key.
+-Primar key can be specified either when a table is created [using CREATE TABLE] or by modifying the existing table struture[using ALTER TABLE]
+
+Primary key constraints - At COlumn Level
+-----------------------------------------
+sytnax
+	<ColumnName> <datatype>(<size>) PRIMARY KEY;
+
+
+
+
+Primary key constraints - At Table Level
+-----------------------------------------
+sytnax
+	PRIMARY KEY(<ColumnName>,<columnName>);
+
+
+
+FOREIGN KEY Constraints
+=======================
+-this oracle constraint is the primary key of one table which is connected to another table to establish a relationship between them.
+-this constraints does not allow uniquely identifying rows in that table, but helps establishing a link to matching column in other tables.
+-the table in which a foreign key is defiend is called foreign table or detail table.
+-the table that defines the primary or unique key and is referenced by the foreign key is called the primary table or master table.
+-the REFERENCES TABLENAME.columnNAME clause of CREATE TABLE command allows master table to be referenced in the foriegn key definition when defining the forign key column attributes, in the detail table.
+-It also can be used in the same table. this is called self referencing.
+-*it can only be referenced with a primary key of a master table. hence it is mandatory for the master table to have a column defiend as Unique or a primary key.
+-Records in the master int he master table cannot be deleted unless child recofd do not exists in the detail table
+-it ensures
+a)Records cannot be inserted into a details table, if corresponding records in the master table do not exists
+b)records of the master table cannot be deleted, if corresponding records in the details table actually exists
+
+Insert/Update operations
+------------------------
+-When a foreign key is defined on a details table, value that is being inserted/updated in the foreign key column should exists in the master table's primary key column to which it is referenced.
+
+for example
+
+product table
+
+Primarykey
+productName	productMake 	model
+TV		LG		LCD
+LCD		LG		XCanvas
+Refrigertor	Samsung		350Litries
+AC		LG		Half Ton
+Tables		Durion		Glass
+
+
+OrderDetails table
+
+composite key
+orderno		productname	cost
+1		TV		350
+2		Tables		323
+3		LCD		232
+1		TV		231
+2		Tables		212
+
+-the productname of the products table is the primary key column. the productnameof the orderdetails table is a foreign key referencing the productname column of the products table.
+-An order cannot hold a product that does not exists in the product table. hence the productname beging add/updated in the orderdetails table must be present in the product table.
+
+Delete operations on the master table
+-------------------------------------
+-A record in the master table cannot be deleted, if the details table holds child records
+-if delete operations is attempeted, oracle displays an error message and prevents the delte operations from going through.
+
+ex
+A product cannot be delted from the product table, if a product is ordered and thus is aviable in the orderdetails table as a record.
+
+
+on Delete Cascade
+-----------------
+- to allow such deletes to go through , the ON DELETE CASCADDE option can be used.
+- the ON DELETE CASCADE option in the foreign key define ensures that all the corresponding records in the detail table are deleted along with the record that is begin delted in the master table.
+
+ex
+a product is deleted from the product table, all the corresponding records avaiable in the orderdetails table will be automatically deleted.
+
+
+
+on Delete set null
+-----------------
+- this ON DELETE SET NULL options can be used defiing the foreign key and this constraints deletes the desired record from the master table, preserving the child records avaiable in the details table and set the values in the foreign key column to null.
+-A foreign key can be defined to reference the same table in the CREATE TABLE statements.
+
+ex
+The product is deleted from the products table, all the corresponding product names that are avaiable in the order details table are set to null.
+
+Self Referencing Foreign Keys
+-----------------------------
+-A foreign key that reference another column i,e primary /unique key column of that same table is caleld self referencing or recursive foreign key.
+
+
+examlple
+
+employee
+PrimaryKey		Foreign Key
+EmployeeNo	Name	 ManagerNo
+1		Ganesh	 3
+2		vedha	 1
+3		sudhakar 
+
+-the Manger is also an employee to the company. hence, in this table , employeeno is the primary key and managerno is the foreign key that references the employeeno column of the same table.
+-The Foreign key can defined in either a CREATE TABLE statement or an ALTER TABLE statement
+
+
+Foriegn key constraints - At COlumn Level
+-----------------------------------------
+sytnax
+	<ColumnName> <datatype>(<size>) 
+	 REFERENCES <TableName> [(<columnName>]
+	 [ON DELETE CASCADE];
+
+
+
+Foriegn key constraints - At Table Level
+-----------------------------------------
+sytnax
+	<ColumnName> <datatype>(<size>) 
+	 REFERENCES <TableName> [(<columnName>,<columnName>];
+
+
+Foriegn key constraints - with ON DELETE CASCADE
+------------------------------------------------
+
+
+
+Foriegn key constraints - with ON DELETE SET NULL
+------------------------------------------------
+-the SET NULL ON DELETE sets the foreign key fields in the detail table to NULL for every record that is delted from the master table . however child records in the details table will not be delted
+-A foreign key with SET NULL ON DELETE can be defined in either a CREATE TABLE statement or an ALTER TABLE Statement.
+
+User defined constraints Names
+==============================
+-Oracle assigns a unique name to each constraints that is defined. the constraints naming convention used by Oracle is
+
+SYS_Cn
+
+where n is a numeric value that makes the constraints name unique.
+-In Production environment , it is always recommended to give the constraints a user-defined name.
+-this provides the developers complete control over that constraints. it becomes quite easy to drop a constraints , by simply referring to the constraints by its user-defined name.
+
+syntax
+	CONSTRAINT <ConstantName> <constraint Definition>;
+
+-A Constraints can be given a user-defined name by preceding the constraints definition with the reserved word CONSTRAINT and a user-defined name.
+
+Constraints for Data Integrity
+==============================
+-Business rules can be enforced in oracle using the CHECK and NOT NULL constraints
+-these constraints can be bound to a column or a table using the CREATE TABLE OR ALTER TABLE Command.
+-such constraints are enforced when any table write operations is carried out. Any insert or update statement causes the relevent business constraints to be enforced and this must be satisfied for the write operation to suceed. Thus such constraints ensure the integrity of the data in tables.
+
+NOT NULL Constraints
+--------------------
+-This constraints is a column level constraints. it ensure that a table column cannot be left empty
+-This column becomes a mandatory column.
+-The NOT NULL COnstraints can only be applied at column level.
+-*the NOT NULL constraints can also be applied as a CHECK Constraint. However oracle does not recommend this.
+
+syntax
+	<ColumnName> <DataType>(<size>) NOT NULL
+
+
+
+CHECK Constraints
+-----------------
+-this Oracle constraints allows applying logical expression to a column value that evluates either to TRUE or FALSE
+-*A CHECK constraint takes substantially longer to execute as compared to NOT NULL, PRIMARY KEY,FOREIGN KEY or UNIQUE. Thus CHECK constraints  must be avoided, if the constraints can be defined using the NOT NULL, primary key or foreign key constraints.
+
+Check Constraints- At Column LEVEL
+----------------------------------
+
+Sytnax
+	<ColumnName><DataType>(<Size>) CHECK(<logical expression>);
+
+Check Constraints- At Table LEVEL
+----------------------------------
+
+Sytnax
+	CHECK(<logical expression>);
+
+
+
+Check Constraints-with not null
+-------------------------------
+-A check constraint is useful only if invalid data is prevented from begin entered. Hence the check constraint condition/expression should always return TRUE or FALSE.
+-if the expression in a check constraint does not return a True/false, the value is unknown
+-unknown do not voilate a check constraint conditions.
+
+Viewing Defined Constraints
+===========================
+-if a users wants to see the constarints defiend on a particular table, the DESCRIBE <TableName> command can be useful to some extend wherein the column names, data type size and the NOT NULL constraints can be viewed.
+-if you looking like PK , FK .. so on are not avaible in the DESCRIBE Command
+-those informations is stored by oracle in a table called USER_CONSTRAINTS .
+
+DEFAULT CONSTRAINT
+==================
+-when a table is created using the CREATE TABLE a default value can be assigned to a column
+-*The data type of the default value should match the data type of the column.
+*Characater and date value in the default constraint should be specified within a single quotes
+
+sytnax
+	<Columnname><Datatype>(<Size>)DEFAULT <value>;
+
+
+DEFAULT - column level constraint
+---------------------------------
+- if a column level constraint is defined on the column that has the default constraint applied, the default constraint must precede the constraint definitions
+
+sytnax
+	<Columnname><datatype>(<Size>)
+		DEFAULT <value><constraint Definition>
+
+
+
+
+
+
+	
+
+
+
+
+

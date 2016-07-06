@@ -1,0 +1,1 @@
+update parent_child set cc=1 where cc= 2;

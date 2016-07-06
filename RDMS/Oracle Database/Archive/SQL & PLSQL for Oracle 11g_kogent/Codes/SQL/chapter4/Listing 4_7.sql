@@ -1,0 +1,1 @@
+select count(ename) from employee where city =’MUMBAI’;

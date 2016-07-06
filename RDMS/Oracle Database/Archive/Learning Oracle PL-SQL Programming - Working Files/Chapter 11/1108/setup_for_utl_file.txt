@@ -1,0 +1,18 @@
+Create a directory in the operating system
+
+mkdir \emp_demo
+
+Once you have the actual directory on the drive, create a directory at the database level. 
+
+You may need to access the database as a DBA or have the permission create directory assigned to you account.
+
+If you are using the HR account, you can log in as sysdba and 
+
+GRANT create any directory TO hr;
+
+or create the directory and grant read write access to HR. 
+
+
+As HR, run this to create the directory.
+
+CREATE OR REPLACE DIRECTORY file_dir AS 'C:\emp_demo'; 

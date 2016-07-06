@@ -1,0 +1,1 @@
+create tablespace data datafile ‘ my_lmt’ size  256k extent management 	local;

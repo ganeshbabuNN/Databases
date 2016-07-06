@@ -1,0 +1,1 @@
+rename employee to emp;

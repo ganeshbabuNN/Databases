@@ -1,0 +1,7 @@
+DECLARE
+  v_message VARCHAR2(100);
+  v_date DATE;
+BEGIN
+  DBMS_OUTPUT.put_line('Hello World!');
+END;
+/

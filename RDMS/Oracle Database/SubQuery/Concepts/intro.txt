@@ -1,0 +1,155 @@
+Subqueries
+==========
+
+-Subquery is an SQL statement that is held within another SQL statement.
+-A subquery is also termed as a nested query
+-A query within the parenthese is called the inner query where as the other one is called the otuer query. A subquery can be 
+-*** if there are two tables are used , subquery is used.
+used under
+1)WHERE Clause
+2)FROM Clause
+3)SELECT Clause
+
+Select --------- from ---- where ---- IN  -outerquery
+(Select --------- from )    -inner query
+
+-Subqueries are used to
+1-insert records in a target table
+2-create tables an insert records in the table created
+3-update records in a target table
+4-create veiw
+5-provide values for conditions in WHERE,HAVING clauses,operators such as IN used with SELECT ,UPDATE and DELETE statements
+
+
+Subquery IN the WHERE Clause
+-----------------------------
+
+-this query will return more then one value
+-In this IN is used has Operator
+
+Subquery_IN_WHERE_Clause_MultiValue.sql
+
+Subquery Equal the WHERE Clause
+-----------------------------
+
+-this will return only one value
+- in this we use Equal sign (=)
+
+Subquery_Equal_WHERE_Clause_SingleValue.sql
+
+Nested Subqueries
+-----------------
+--nested with nested subquery
+
+Select --------- from ---- where ---- IN  -outerquery
+(Select --------- from ----- where ------ IN      -inner query
+(select ---- from ------)     -inner query
+)
+
+Subquery_Nested_queries.sql
+
+subquery in the FROM Clause
+-------------------------
+- A subquery written in the FROM clause of the SELECT statement is called an inline view.
+- Anything written in the FROM clause is the data source for that parituclar SELECT statement, hence such queries that are written in the FROM clause will also represetn a data source.
+
+select  A...,B...
+from ... A,
+(select ...,.... from ...)B
+where A..=B...
+
+
+Subquery_In_FROM_Clause.sql
+
+Subquery in the HAVING Clause
+----------------------------
+-placing a subquery in the HAVING clause of an outer query allows filtering records based on the result returned by the subquery
+-Basically H
+AVING Clause is always used along with the GROUP BY clause. HAVING is basically a conditions that is applied on the result set retreved by GROUP BY clause
+
+Subquery_in_HAVING_clause.sql
+
+
+Correlated SubQueries
+--------------------
+-A subquery becomes correlated when the subquery reference a column from a table in the parent query
+-A correlated subquery is evaluated once for each row processed by the parent statement which can be SELECT,DELETE or UPDATE
+-it is one way of reading every row in a table and comparing value in the each rows against related data.
+-it is used to wheenver a subquery must return a different result for each candidate row considered by the parent way.
+-The EXISTS operator is usually used with correlated subqueryies. this operator enables determing whether a value retrieved by the outer query exists in the results set of the values retrived by the inner query. if the subquery returns at least one row, the operator returns TRUE. if the value does not exists, it returns FALSE.
+-the EXISTS operator ensures that the search in the inner query terminates when at least one match is not found.
+-Similary NON EXISTS operator enables determing whether a value retrieved by the outer query is not a part of the result set of the values retrieved by the inner query.
+
+*execution way
+-for every row of parent query the child query is executed once.
+-the child query returns boolean value [True or False] and then parent query shows the result
+-if the child query returns True, the Parent query is executed, otherwise, the parent query is not executed.
+
+*Referencing column of the parent table may be
+-[A.department_id=B.department_id]
+-[department_id=B.department_id]
+
+Subquery_CorelatedSubquery_EXISTS.sql
+Subquery_CorelatedSubquery_NOTEXISTS.sql
+Subquery_CorelatedSubquery_ComparisonOperator.sql
+
+Subquery with MultiColumns
+--------------------------
+--Column name of the every row retrieved by the outer query is compared with both the columns of every row retrived by inner query
+
+Subquery_With_Multi_Columns.sql
+
+Subquery As part of the BETWEEN Operator
+----------------------------------------
+- getting the Range between the specific value of the resulsets.
+
+select ...,..,.. from ...
+where (... 
+BETWEEN 
+(select min(...) from ...)
+AND (Select AVG(...) From ...));
+
+Subquery_BETWEEN_Operator.sql
+
+Subquery in CASE Expression
+--------------------------
+--you can encoperate the case expression in the subquery.
+
+Subquery_In_CASE_Expressions.sql
+
+select ...,
+       ...,
+      (CASE WHEN ... IN (SELECT ... from ...) 
+            THEN '-----' 
+	    ELSE '.........'END) 
+            "..."
+from .....;
+
+Subquery_In_CASE_Expressions.sql
+
+Subquery in an ORDER BY Clause
+------------------------------
+- the inner query returns in the alphabetic order. the record returned by the inner query are correlated with the outer query using same column of both the table.
+
+select  ...,
+	...
+from ... A
+ORDER BY 
+(SELECT ... FROM .... B	WHERE A...=B...);
+
+Subquery_In_ORDER_BY_clause.sql
+
+Subquery In An UPDATE Statement
+-------------------------------
+-In an UPDATE statement, Column values can be set to a value returned by a single-row subquery
+
+Update table_name
+ set columnname= (Select  AVG(Column_name) from table_name); --returns single value
+
+Subquery_IN_UPDATE_statements.sql
+
+Subquery in DELETE Statment
+---------------------------
+DELETE FROM table_name WHERE columna_name IN ( SELECT column_name FROM table_name WHERE column_name='xx');
+
+Subquery_In_DELETE_statements.sql

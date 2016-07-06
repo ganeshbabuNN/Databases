@@ -1,0 +1,27 @@
+--As I was saying , a procedure is intended to show some actions, where as the functions is intended to return some value.
+-- The primary focus on the functions is to return atleast single value and the focus is to perform some single actions
+FUNCTIONS
+=========
+--we shall convert procedures into this has a functions
+Function_Converting_From_Procedure.sql
+
+---we can use this in the SQL statements also..
+Function_Using_Select_statement.sql
+
+
+NAME notations
+==============
+---using the name notations
+Function_Calling_Using_Name_Notations.sql
+
+NESTED FUNCTION
+===============
+---USING AND CALLING FUNCTION IN THE AB itself
+Function_Nested_functions.sql
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+select d1.bname,sum (d1.amount)tamt from deposit d1 group by d1.bname;

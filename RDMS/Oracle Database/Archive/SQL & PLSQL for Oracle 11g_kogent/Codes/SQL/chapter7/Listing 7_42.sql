@@ -1,0 +1,1 @@
+select city from branch, deposit where deposit.bname = branch.Bname and 		(deposit.cname='ANIL'OR DEPOSIT.CNAME =’SUNIL’);

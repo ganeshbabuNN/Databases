@@ -1,0 +1,1 @@
+select cname,sum(salary) from emp_company group by cname;

@@ -1,0 +1,237 @@
+Using Date Functions
+===================
+-Dates are stored in the database as a number that contains both the calender data information and the time infromations
+-oracle offers several date functions that allow modifying ,calculating and comparing data data types.
+-by default oracle uses that format DD-MON-YYYY to represent a date, however, using data functions this format can be changed as desired.
+
+Viewing the System Data and Time
+--------------------------------
+- SYSDATE function returns the current date
+
+Current date
+------------
+-CURRENT_DATE functions returns the current date in the session time zone, in a value in the gregorian calender of data type DATE
+
+
+SystemTimeStamp
+---------------
+-SYSTIMESTAMP functions returns the system date including fractional seconds and time zone of the database.
+-this return type is TIMESTAMP with TIME ZONE
+
+Extracting a date or interval value
+----------------------------------
+- an EXTRACT functions extracts and returns the value of a specified datetime field from a datetime or interval value expression
+-EXTRACT() return a value extracted from a date or a interval value
+
+Syntax
+EXTRACT({YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|TIMEZONE_HOUR|TIMEZONE_MINUTE|TIMEZONE_REGION|TIMEZONE_ABBR) FROM {<DateValue>|<IntervalValue>})
+
+- a date can be used only to extract YEAR, MONTH and Day, while a timestample with a time zone data type can be used only to extract TIMEZONE_HOUR and TIMEZONE_MINUTE
+
+Data conversion functions
+-------------------------
+-the date data type is used to stored date and time funcitons.
+-it stored information about century,year,month,day,hour,minute and seconds for each date values
+-the value in the column of a date data type is always stored in a specific default format.
+-this default format is 'DD-MON-YY HH:MI:SS'.the value of the date column are always retrieved in the default format.
+
+TO_DATE
+-------
+-if the data from a date column has to be viewed in any other format other than the default format,then use to_date functions
+-this function converts a character field to a date field.
+
+sytnax
+	TO_DATE(<Character>[,<Format>]);
+
+TO_CHAR
+-------
+-TO_CHAR() converts a value of a Date data type to char value. TO_CHAR() accepts a date as well as the format in which the date has to appear
+-this functions facilitates the retreival of data in a format different from the default format. it can also extract a part of date i,e the date,month or the year from the date value and use it for sorting or grouping of data according to the date, month or year
+
+
+Date Formate models
+
+formats		Description
+- / , . ; : 	Punctuation and quoted text is reproduced in the result.
+"Text"
+AD A.D		AD indicator with or without periods.
+AM A.M		Meridian indicator with or without periods.
+BC B.C		BC indicator with or without periods
+D		Day of week (1-7).
+DAY		Name of day.
+DD		Day of month (1-31)
+DDD		Day of year (1-366).
+DL		Returns a value in the long date format, which is an extension of Oracle Database's DATE format, determined 		by the current value of the NLS_DATE_FORMAT parameter. Makes the appearance of the date components (day name, 		month number, and so forth) depend on the NLS_TERRITORY and NLS_LANGUAGE parameters. For example, in the 		AMERICAN_AMERICA locale, this is equivalent to specifying the format 'fmDay, Month dd, yyyy'. In the 		GERMAN_GERMANY locale, it is equivalent to specifying the format 'fmDay, dd. Month yyyy'.
+DS		Returns a value in the short date format. Makes the appearance of the date components (day name, month 		number, and so forth) depend on the NLS_TERRITORY and NLS_LANGUAGE parameters. For example, in the 		AMERICAN_AMERICA locale, this is equivalent to specifying the format 'MM/DD/RRRR'. In the 		ENGLISH_UNITED_KINGDOM locale, it is equivalent to specifying the format 'DD/MM/RRRR'.
+DY		Abbreviated name of day
+E		Abbreviated era name (Japanese Imperial, ROC Official, and Thai Buddha calendars)
+EE		Full era name (Japanese Imperial, ROC Official, and Thai Buddha calendars).
+FF [1..9]	Fractional seconds; no radix character is printed. Use the X format element to add the radix character. Use 		the numbers 1 to 9 after FF to specify the number of digits in the fractional second portion of the datetime 		value returned. If you do not specify a digit, then Oracle Database uses the precision specified for the 		datetime datatype or the datatype's default precision. Valid in timestamp and interval formats, but not in 		DATE formats.
+FM		Returns a value with no leading or trailing blanks.
+FX		Requires exact matching between the character data and the format model
+HH HH12		Hour of day (1-12).
+HH24		Hour of day (0-23).
+IW		Week of year (1-52 or 1-53) based on the ISO standard.
+IYY IY I	Last 3, 2, or 1 digit(s) of ISO year
+IYYY		4-digit year based on the ISO standard.
+J		Julian day; the number of days since January 1, 4712 BC. Number specified with J must be integers.
+MI		Minute (0-59).
+MM		Month (01-12; January = 01).
+MON		Abbreviated name of month
+MONTH		Name of month
+PM P.M.		Meridian indicator with or without periods
+Q		Quarter of year (1, 2, 3, 4; January - March = 1).
+RM		Roman numeral month (I-XII; January = I)
+RR		Lets you store 20th century dates in the 21st century using only two digits.
+RRRR		Round year. Accepts either 4-digit or 2-digit input. If 2-digit, provides the same return as RR. If you do 			not want this functionality, then enter the 4-digit year
+SS		Second (0-59).
+SSSSS		Seconds past midnight (0-86399).
+TS		Returns a value in the short time format. Makes the appearance of the time components (hour, minutes, and so 		forth) depend on the NLS_TERRITORY and NLS_LANGUAGE initialization parameters.
+TZD 		Daylight savings information. The TZD value is an abbreviated time zone string with daylight saving 		information. It must correspond with the region specified in TZR. Valid in timestamp and interval formats, 			but not in DATE format ex PST (for US/Pacific standard time); PDT (for US/Pacific daylight time).
+TZH		Time zone hour. (See TZM format element.) Valid in timestamp and interval formats, but not in DATE formats.
+		Examples: ''HH:MI:SS.FFTZH:TZM
+TZM		Time zone minute. (See TZH format element.) Valid in timestamp and interval formats, but not in DATE formats
+		'HH:MI:SS.FFTZH:TZM'
+TZR		Time zone region information. The value must be one of the time zone regions supported in the database. Valid 		in timestamp and interval formats, but not in DATE formats. US/Pacific
+WW		Week of year (1-53) where week 1 starts on the first day of the year and continues to the seventh day of the 		year
+W		Week of month (1-5) where week 1 starts on the first day of the month and ends on the seventh
+X		Local radix character 'HH:MI:SSXFF'
+Y,YYY		Year with comma in this position.
+YEAR SYEAR	Year, spelled out; S prefixes BC dates with a minus sign (-)
+YYYY SYYYY 	4-digit year; S prefixes BC dates with a minus sign.
+YYY  YY Y	Last 3, 2, or 1 digit(s) of year.
+	
+SELECT TO_CHAR(SYSTIMESTAMP, 'SS.FF3') from dual;
+
+
+sytnax
+	TO_CHAR(<Date>[,<Format>]);
+-format must be a date format. if format is ommited, then the date is converted to a character value using the default date format i,e "DD-MON-YY".
+
+Using TH
+- DDTH places TH , RD, ND for the Date[DD], for example 2nd,3rd,8th and so on.
+
+Using DDSP
+-it indicates that the date[DD] must be displayed by spelling the date such as ONE, TWELVE and so on.
+
+Using SPTH
+-it displays the date[DD] with th added to the spelling fourteenth, twelfth
+
+Translating Number to words using Julian date converstion
+---------------------------------------------------------
+-sometimes in a commerical ap amounts have to be represented as amount in words . speciall while printing bank drafts
+like example 
+4800 - FOUR THOUSAND EIGHT HUNDRED...etc
+to_char(to_date(salary,'J'),'JsP')--title case
+to_char(to_date(salary,'J'),'jSP')--lower case
+-The minimum JULIAN number allowed to 1 and maximum JULIAN number allowed is 5373484. Amount larger than the maximum JULIAN number allowed cannot be converted to words.
+-the conversion only works with integer amounts. if rupees and paise are also required in the output, then split up the amount into its integer and decimal parts and hanlde the case of a zero amount 
+
+Manipulating dates
+==================
+-to manipulate and extract values from the date column of a table.
+
+Adding Dates
+-----------
+-ADD_MONTH() returns date after adding the number of months specified in the function
+
+syntax
+	ADD_MONTHS(<date>,<Number>);
+
+Retrieving the last date
+------------------------
+-LAST_DAY() returns the last date of the month specified with the functions
+
+syntax
+	LAST_DAY(<Date>)
+
+Finding Months between dates
+----------------------------
+-MONTHS_BETWEEN() returns number of months between Date1 and Date2
+
+syntax
+	MONTHS_BETWEEN(<Date1>,<Date2>)
+where
+-if date1 comes after date2, then MONTHS_BETWEEN returns a positive number.
+-if Date1 comes before date2, then MONTHS_BETWEEN returns a negative number.
+-if Date1 and Date2 are in the same month, then MONTHS_BETWEEN returns a fraction[a value between -1 and +1].
+-if Date1 and Date2 both fall on the last day of their respective months, then MONTHS_BETWEEN returns a whole number[no fractional components].
+-if Date1 and Date2 are in diff months and at least one of the dates is not a last day in the month, then MONTHS_BETWEEN returns a fraction number.the fractional component is calculated on a 31-day month baseis and also takes into account any difference in the time component of Date1 and Date2.
+
+Retrieving the first day of the week
+------------------------------------
+-NEXT_DAY() returns the date of the first weekday, named by character, that is after the date named by date. character must be a day of the week
+syntax:
+	NEXT_DAY(<Date>,<Character>);
+
+
+Converting a date time across time zone
+---------------------------------------
+- NEW_TIME() returns the date after converting it from time zone1 to a date in time zone2.
+
+sytnax
+NEW_TIME(<Date>,<Zone1>,<Zone2>)
+
+value		description
+AST		Atlantic standard time
+BST		Bering standard time
+CST		central standard time
+EST		Eastern standard time
+GMT		Greenwich mean time
+HDT		Alaska-Hwaii Daylight time
+MDT		Mountain Daylight Time
+YST		Yukon Standard time
+
+to Saylight
+
+ADT		Altantic Daylight time
+BDT		Bering daylight time
+CDT		Central Daylight time
+EDT		Eastern Daylight time
+HST		Alaska-Hawali standard time
+MST		Moutain standard time
+NST		NewFoundland Standard time
+PDT		Pacific Daylight time
+YDT		Yukon Dayligh time.
+
+Retrieving A rounded date
+-------------------------
+-ROUND() returns date rounded to specific unit of measures. if the second parameter is ommitted the ROUND() will round the date to the nearest day
+
+Syntax
+	ROUND(<Date>,[<Format>]);
+
+*formats
+
+Unit	Format parameter	Rounding Rules
+
+Year	SYYYY, YYY,YEAR,SYEAR   rounds up on july 1st
+	SYEAR,YYY,YY,YY
+ISO	IYYYY,IY,I		
+Year
+Quater	Q			Rounds up on the 16th day of the second month of the quarter
+Month	MONTH,MON,MM,RM		rounds up on the 16th day of the month
+Week	WW			Same day of the week as the first day of the year
+IW	IW			Same Day of the week as the first day of the year
+W	W			Same day of the week as the first day of the month
+Day	DDD,DD,J		
+Hour	HH,HH12,HH24
+Start	DAY,DY,D
+day of 
+week
+Minute	MI
+
+
+
+Working with date samples
+-------------------------
+
+- return date should be calculated as home date plus 4 hours, 30 minutes and 40 seconds
+
+
+update home
+Set homedate= rentaldate + 4/24+1/48+40/86400
+where homeno=13
+
+
+

@@ -1,0 +1,34 @@
+CONSTRUCTORS
+=============
+
+As discussing A record type is just a data struture where all the attributes comprises into a unit where as in object is contains multiples field i,e attributes but the diff is in the field we can include code with it as i said before object type is a combinations of package and complex types.
+-- the record data struture and package strutues will be used in various situationsin PLSQL
+-- by default the this type, default construtors. this is done by the oracle
+--the sample code like like this.
+
+Object_Type_Constructor_SELF_Like a Package.sql
+
+-- like how you have package body and the spec, here also object body can be return for the code.
+Object_Type_Constructor_SELF_Like a Package.sql
+
+'SELF' this is trying to assigning the body to the instance of the object
+Object_Type_Constructor_SELF_Like a Package.sql
+
+---let us call the object that is is emp_obj
+Object_Type_Constructor_SELF_Like a Package.sql
+
+Constructor Attributes
+-----------------------
+---Now creating the construtor , passing without any attribute and with only one attribule
+Object_Type_Constructor_Parmeterised_SELF.sql
+
+---adding the implementation for the body of above type
+Object_Type_Constructor_Parmeterised_SELF.sql
+
+Initializing the Empty Constructor
+----------------------------------
+-same you can even put some initializing value into the empty constructor.
+Object_Type_Constructor_Attributes_Initialization.sql
+
+-now call the object, by default other attributes are called with that constructure, which is called by the constructors.
+Object_Type_Constructor_Attributes_Initialization.sql

@@ -1,0 +1,324 @@
+
+
+ LOG file opened at 04/18/08 16:50:37
+
+Field Definitions for table SUBSCRIBERMASTER
+  Record format DELIMITED BY NEWLINE
+  Data in file has same endianness as the platform
+  Rows with all null fields are accepted
+
+  Fields in Data Source: 
+
+    ACCOUNTNO                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    FIRSTNAME                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    LASTNAME                        CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    BUILDINGNAME                    CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    ROAD                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    AREA                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    CITY                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    PINCODE                         CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    COUNTRY                         CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    CONTACTNO                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    STATUS                          CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+error processing column STATUS in row 1 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 2 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 3 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 4 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 5 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 6 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 7 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 8 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 9 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 10 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+
+
+ LOG file opened at 04/18/08 16:52:40
+
+Field Definitions for table SUBSCRIBERMASTER
+  Record format DELIMITED BY NEWLINE
+  Data in file has same endianness as the platform
+  Rows with all null fields are accepted
+
+  Fields in Data Source: 
+
+    ACCOUNTNO                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    FIRSTNAME                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    LASTNAME                        CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    BUILDINGNAME                    CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    ROAD                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    AREA                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    CITY                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    PINCODE                         CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    COUNTRY                         CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    CONTACTNO                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    STATUS                          CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+error processing column STATUS in row 1 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 2 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 3 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 4 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 5 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 6 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 7 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 8 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 9 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 10 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+
+
+ LOG file opened at 04/18/08 16:54:16
+
+Field Definitions for table SUBSCRIBERMASTER
+  Record format DELIMITED BY NEWLINE
+  Data in file has same endianness as the platform
+  Rows with all null fields are accepted
+
+  Fields in Data Source: 
+
+    ACCOUNTNO                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    FIRSTNAME                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    LASTNAME                        CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    BUILDINGNAME                    CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    ROAD                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    AREA                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    CITY                            CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    PINCODE                         CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    COUNTRY                         CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    CONTACTNO                       CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+    STATUS                          CHAR (255)
+      Terminated by ","
+      Trim whitespace same as SQL Loader
+error processing column STATUS in row 1 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 2 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 3 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 4 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 5 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 6 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 7 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 8 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 9 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+error processing column STATUS in row 10 for datafile C:\ExternalTables\SubscriberMaster.txt
+ORA-12899: value too large for column STATUS (actual: 2, maximum: 1)
+
+
+ LOG file opened at 04/18/08 17:02:12
+
+Field Definitions for table SUBSCRIBERMASTER
+  Record format DELIMITED BY NEWLINE
+  Data in file has same endianness as the platform
+  Rows with all null fields are accepted
+
+  Fields in Data Source: 
+
+    ACCOUNTNO                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    FIRSTNAME                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    LASTNAME                        CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    BUILDINGNAME                    CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    ROAD                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    AREA                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    CITY                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    PINCODE                         CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    COUNTRY                         CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    CONTACTNO                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    STATUS                          CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+
+
+ LOG file opened at 04/18/08 17:09:40
+
+Field Definitions for table SUBSCRIBERMASTER
+  Record format DELIMITED BY NEWLINE
+  Data in file has same endianness as the platform
+  Rows with all null fields are accepted
+
+  Fields in Data Source: 
+
+    ACCOUNTNO                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    FIRSTNAME                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    LASTNAME                        CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    BUILDINGNAME                    CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    ROAD                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    AREA                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    CITY                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    PINCODE                         CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    COUNTRY                         CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    CONTACTNO                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    STATUS                          CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+
+
+ LOG file opened at 04/18/08 17:25:45
+
+Field Definitions for table SUBSCRIBERMASTER
+  Record format DELIMITED BY NEWLINE
+  Data in file has same endianness as the platform
+  Rows with all null fields are accepted
+
+  Fields in Data Source: 
+
+    ACCOUNTNO                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    FIRSTNAME                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    LASTNAME                        CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    BUILDINGNAME                    CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    ROAD                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    AREA                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    CITY                            CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    PINCODE                         CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    COUNTRY                         CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    CONTACTNO                       CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
+    STATUS                          CHAR (255)
+      Terminated by ", "
+      Trim whitespace same as SQL Loader
