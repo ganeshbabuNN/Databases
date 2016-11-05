@@ -1,1 +1,0 @@
-select – (salary) from emp_company;

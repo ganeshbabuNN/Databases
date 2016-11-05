@@ -1,1 +1,0 @@
-create table scn_table(a number,time_ins date,scn number);

@@ -1,1 +1,0 @@
-select current_timestamp,localtimestamp,systimestamp from dual;

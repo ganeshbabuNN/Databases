@@ -1,1 +1,0 @@
-select extract(timezone_region from c) from ztemp7;

@@ -1,1 +1,0 @@
-Select * from V$TIMEZONE_NAMES;

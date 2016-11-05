@@ -1,1 +1,0 @@
-create table tcomplex(arl number,aim number);

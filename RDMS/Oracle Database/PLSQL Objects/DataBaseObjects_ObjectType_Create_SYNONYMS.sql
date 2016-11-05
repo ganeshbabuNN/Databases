@@ -1,1 +1,0 @@
-CREATE PUBLIC SYNONYM typPubBook FOR typBook;
