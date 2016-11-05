@@ -1,0 +1,1 @@
+create table table2(ename varchar2(20)); 

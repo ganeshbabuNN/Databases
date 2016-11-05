@@ -1,0 +1,1 @@
+ select cname companyname from company;
